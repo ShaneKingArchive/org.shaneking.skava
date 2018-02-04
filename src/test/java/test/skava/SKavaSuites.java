@@ -8,10 +8,12 @@ package test.skava;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import test.skava.crypto.CryptoSuites;
 import test.skava.ling.LingSuites;
+import test.skava.sql.SqlSuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({LingSuites.class})
+@Suite.SuiteClasses({CryptoSuites.class, LingSuites.class, SqlSuites.class})
 public class SKavaSuites
 {
 }

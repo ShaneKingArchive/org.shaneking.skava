@@ -56,12 +56,14 @@ public class Date0Test extends SKUnit
   public void date() throws Exception
   {
     Assert.assertEquals(Date0.date(), Date0.toString(now, Date0.Y_M_D));
+    Assert.assertNotEquals(Date0.date(), Date0.toString(now, Date0.YMD));
   }
 
   @Test
   public void time() throws Exception
   {
     Assert.assertEquals(Date0.time(), Date0.toString(now, Date0.H_MI_S));
+    Assert.assertNotEquals(Date0.time(), Date0.toString(now, Date0.HMIS));
   }
 
   @Test
