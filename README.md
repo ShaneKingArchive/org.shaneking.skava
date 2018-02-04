@@ -27,8 +27,8 @@ ShaneKing is released under [MIT][].
 [shaneking.org]: http://shaneking.org/
 
 
-[versioneye]:https://www.versioneye.com/user/projects/56f53fe535630e0034fda35c
-[versioneye img]:https://www.versioneye.com/user/projects/56f53fe535630e0034fda35c/badge.svg
+[versioneye]:https://www.versioneye.com/user/projects/5a768e360fb24f02987fd91e
+[versioneye img]:https://www.versioneye.com/user/projects/5a768e360fb24f02987fd91e/badge.svg
 
 
 [travis]:https://travis-ci.org/ShaneKing/org.shaneking.skava
