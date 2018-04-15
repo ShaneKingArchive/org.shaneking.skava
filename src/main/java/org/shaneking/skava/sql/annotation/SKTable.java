@@ -13,6 +13,9 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * @see javax.persistence.Table
+ */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Inherited

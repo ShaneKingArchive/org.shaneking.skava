@@ -30,7 +30,7 @@ public class SKEntity
   private static final Logger LOG = LoggerFactory.getLogger(SKEntity.class);
 
   @SKColumn(length = 36)
-  private String uuid;
+  private String uid;
   @SKColumn(length = 11, dataType = "INT")
   private Integer version = 1;
   /**
@@ -65,7 +65,7 @@ public class SKEntity
   @SKColumn(length = 36)
   private String lastModifyUserId;
   @SKColumn(length = 1)
-  private String invalid;//0|1
+  private String invalid = "0";//0|1
   /**
    * @see org.shaneking.skava.ling.util.Date0#Y_M_D
    */
@@ -125,8 +125,8 @@ public class SKEntity
     sqlList.add("set");
     sqlList.add(Joiner.on(String0.COMMA).join(updateList));
     sqlList.add("where");
-    sqlList.add("uuid=? and version=?");
-    rtnObjectList.add(uuid);
+    sqlList.add("uid=? and version=?");
+    rtnObjectList.add(uid);
     rtnObjectList.add(version);
 
     return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
@@ -142,7 +142,7 @@ public class SKEntity
     Object o = null;
     for (String fieldName : unTransientFieldNameList)
     {
-      if (!"uuid".equals(fieldName))
+      if (!"uid".equals(fieldName))
       {
         try
         {
@@ -394,14 +394,14 @@ public class SKEntity
     return Joiner.on("").join(Lists.transform(Lists.newArrayList(hasUpperCaseString.split("")), tmpFunc));
   }
 
-  public String getUuid()
+  public String getUid()
   {
-    return uuid;
+    return uid;
   }
 
-  public SKEntity setUuid(String uuid)
+  public SKEntity setUid(String uid)
   {
-    this.uuid = uuid;
+    this.uid = uid;
     return this;
   }
 

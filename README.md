@@ -35,10 +35,10 @@ ShaneKing is released under [MIT][].
 [travis img]:https://secure.travis-ci.org/ShaneKing/org.shaneking.skava.png
 
 
-[codecov]:https://codecov.io/github/ShaneKing/org.shaneking.skava?branch=mirror
+[codecov]:https://codecov.io/gh/ShaneKing/org.shaneking.skava/branch/mirror
 [codecov img]:https://codecov.io/github/ShaneKing/org.shaneking.skava/coverage.svg?branch=mirror
 [codacy]:https://www.codacy.com/app/ShaneKing/org-shaneking-skava
-[codacy img]:https://api.codacy.com/project/badge/grade/fbc447cb8a74450eb86d110afd348096
+[codacy img]:https://api.codacy.com/project/badge/Grade/f51ab5d62ea04e3eac72fe998e890528
 [saucelabs]:https://saucelabs.com/u/ShaneKing
 [saucelabs img]:https://saucelabs.com/browser-matrix/ShaneKing.svg
 

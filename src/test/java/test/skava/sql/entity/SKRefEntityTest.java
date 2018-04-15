@@ -19,7 +19,7 @@ public class SKRefEntityTest extends SKUnit
     AddressEntity addressEntity = new AddressEntity();
     skPrint(addressEntity.insertSql().toString());
     skPrint(addressEntity.selectSql().toString());
-    addressEntity.setUuid(UUID.randomUUID().toString());
+    addressEntity.setUid(UUID.randomUUID().toString());
     skPrint(addressEntity.insertSql().toString());
     skPrint(addressEntity.updateByIdAndVersionSql().toString());
     skPrint(addressEntity.selectSql().toString());
