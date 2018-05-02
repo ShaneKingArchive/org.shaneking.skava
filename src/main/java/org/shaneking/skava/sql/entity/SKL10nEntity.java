@@ -14,7 +14,7 @@ public class SKL10nEntity extends SKEntity
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
   @SKColumn(length = 6)
-  private String insertTimeZone;
+  private String createTimeZone;
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
@@ -26,14 +26,14 @@ public class SKL10nEntity extends SKEntity
   @SKColumn(length = 6)
   private String invalidTimeZone;
 
-  public String getInsertTimeZone()
+  public String getCreateTimeZone()
   {
-    return insertTimeZone;
+    return createTimeZone;
   }
 
-  public SKL10nEntity setInsertTimeZone(String insertTimeZone)
+  public SKL10nEntity setCreateTimeZone(String createTimeZone)
   {
-    this.insertTimeZone = insertTimeZone;
+    this.createTimeZone = createTimeZone;
     return this;
   }
 

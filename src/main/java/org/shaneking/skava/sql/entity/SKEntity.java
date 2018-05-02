@@ -44,14 +44,14 @@ public class SKEntity
    * @see org.shaneking.skava.ling.util.Date0#Y_M_D
    */
   @SKColumn(length = 10)
-  private String insertDate;
+  private String createDate;
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
   @SKColumn(length = 8)
-  private String insertTime;
+  private String createTime;
   @SKColumn(length = 36)
-  private String insertUserId;
+  private String createUserId;
   /**
    * @see org.shaneking.skava.ling.util.Date0#Y_M_D
    */
@@ -427,36 +427,36 @@ public class SKEntity
     return this;
   }
 
-  public String getInsertDate()
+  public String getCreateDate()
   {
-    return insertDate;
+    return createDate;
   }
 
-  public SKEntity setInsertDate(String insertDate)
+  public SKEntity setCreateDate(String createDate)
   {
-    this.insertDate = insertDate;
+    this.createDate = createDate;
     return this;
   }
 
-  public String getInsertTime()
+  public String getCreateTime()
   {
-    return insertTime;
+    return createTime;
   }
 
-  public SKEntity setInsertTime(String insertTime)
+  public SKEntity setCreateTime(String createTime)
   {
-    this.insertTime = insertTime;
+    this.createTime = createTime;
     return this;
   }
 
-  public String getInsertUserId()
+  public String getCreateUserId()
   {
-    return insertUserId;
+    return createUserId;
   }
 
-  public SKEntity setInsertUserId(String insertUserId)
+  public SKEntity setCreateUserId(String createUserId)
   {
-    this.insertUserId = insertUserId;
+    this.createUserId = createUserId;
     return this;
   }
 

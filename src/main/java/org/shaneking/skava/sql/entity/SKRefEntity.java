@@ -7,16 +7,17 @@
 package org.shaneking.skava.sql.entity;
 
 import org.shaneking.skava.sql.annotation.SKColumn;
-import org.shaneking.skava.sql.annotation.SKTransient;
 
 public class SKRefEntity extends SKEntity
 {
-  @SKTransient
-  public static final String TYPE_OF_USER = "user";
+  public static final String TYPE_OF_BRANCH = "branch";
+  public static final String TYPE_OF_ORG    = "org";
+  public static final String TYPE_OF_USER   = "user";
 
+  @SKColumn(length = 36)
   private String refType;
   @SKColumn(length = 36)
-  private String refId;
+  private String refUid;
 
   public String getRefType()
   {
@@ -29,14 +30,14 @@ public class SKRefEntity extends SKEntity
     return this;
   }
 
-  public String getRefId()
+  public String getRefUid()
   {
-    return refId;
+    return refUid;
   }
 
-  public SKRefEntity setRefId(String refId)
+  public SKRefEntity setRefUid(String refUid)
   {
-    this.refId = refId;
+    this.refUid = refUid;
     return this;
   }
 }
