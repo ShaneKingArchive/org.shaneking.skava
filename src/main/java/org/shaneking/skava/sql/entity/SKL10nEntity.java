@@ -14,48 +14,48 @@ public class SKL10nEntity extends SKEntity
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
   @SKColumn(length = 6)
-  private String createTimeZone;
+  private String createTimezone;
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
   @SKColumn(length = 6)
-  private String lastModifyTimeZone;
+  private String lastModifyTimezone;
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
   @SKColumn(length = 6)
-  private String invalidTimeZone;
+  private String invalidTimezone;
 
-  public String getCreateTimeZone()
+  public String getCreateTimezone()
   {
-    return createTimeZone;
+    return createTimezone;
   }
 
-  public SKL10nEntity setCreateTimeZone(String createTimeZone)
+  public SKL10nEntity setCreateTimezone(String createTimezone)
   {
-    this.createTimeZone = createTimeZone;
+    this.createTimezone = createTimezone;
     return this;
   }
 
-  public String getLastModifyTimeZone()
+  public String getLastModifyTimezone()
   {
-    return lastModifyTimeZone;
+    return lastModifyTimezone;
   }
 
-  public SKL10nEntity setLastModifyTimeZone(String lastModifyTimeZone)
+  public SKL10nEntity setLastModifyTimezone(String lastModifyTimezone)
   {
-    this.lastModifyTimeZone = lastModifyTimeZone;
+    this.lastModifyTimezone = lastModifyTimezone;
     return this;
   }
 
-  public String getInvalidTimeZone()
+  public String getInvalidTimezone()
   {
-    return invalidTimeZone;
+    return invalidTimezone;
   }
 
-  public SKL10nEntity setInvalidTimeZone(String invalidTimeZone)
+  public SKL10nEntity setInvalidTimezone(String invalidTimezone)
   {
-    this.invalidTimeZone = invalidTimeZone;
+    this.invalidTimezone = invalidTimezone;
     return this;
   }
 }
