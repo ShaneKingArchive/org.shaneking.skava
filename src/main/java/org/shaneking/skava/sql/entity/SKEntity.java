@@ -41,41 +41,26 @@ public class SKEntity
   @SKColumn(canWhere = false, dataType = "LONGTEXT")
   private String extJson;
   /**
-   * @see org.shaneking.skava.ling.util.Date0#Y_M_D
+   * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
-  @SKColumn(length = 10)
-  private String createDate;
-  /**
-   * @see org.shaneking.skava.ling.util.Date0#H_MI_S
-   */
-  @SKColumn(length = 8)
-  private String createTime;
+  @SKColumn(length = 20)
+  private String createDatetime;
   @SKColumn(length = 36)
   private String createUserId;
   /**
-   * @see org.shaneking.skava.ling.util.Date0#Y_M_D
+   * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
-  @SKColumn(length = 10)
-  private String lastModifyDate;
-  /**
-   * @see org.shaneking.skava.ling.util.Date0#H_MI_S
-   */
-  @SKColumn(length = 8)
-  private String lastModifyTime;
+  @SKColumn(length = 20)
+  private String lastModifyDatetime;
   @SKColumn(length = 36)
   private String lastModifyUserId;
   @SKColumn(length = 1)
   private String invalid = "0";//0|1
   /**
-   * @see org.shaneking.skava.ling.util.Date0#Y_M_D
+   * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
-  @SKColumn(length = 10)
-  private String invalidDate;
-  /**
-   * @see org.shaneking.skava.ling.util.Date0#H_MI_S
-   */
-  @SKColumn(length = 8)
-  private String invalidTime;
+  @SKColumn(length = 20)
+  private String invalidDatetime;
   @SKColumn(length = 36)
   private String invalidUserId;
 
@@ -427,25 +412,14 @@ public class SKEntity
     return this;
   }
 
-  public String getCreateDate()
+  public String getCreateDatetime()
   {
-    return createDate;
+    return createDatetime;
   }
 
-  public SKEntity setCreateDate(String createDate)
+  public SKEntity setCreateDatetime(String createDatetime)
   {
-    this.createDate = createDate;
-    return this;
-  }
-
-  public String getCreateTime()
-  {
-    return createTime;
-  }
-
-  public SKEntity setCreateTime(String createTime)
-  {
-    this.createTime = createTime;
+    this.createDatetime = createDatetime;
     return this;
   }
 
@@ -460,25 +434,14 @@ public class SKEntity
     return this;
   }
 
-  public String getLastModifyDate()
+  public String getLastModifyDatetime()
   {
-    return lastModifyDate;
+    return lastModifyDatetime;
   }
 
-  public SKEntity setLastModifyDate(String lastModifyDate)
+  public SKEntity setLastModifyDatetime(String lastModifyDatetime)
   {
-    this.lastModifyDate = lastModifyDate;
-    return this;
-  }
-
-  public String getLastModifyTime()
-  {
-    return lastModifyTime;
-  }
-
-  public SKEntity setLastModifyTime(String lastModifyTime)
-  {
-    this.lastModifyTime = lastModifyTime;
+    this.lastModifyDatetime = lastModifyDatetime;
     return this;
   }
 
@@ -504,25 +467,14 @@ public class SKEntity
     return this;
   }
 
-  public String getInvalidDate()
+  public String getInvalidDatetime()
   {
-    return invalidDate;
+    return invalidDatetime;
   }
 
-  public SKEntity setInvalidDate(String invalidDate)
+  public SKEntity setInvalidDatetime(String invalidDatetime)
   {
-    this.invalidDate = invalidDate;
-    return this;
-  }
-
-  public String getInvalidTime()
-  {
-    return invalidTime;
-  }
-
-  public SKEntity setInvalidTime(String invalidTime)
-  {
-    this.invalidTime = invalidTime;
+    this.invalidDatetime = invalidDatetime;
     return this;
   }
 
