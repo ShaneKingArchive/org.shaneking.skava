@@ -69,7 +69,11 @@ public final class String0
   public static final String SQUARE              = "√";
   public static final String TRIANGLE            = "△";
   public static final String UNDERLINE           = "_";
+  public static final String UNDERLINE_DOUBLE    = "__";
   public static final String UNION               = "∪";
   public static final String VARIES              = "∝";
   public static final String VERTICAL            = "|";
+
+  public static final String MALE   = "♂";
+  public static final String FEMALE = "♀";
 }
