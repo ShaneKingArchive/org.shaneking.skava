@@ -15,7 +15,6 @@ import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.sql.annotation.SKColumn;
 import org.shaneking.skava.sql.annotation.SKTable;
-import org.shaneking.skava.sql.annotation.SKTransient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,11 +22,17 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SKEntity
 {
-  @SKTransient
   private static final Logger LOG = LoggerFactory.getLogger(SKEntity.class);
+  private static SKTable skTable;
+  private static String  tableName;
+
+  private Map<String, String>   dbColumnMap   = Maps.newHashMap();
+  private List<String>          fieldNameList = Lists.newArrayList();
+  private Map<String, SKColumn> skColumnMap   = Maps.newHashMap();
 
   @SKColumn(length = 36)
   private String id;
@@ -64,22 +69,60 @@ public class SKEntity
   @SKColumn(length = 36)
   private String invalidUserId;
 
-  @SKTransient
-  private SKTable skTable;
-  @SKTransient
-  private String  tableName;
-
-  @SKTransient
-  private List<String>          unTransientFieldNameList = Lists.newArrayList();
-  @SKTransient
-  private Map<String, SKColumn> skColumnMap              = Maps.newHashMap();
-  @SKTransient
-  private Map<String, String>   columnNameMap            = Maps.newHashMap();
-
   public SKEntity()
   {
     initTableInfo();
     initColumnInfo(this.getClass());
+  }
+
+  public void initColumnInfo(Class<? extends Object> skEntityClass)
+  {
+    if (SKEntity.class.isAssignableFrom(skEntityClass.getSuperclass()))
+    {
+      initColumnInfo(skEntityClass.getSuperclass());
+    }
+    for (Field field : skEntityClass.getDeclaredFields())
+    {
+      SKColumn skColumn = field.getAnnotation(SKColumn.class);
+      if (skColumn != null)
+      {
+        dbColumnMap.put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.replaceUpperCase2UnderlineLowerCase(field.getName()) : skColumn.name());
+        fieldNameList.add(field.getName());
+        skColumnMap.put(field.getName(), skColumn);
+      }
+    }
+  }
+
+  public void initTableInfo()
+  {
+    if (skTable == null)
+    {
+      skTable = this.getClass().getAnnotation(SKTable.class);
+    }
+    if (Strings.isNullOrEmpty(skTable.name()))
+    {
+      tableName = String0.replaceUpperCase2UnderlineLowerCase(Lists.reverse(Lists.newArrayList(this.getClass().getName().split("\\."))).get(0));
+      tableName = "t" + (tableName.startsWith(String0.UNDERLINE) ? tableName : String0.UNDERLINE + tableName);
+    }
+    else
+    {
+      tableName = (Strings.isNullOrEmpty(skTable.schema()) ? "" : skTable.schema() + String0.DOT) + skTable.name();
+    }
+  }
+
+  //curd
+  public int delete()
+  {
+    int rtnInt = 0;
+    //TODO
+    return rtnInt;
+  }
+
+  public int insert()
+  {
+    int rtnInt = 0;
+    //TODO
+    return rtnInt;
   }
 
   public int insertOrUpdateById()
@@ -89,97 +132,28 @@ public class SKEntity
     return rtnInt;
   }
 
-  public List<? extends SKEntity> select()
-  {
-    List<? extends SKEntity> rtnList = Lists.newArrayList();
-    //TODO
-    return rtnList;
-  }
-
-  public Tuple.Pair<String, List<Object>> updateByIdAndVersionSql()
-  {
-    List<Object> rtnObjectList = Lists.newArrayList();
-
-    List<String> updateList = Lists.newArrayList();
-    genUpdateStatement(updateList, rtnObjectList);
-    extUpdateStatement(updateList, rtnObjectList);
-
-    List<String> sqlList = Lists.newArrayList();
-    sqlList.add("update");
-    sqlList.add(tableName);
-    sqlList.add("set");
-    sqlList.add(Joiner.on(String0.COMMA).join(updateList));
-    sqlList.add("where");
-    sqlList.add("id=? and version=?");
-    rtnObjectList.add(id);
-    rtnObjectList.add(version);
-
-    return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
-  }
-
-  public void extUpdateStatement(@Nonnull List<String> updateList, @Nonnull List<Object> objectList)
-  {
-
-  }
-
-  public void genUpdateStatement(@Nonnull List<String> updateList, @Nonnull List<Object> objectList)
-  {
-    Object o = null;
-    for (String fieldName : unTransientFieldNameList)
-    {
-      if (!"id".equals(fieldName))
-      {
-        try
-        {
-          o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
-        }
-        catch (Exception e)
-        {
-          o = null;
-          LOG.warn(e.toString());
-        }
-        if (o != null && !Strings.isNullOrEmpty(o.toString()))
-        {
-          updateList.add(columnNameMap.get(fieldName) + "=?");
-          if ("version".equals(fieldName))
-          {
-            objectList.add((Integer) o + 1);
-          }
-          else
-          {
-            objectList.add(o);
-          }
-        }
-      }
-    }
-  }
-
   public Tuple.Pair<String, List<Object>> insertSql()
   {
     List<Object> rtnObjectList = Lists.newArrayList();
 
     List<String> insertList = Lists.newArrayList();
-    genInsertStatement(insertList, rtnObjectList);
-    extInsertStatement(insertList, rtnObjectList);
+    insertStatement(insertList, rtnObjectList);
+    insertStatementExt(insertList, rtnObjectList);
 
     List<String> sqlList = Lists.newArrayList();
     sqlList.add("insert into");
     sqlList.add(tableName);
-    sqlList.add("(" + Joiner.on(String0.COMMA).join(insertList) + ")");
+    sqlList.add(String0.OPEN_PARENTHESIS + Joiner.on(String0.COMMA).join(insertList) + String0.CLOSE_PARENTHESIS);
     sqlList.add("values");
-    sqlList.add("(" + Strings.repeat(",?", insertList.size()).substring(1) + ")");
+    sqlList.add(String0.OPEN_PARENTHESIS + Strings.repeat(String0.COMMA + String0.QUESTION, insertList.size()).substring(1) + String0.CLOSE_PARENTHESIS);
 
-    return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
+    return Tuple.of(Joiner.on(String0.BLACK).join(sqlList), rtnObjectList);
   }
 
-  public void extInsertStatement(@Nonnull List<String> insertList, @Nonnull List<Object> objectList)
-  {
-  }
-
-  public void genInsertStatement(@Nonnull List<String> insertList, @Nonnull List<Object> objectList)
+  public void insertStatement(@Nonnull List<String> insertList, @Nonnull List<Object> objectList)
   {
     Object o = null;
-    for (String fieldName : unTransientFieldNameList)
+    for (String fieldName : fieldNameList)
     {
       try
       {
@@ -192,40 +166,50 @@ public class SKEntity
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString()))
       {
-        insertList.add(columnNameMap.get(fieldName));
+        insertList.add(dbColumnMap.get(fieldName));
         objectList.add(o);
       }
     }
   }
 
+  public void insertStatementExt(@Nonnull List<String> insertList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public List<? extends SKEntity> select()
+  {
+    List<? extends SKEntity> rtnList = Lists.newArrayList();
+    //TODO
+    return rtnList;
+  }
 
   public Tuple.Pair<String, List<Object>> selectSql()
   {
     List<Object> rtnObjectList = Lists.newArrayList();
 
     List<String> selectList = Lists.newArrayList();
-    genSelectStatement(selectList, rtnObjectList);
-    extSelectStatement(selectList, rtnObjectList);
+    selectStatement(selectList, rtnObjectList);
+    selectStatementExt(selectList, rtnObjectList);
 
     List<String> fromList = Lists.newArrayList();
-    genFromStatement(fromList, rtnObjectList);
-    extFromStatement(fromList, rtnObjectList);
+    fromStatement(fromList, rtnObjectList);
+    fromStatementExt(fromList, rtnObjectList);
 
     List<String> whereList = Lists.newArrayList();
-    genWhereStatement(whereList, rtnObjectList);
-    extWhereStatement(whereList, rtnObjectList);
+    whereStatement(whereList, rtnObjectList);
+    whereStatementExt(whereList, rtnObjectList);
 
     List<String> groupByList = Lists.newArrayList();
-    genGroupByStatement(groupByList, rtnObjectList);
-    extGroupByStatement(groupByList, rtnObjectList);
+    groupByStatement(groupByList, rtnObjectList);
+    groupByStatementExt(groupByList, rtnObjectList);
 
     List<String> havingList = Lists.newArrayList();
-    genHavingStatement(havingList, rtnObjectList);
-    extHavingStatement(havingList, rtnObjectList);
+    havingStatement(havingList, rtnObjectList);
+    havingStatementExt(havingList, rtnObjectList);
 
     List<String> orderByList = Lists.newArrayList();
-    genOrderByStatement(orderByList, rtnObjectList);
-    extOrderByStatement(orderByList, rtnObjectList);
+    orderByStatement(orderByList, rtnObjectList);
+    orderByStatementExt(orderByList, rtnObjectList);
 
     List<String> sqlList = Lists.newArrayList();
     sqlList.add("select");
@@ -256,38 +240,118 @@ public class SKEntity
     return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
   }
 
-  public void extOrderByStatement(@Nonnull List<String> orderByList, @Nonnull List<Object> objectList)
+  public void selectStatement(@Nonnull List<String> selectList, @Nonnull List<Object> objectList)
   {
+    //jdk8 can't infer it
+    Function<String, String> tmpFunc = (String fieldName) -> dbColumnMap.get(fieldName);
+    selectList.addAll(Lists.transform(fieldNameList, tmpFunc));
   }
 
-  public void genOrderByStatement(@Nonnull List<String> orderByList, @Nonnull List<Object> objectList)
+  public void selectStatementExt(@Nonnull List<String> selectList, @Nonnull List<Object> objectList)
   {
+    //nothing
   }
 
-  public void extHavingStatement(@Nonnull List<String> havingList, @Nonnull List<Object> objectList)
+  public int update()
   {
+    int rtnInt = 0;
+    //TODO
+    return rtnInt;
   }
 
-  public void genHavingStatement(@Nonnull List<String> havingList, @Nonnull List<Object> objectList)
+  public Tuple.Pair<String, List<Object>> updateByIdAndVersionSql()
   {
+    List<Object> rtnObjectList = Lists.newArrayList();
+
+    List<String> updateList = Lists.newArrayList();
+    updateStatement(updateList, rtnObjectList);
+    updateStatementExt(updateList, rtnObjectList);
+
+    List<String> sqlList = Lists.newArrayList();
+    sqlList.add("update");
+    sqlList.add(tableName);
+    sqlList.add("set");
+    sqlList.add(Joiner.on(String0.COMMA).join(updateList));
+    sqlList.add("where");
+    sqlList.add("id=? and version=?");
+    rtnObjectList.add(id);
+    rtnObjectList.add(version);
+
+    return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
   }
 
-  public void extGroupByStatement(@Nonnull List<String> groupByList, @Nonnull List<Object> objectList)
-  {
-  }
-
-  public void genGroupByStatement(@Nonnull List<String> groupByList, @Nonnull List<Object> objectList)
-  {
-  }
-
-  public void extWhereStatement(@Nonnull List<String> whereList, @Nonnull List<Object> objectList)
-  {
-  }
-
-  public void genWhereStatement(@Nonnull List<String> whereList, @Nonnull List<Object> objectList)
+  public void updateStatement(@Nonnull List<String> updateList, @Nonnull List<Object> objectList)
   {
     Object o = null;
-    for (String fieldName : unTransientFieldNameList)
+    for (String fieldName : fieldNameList.stream().filter(fieldName -> !"id".equals(fieldName)).collect(Collectors.toList()))
+    {
+      try
+      {
+        o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
+      }
+      catch (Exception e)
+      {
+        o = null;
+        LOG.warn(e.toString());
+      }
+      if (o != null && !Strings.isNullOrEmpty(o.toString()))
+      {
+        updateList.add(dbColumnMap.get(fieldName) + "=?");
+        if ("version".equals(fieldName))
+        {
+          objectList.add((Integer) o + 1);
+        }
+        else
+        {
+          objectList.add(o);
+        }
+      }
+    }
+  }
+
+  public void updateStatementExt(@Nonnull List<String> updateList, @Nonnull List<Object> objectList)
+  {
+
+  }
+
+  //others
+  public void fromStatement(@Nonnull List<String> fromList, @Nonnull List<Object> objectList)
+  {
+    fromList.add(tableName);
+  }
+
+  public void fromStatementExt(@Nonnull List<String> fromList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void groupByStatement(@Nonnull List<String> groupByList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void groupByStatementExt(@Nonnull List<String> groupByList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void havingStatement(@Nonnull List<String> havingList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void havingStatementExt(@Nonnull List<String> havingList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void orderByStatement(@Nonnull List<String> orderByList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void orderByStatementExt(@Nonnull List<String> orderByList, @Nonnull List<Object> objectList)
+  {
+  }
+
+  public void whereStatement(@Nonnull List<String> whereList, @Nonnull List<Object> objectList)
+  {
+    Object o = null;
+    for (String fieldName : fieldNameList)
     {
       try
       {
@@ -300,85 +364,17 @@ public class SKEntity
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString()) && (skColumnMap.get(fieldName) == null || skColumnMap.get(fieldName).canWhere()))
       {
-        whereList.add(columnNameMap.get(fieldName) + "=?");
+        whereList.add(dbColumnMap.get(fieldName) + "=?");
         objectList.add(o);
       }
     }
   }
 
-  public void extFromStatement(@Nonnull List<String> fromList, @Nonnull List<Object> objectList)
+  public void whereStatementExt(@Nonnull List<String> whereList, @Nonnull List<Object> objectList)
   {
   }
 
-  public void genFromStatement(@Nonnull List<String> fromList, @Nonnull List<Object> objectList)
-  {
-    fromList.add(tableName);
-  }
-
-  public void extSelectStatement(@Nonnull List<String> selectList, @Nonnull List<Object> objectList)
-  {
-    //nothing
-  }
-
-  public void genSelectStatement(@Nonnull List<String> selectList, @Nonnull List<Object> objectList)
-  {
-    //jdk8 can't infer it
-    Function<String, String> tmpFunc = (String fieldName) -> columnNameMap.get(fieldName);
-    selectList.addAll(Lists.transform(unTransientFieldNameList, tmpFunc));
-  }
-
-  public void initColumnInfo(Class<? extends Object> skEntityClass)
-  {
-    if (SKEntity.class.isAssignableFrom(skEntityClass.getSuperclass()))
-    {
-      initColumnInfo(skEntityClass.getSuperclass());
-    }
-    for (Field field : skEntityClass.getDeclaredFields())
-    {
-      SKColumn skColumn = field.getAnnotation(SKColumn.class);
-      if (field.getAnnotation(SKTransient.class) == null)
-      {
-        unTransientFieldNameList.add(field.getName());
-        if (skColumn != null)
-        {
-          skColumnMap.put(field.getName(), skColumn);
-          if (!Strings.isNullOrEmpty(skColumn.name()))
-          {
-            columnNameMap.put(field.getName(), skColumn.name());
-          }
-        }
-        if (Strings.isNullOrEmpty(columnNameMap.get(field.getName())))
-        {
-          columnNameMap.put(field.getName(), replaceUpperCase2UnderlineLowerCase(field.getName()));
-        }
-      }
-    }
-  }
-
-  public void initTableInfo()
-  {
-    if (skTable == null)
-    {
-      skTable = this.getClass().getAnnotation(SKTable.class);
-    }
-    if (Strings.isNullOrEmpty(skTable.name()))
-    {
-      tableName = replaceUpperCase2UnderlineLowerCase(Lists.reverse(Lists.newArrayList(this.getClass().getName().split("\\."))).get(0));
-      tableName = "t" + (tableName.startsWith(String0.UNDERLINE) ? tableName : String0.UNDERLINE + tableName);
-    }
-    else
-    {
-      tableName = (Strings.isNullOrEmpty(skTable.schema()) ? "" : skTable.schema() + String0.DOT) + skTable.name();
-    }
-  }
-
-  public String replaceUpperCase2UnderlineLowerCase(@Nonnull String hasUpperCaseString)
-  {
-    //jdk8 can't infer it
-    Function<String, String> tmpFunc = (alphabet) -> alphabet.equals(alphabet.toUpperCase()) ? String0.UNDERLINE + alphabet.toLowerCase() : alphabet;
-    return Joiner.on("").join(Lists.transform(Lists.newArrayList(hasUpperCaseString.split("")), tmpFunc));
-  }
-
+  //get/set
   public String getId()
   {
     return id;

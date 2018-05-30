@@ -2,6 +2,7 @@ package test.skava.sql.entity;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
+import org.shaneking.skava.ling.lang.String0;
 import test.skava.SKUnit;
 
 public class SKEntityTest extends SKUnit
@@ -29,13 +30,13 @@ public class SKEntityTest extends SKUnit
   @Test
   public void extUpdateStatement() throws Exception
   {
-    userEntity.extUpdateStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.updateStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genUpdateStatement() throws Exception
   {
-    userEntity.genUpdateStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.updateStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
@@ -47,13 +48,13 @@ public class SKEntityTest extends SKUnit
   @Test
   public void extInsertStatement() throws Exception
   {
-    userEntity.extInsertStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.insertStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genInsertStatement() throws Exception
   {
-    userEntity.genInsertStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.insertStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
@@ -65,73 +66,73 @@ public class SKEntityTest extends SKUnit
   @Test
   public void extOrderByStatement() throws Exception
   {
-    userEntity.extOrderByStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.orderByStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genOrderByStatement() throws Exception
   {
-    userEntity.genOrderByStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.orderByStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void extHavingStatement() throws Exception
   {
-    userEntity.extHavingStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.havingStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genHavingStatement() throws Exception
   {
-    userEntity.genHavingStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.havingStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void extGroupByStatement() throws Exception
   {
-    userEntity.extGroupByStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.groupByStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genGroupByStatement() throws Exception
   {
-    userEntity.genGroupByStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.groupByStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void extWhereStatement() throws Exception
   {
-    userEntity.extWhereStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.whereStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genWhereStatement() throws Exception
   {
-    userEntity.genWhereStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.whereStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void extFromStatement() throws Exception
   {
-    userEntity.extFromStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.fromStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genFromStatement() throws Exception
   {
-    userEntity.genFromStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.fromStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void extSelectStatement() throws Exception
   {
-    userEntity.extSelectStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.selectStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
   public void genSelectStatement() throws Exception
   {
-    userEntity.genSelectStatement(Lists.newArrayList(), Lists.newArrayList());
+    userEntity.selectStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
@@ -149,7 +150,7 @@ public class SKEntityTest extends SKUnit
   @Test
   public void replaceUpperCase2UnderlineLowerCase() throws Exception
   {
-    skPrint(userEntity.replaceUpperCase2UnderlineLowerCase(this.getClass().getName()));
+    skPrint(String0.replaceUpperCase2UnderlineLowerCase(this.getClass().getName()));
   }
 
 }

@@ -26,6 +26,7 @@ public class SKL10nEntity extends SKEntity
   @SKColumn(length = 6)
   private String invalidTimezone;
 
+  //get/set
   public String getCreateTimezone()
   {
     return createTimezone;

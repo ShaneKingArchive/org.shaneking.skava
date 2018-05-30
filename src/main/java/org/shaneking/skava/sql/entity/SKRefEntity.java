@@ -11,7 +11,6 @@ import org.shaneking.skava.sql.annotation.SKColumn;
 public class SKRefEntity extends SKEntity
 {
   public static final String TYPE_OF_BRANCH = "branch";
-  public static final String TYPE_OF_ORG    = "org";
   public static final String TYPE_OF_USER   = "user";
 
   @SKColumn(length = 36)
@@ -19,6 +18,7 @@ public class SKRefEntity extends SKEntity
   @SKColumn(length = 36)
   private String refUid;
 
+  //get/set
   public String getRefType()
   {
     return refType;

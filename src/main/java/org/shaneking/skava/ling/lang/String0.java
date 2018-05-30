@@ -6,6 +6,12 @@
  */
 package org.shaneking.skava.ling.lang;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+import javax.annotation.Nonnull;
+
 public final class String0
 {
   public static final String AMPERSAND           = "&";
@@ -14,6 +20,7 @@ public final class String0
   public static final String ARROW               = "→";
   public static final String ASTERISK            = "*";
   public static final String BACKSLASH           = "\\";
+  public static final String BLACK               = " ";
   public static final String CELSIUS             = "℃";
   public static final String CIRCLE              = "⊙";
   public static final String CIRCUMFERENCE       = "○";
@@ -76,4 +83,11 @@ public final class String0
 
   public static final String MALE   = "♂";
   public static final String FEMALE = "♀";
+
+  public static String replaceUpperCase2UnderlineLowerCase(@Nonnull String hasUpperCaseString)
+  {
+    //jdk8 can't infer it
+    Function<String, String> tmpFunc = (alphabet) -> alphabet.equals(alphabet.toUpperCase()) ? String0.UNDERLINE + alphabet.toLowerCase() : alphabet;
+    return Joiner.on("").join(Lists.transform(Lists.newArrayList(hasUpperCaseString.split("")), tmpFunc));
+  }
 }
