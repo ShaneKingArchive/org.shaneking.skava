@@ -5,23 +5,24 @@ Java Library for ShaneKing, More to see [shaneking.org][].
 ### sql
 - [ ] auto created table if not exist at application start
 
-## Dependencies
+## Badge
+### Dependencies
 [![][versioneye img]][versioneye]
 
-## Build
+### Build
 [![][travis img]][travis]
 
-## Test
+### Test
 [![][codecov img]][codecov]
 [![][codacy img]][codacy]
 
-## Release
+### Release
 [![][mavenbadge img]][mavenbadge]
 
-## Discussion
+### Discussion
 [![][gitter img]][gitter]
 
-## License
+### License
 [![][license img]][license]
 
 ShaneKing is released under [MIT][].
