@@ -28,9 +28,14 @@ public class AES
 {
   //ThisIsSixFourBitSaltForShaneKing
   public static final String           DEFAULT_SALT     = "546869734973536978466F757242697453616C74466F725368616E654B696E67";
-  private static       AES              instance         = null;
-  private static       SecretKeyFactory secretKeyFactory = null;
+  private static      AES              instance         = null;
+  private static      SecretKeyFactory secretKeyFactory = null;
 
+
+  private AES() throws NoSuchAlgorithmException
+  {
+    secretKeyFactory = SecretKeyFactory.getInstance(KeySpec0.PBKDF2WithHmacSHA1);
+  }
 
   public static synchronized AES ins() throws NoSuchAlgorithmException
   {
@@ -41,9 +46,31 @@ public class AES
     return instance;
   }
 
-  private AES() throws NoSuchAlgorithmException
+  public static String base64(byte[] bytes)
   {
-    secretKeyFactory = SecretKeyFactory.getInstance(KeySpec0.PBKDF2WithHmacSHA1);
+    return Base64.encodeBase64String(bytes);
+  }
+
+  public static byte[] base64(@Nonnull String str)
+  {
+    return Base64.decodeBase64(str);
+  }
+
+  public static String hex(byte[] bytes)
+  {
+    return Hex.encodeHexString(bytes);
+  }
+
+  public static byte[] hex(@Nonnull String str)
+  {
+    try
+    {
+      return Hex.decodeHex(str.toCharArray());
+    }
+    catch (DecoderException e)
+    {
+      throw new IllegalStateException(e);
+    }
   }
 
   public String decrypt(@Nonnull String cipherText) throws Exception
@@ -92,32 +119,5 @@ public class AES
     Cipher cipher = Cipher.getInstance(Cipher0.AES_CBC_PKCS5Padding);
     cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(hex(iv)));
     return base64(cipher.doFinal(cipherText.getBytes(Charset0.UTF_8)));
-  }
-
-  public static String base64(byte[] bytes)
-  {
-    return Base64.encodeBase64String(bytes);
-  }
-
-  public static byte[] base64(@Nonnull String str)
-  {
-    return Base64.decodeBase64(str);
-  }
-
-  public static String hex(byte[] bytes)
-  {
-    return Hex.encodeHexString(bytes);
-  }
-
-  public static byte[] hex(@Nonnull String str)
-  {
-    try
-    {
-      return Hex.decodeHex(str.toCharArray());
-    }
-    catch (DecoderException e)
-    {
-      throw new IllegalStateException(e);
-    }
   }
 }

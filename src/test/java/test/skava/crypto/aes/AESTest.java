@@ -20,7 +20,7 @@ public class AESTest extends SKUnit
   @Test
   public void ins() throws Exception
   {
-    Assert.assertSame(AES.ins(),AES.ins());
+    Assert.assertSame(AES.ins(), AES.ins());
   }
 
   @Test

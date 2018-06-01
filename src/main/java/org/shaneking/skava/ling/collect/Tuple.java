@@ -37,40 +37,6 @@ public class Tuple<First, Rest> implements Iterable<Object>
     this.rest = rest;
   }
 
-  @Override
-  public int hashCode()
-  {
-    return Objects.hashCode(Iterators.toArray(iterator(), Object.class));
-  }
-
-  @Override
-  public boolean equals(@Nullable Object obj)
-  {
-    return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
-
-  }
-
-  @Override
-  public String toString()
-  {
-    return joinWith(BEGIN, SEP, END).join(this);
-  }
-
-  public String toString(String sep)
-  {
-    return toString(joinWith(sep));
-  }
-
-  public String toString(String begin, String sep, String end)
-  {
-    return toString(joinWith(begin, sep, end));
-  }
-
-  public String toString(TupleJoiner joiner)
-  {
-    return joiner.join(this);
-  }
-
   public static TupleJoiner joinWith(String sep)
   {
     return new TupleJoiner(BEGIN, sep, END);
@@ -79,18 +45,6 @@ public class Tuple<First, Rest> implements Iterable<Object>
   public static TupleJoiner joinWith(String begin, String sep, String end)
   {
     return new TupleJoiner(begin, sep, end);
-  }
-
-  @Nonnull
-  @Override
-  public Iterator<Object> iterator()
-  {
-    return Lists.newArrayList(first, rest).iterator();
-  }
-
-  public <T> Tuple<T, Tuple<First, Rest>> prepend(T t)
-  {
-    return new Tuple<>(t, this);
   }
 
   public static Null of()
@@ -207,6 +161,52 @@ public class Tuple<First, Rest> implements Iterable<Object>
   public static <T> T getN(Tuple<?, ?> tuple, int n)
   {
     return (T) Iterables.get(tuple, n);
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return Objects.hashCode(Iterators.toArray(iterator(), Object.class));
+  }
+
+  @Override
+  public boolean equals(@Nullable Object obj)
+  {
+    return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
+
+  }
+
+  @Override
+  public String toString()
+  {
+    return joinWith(BEGIN, SEP, END).join(this);
+  }
+
+  public String toString(String sep)
+  {
+    return toString(joinWith(sep));
+  }
+
+  public String toString(String begin, String sep, String end)
+  {
+    return toString(joinWith(begin, sep, end));
+  }
+
+  public String toString(TupleJoiner joiner)
+  {
+    return joiner.join(this);
+  }
+
+  @Nonnull
+  @Override
+  public Iterator<Object> iterator()
+  {
+    return Lists.newArrayList(first, rest).iterator();
+  }
+
+  public <T> Tuple<T, Tuple<First, Rest>> prepend(T t)
+  {
+    return new Tuple<>(t, this);
   }
 
   private enum End
