@@ -55,33 +55,33 @@ public class Date0Test extends SKUnit
   @Test
   public void date() throws Exception
   {
-    Assert.assertEquals(Date0.date(), Date0.format(now, Date0.Y_M_D));
-    Assert.assertNotEquals(Date0.date(), Date0.format(now, Date0.YMD));
+    Assert.assertEquals(Date0.on().date(), Date0.on(now).format(Date0.Y_M_D));
+    Assert.assertNotEquals(Date0.on().date(), Date0.on(now).format(Date0.YMD));
   }
 
   @Test
   public void time() throws Exception
   {
-    Assert.assertEquals(Date0.time(), Date0.format(now, Date0.H_MI_S));
-    Assert.assertNotEquals(Date0.time(), Date0.format(now, Date0.HMIS));
+    Assert.assertEquals(Date0.on().time(), Date0.on(now).format(Date0.H_MI_S));
+    Assert.assertNotEquals(Date0.on().time(), Date0.on(now).format(Date0.HMIS));
   }
 
   @Test
   public void zone() throws Exception
   {
-    Assert.assertEquals(Date0.zone(), Date0.format(now, Date0.XXX));
+    Assert.assertEquals(Date0.on().zone(), Date0.on(now).format(Date0.XXX));
   }
 
   @Test
   public void dateTime() throws Exception
   {
-    Assert.assertEquals(Date0.dateTime(), Date0.format(now, Date0.DATE_TIME));
+    Assert.assertEquals(Date0.on().dateTime(), Date0.on(now).format(Date0.DATE_TIME));
   }
 
   @Test
   public void datetime() throws Exception
   {
-    Assert.assertEquals(Date0.datetime(), Date0.format(now, Date0.DATETIME));
+    Assert.assertEquals(Date0.on().datetime(), Date0.on(now).format(Date0.DATETIME));
   }
 
   @Test
@@ -93,13 +93,13 @@ public class Date0Test extends SKUnit
   @Test
   public void toString0() throws Exception
   {
-    Assert.assertEquals(datetime, Date0.format(now, Date0.DATETIME));
+    Assert.assertEquals(datetime, Date0.on(now).format(Date0.DATETIME));
   }
 
   @Test(expected = Exception.class)
   public void toStringWithException()
   {
-    Date0.format(date, pattern);
+    Date0.on(date).format(pattern);
   }
 
 }

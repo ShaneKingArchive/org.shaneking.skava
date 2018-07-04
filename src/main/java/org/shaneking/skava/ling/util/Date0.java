@@ -20,29 +20,11 @@ public final class Date0
   public static final String DATE_TIME = Y_M_D + " " + H_MI_S;
   public static final String DATETIME  = YMD + HMIS;
 
-  public static String date()
-  {
-    return format(now(), Y_M_D);
-  }
+  private Date date = new Date();
 
-  public static String time()
+  private Date0(Date date)
   {
-    return format(now(), H_MI_S);
-  }
-
-  public static String zone()
-  {
-    return format(now(), XXX);
-  }
-
-  public static String dateTime()
-  {
-    return format(now(), DATE_TIME);
-  }
-
-  public static String datetime()
-  {
-    return format(now(), DATETIME);
+    this.date = date;
   }
 
   public static Date now()
@@ -50,7 +32,42 @@ public final class Date0
     return new Date();
   }
 
-  public static String format(@Nonnull Date date, @Nonnull String pattern)
+  public static Date0 on()
+  {
+    return Date0.on(Date0.now());
+  }
+
+  public static Date0 on(Date date)
+  {
+    return new Date0(date);
+  }
+
+  public String date()
+  {
+    return format(Y_M_D);
+  }
+
+  public String time()
+  {
+    return format(H_MI_S);
+  }
+
+  public String zone()
+  {
+    return format(XXX);
+  }
+
+  public String dateTime()
+  {
+    return format(DATE_TIME);
+  }
+
+  public String datetime()
+  {
+    return format(DATETIME);
+  }
+
+  public String format(@Nonnull String pattern)
   {
     return new SimpleDateFormat(pattern).format(date);
   }
