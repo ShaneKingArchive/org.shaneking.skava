@@ -20,78 +20,78 @@ public class AESTest extends SKUnit
   @Test
   public void ins() throws Exception
   {
-    Assert.assertSame(AES.ins(), AES.ins());
+    Assert.assertSame(AES.singleton(), AES.singleton());
   }
 
   @Test
   public void decrypt() throws Exception
   {
-    Assert.assertEquals(AES.ins().decrypt(cipherText), plainText);
+    Assert.assertEquals(AES.singleton().decrypt(cipherText), plainText);
   }
 
   @Test
   public void decrypt1() throws Exception
   {
-    Assert.assertEquals(AES.ins().decrypt(cipherText, AES.DEFAULT_SALT), plainText);
+    Assert.assertEquals(AES.singleton().decrypt(cipherText, AES.DEFAULT_SALT), plainText);
   }
 
   @Test
   public void decrypt2() throws Exception
   {
-    Assert.assertEquals(AES.ins().decrypt(cipherText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32)), plainText);
+    Assert.assertEquals(AES.singleton().decrypt(cipherText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32)), plainText);
   }
 
   @Test
   public void decrypt3() throws Exception
   {
-    Assert.assertEquals(AES.ins().decrypt(cipherText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32), AES.DEFAULT_SALT), plainText);
+    Assert.assertEquals(AES.singleton().decrypt(cipherText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32), AES.DEFAULT_SALT), plainText);
   }
 
   @Test
   public void encrypt() throws Exception
   {
-    Assert.assertEquals(AES.ins().encrypt(plainText), cipherText);
+    Assert.assertEquals(AES.singleton().encrypt(plainText), cipherText);
   }
 
   @Test
   public void encrypt1() throws Exception
   {
-    Assert.assertEquals(AES.ins().encrypt(plainText, AES.DEFAULT_SALT), cipherText);
+    Assert.assertEquals(AES.singleton().encrypt(plainText, AES.DEFAULT_SALT), cipherText);
   }
 
   @Test
   public void encrypt2() throws Exception
   {
-    Assert.assertEquals(AES.ins().encrypt(plainText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32)), cipherText);
+    Assert.assertEquals(AES.singleton().encrypt(plainText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32)), cipherText);
   }
 
   @Test
   public void encrypt3() throws Exception
   {
-    Assert.assertEquals(AES.ins().encrypt(plainText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32), AES.DEFAULT_SALT), cipherText);
+    Assert.assertEquals(AES.singleton().encrypt(plainText, AES.DEFAULT_SALT, AES.DEFAULT_SALT.substring(0, 32), AES.DEFAULT_SALT), cipherText);
   }
 
   @Test
   public void base64() throws Exception
   {
-    skPrint(AES.base64(AES.DEFAULT_SALT));
+    Assert.assertEquals(new String(AES.base64(AES.DEFAULT_SALT)), "玼�������~���:�^��n6����~��.�㮅�nw�ε�N��\u001E��N�");
   }
 
   @Test
   public void base641() throws Exception
   {
-    skPrint(AES.base64(AES.DEFAULT_SALT.getBytes()));
+    Assert.assertEquals(AES.base64(AES.DEFAULT_SALT.getBytes()), "NTQ2ODY5NzM0OTczNTM2OTc4NDY2Rjc1NzI0MjY5NzQ1MzYxNkM3NDQ2NkY3MjUzNjg2MTZFNjU0QjY5NkU2Nw==");
   }
 
   @Test
   public void hex() throws Exception
   {
-    skPrint(AES.hex(AES.DEFAULT_SALT));
+    Assert.assertEquals(new String(AES.hex(AES.DEFAULT_SALT)), "ThisIsSixFourBitSaltForShaneKing");
   }
 
   @Test
   public void hex1() throws Exception
   {
-    skPrint(AES.hex(AES.DEFAULT_SALT.getBytes()));
+    Assert.assertEquals(AES.hex(AES.DEFAULT_SALT.getBytes()), "35343638363937333439373335333639373834363646373537323432363937343533363136433734343636463732353336383631364536353442363936453637");
   }
 }

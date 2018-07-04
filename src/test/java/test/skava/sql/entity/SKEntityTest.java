@@ -1,6 +1,7 @@
 package test.skava.sql.entity;
 
 import com.google.common.collect.Lists;
+import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.String0;
 import test.skava.SKUnit;
@@ -12,19 +13,19 @@ public class SKEntityTest extends SKUnit
   @Test
   public void insertOrUpdateById() throws Exception
   {
-    skPrint(userEntity.insertOrUpdateById());
+    Assert.assertEquals(userEntity.insertOrUpdateById(), 0);
   }
 
   @Test
   public void select() throws Exception
   {
-    skPrint(userEntity.select());
+    Assert.assertEquals(userEntity.select().toString(), "[]");
   }
 
   @Test
   public void updateByIdAndVersionSql() throws Exception
   {
-    skPrint(userEntity.updateByIdAndVersionSql());
+    Assert.assertEquals(userEntity.updateByIdAndVersionSql().toString(), "(update t_user_entity set version=? where id=? and version=?,[2, null, 1])");
   }
 
   @Test
@@ -42,7 +43,7 @@ public class SKEntityTest extends SKUnit
   @Test
   public void insertSql() throws Exception
   {
-    skPrint(userEntity.insertSql());
+    Assert.assertEquals(userEntity.insertSql().toString(), "(insert into t_user_entity (version) values (?),[1])");
   }
 
   @Test
@@ -60,7 +61,7 @@ public class SKEntityTest extends SKUnit
   @Test
   public void selectSql() throws Exception
   {
-    skPrint(userEntity.selectSql());
+    Assert.assertEquals(userEntity.selectSql().toString(), "(select id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id,birthday from t_user_entity where version=?,[1])");
   }
 
   @Test
@@ -148,9 +149,9 @@ public class SKEntityTest extends SKUnit
   }
 
   @Test
-  public void replaceUpperCase2UnderlineLowerCase() throws Exception
+  public void upper2lower() throws Exception
   {
-    skPrint(String0.replaceUpperCase2UnderlineLowerCase(this.getClass().getName()));
+    Assert.assertEquals(String0.upper2lower(this.getClass().getName()), "test_.skava_.sql_.entity_._s_k_entity_test");
   }
 
 }

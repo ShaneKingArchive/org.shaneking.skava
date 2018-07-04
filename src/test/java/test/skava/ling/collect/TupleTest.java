@@ -1,6 +1,7 @@
 package test.skava.ling.collect;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.collect.Tuple;
@@ -9,7 +10,7 @@ import test.skava.SKUnit;
 
 public class TupleTest extends SKUnit
 {
-  private Tuple             eleven      = null;
+  private Tuple             eleven      = Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
   private Tuple.TupleJoiner tupleJoiner = null;
 
   @Before
@@ -29,174 +30,174 @@ public class TupleTest extends SKUnit
   @Test
   public void toString0() throws Exception
   {
-    skPrint(eleven.toString(String0.DOT));
+    Assert.assertEquals(eleven.toString(String0.DOT), "(1.2.3.4.5.6.7.8.9.10.11)");
   }
 
   @Test
   public void toString1() throws Exception
   {
-    skPrint(eleven.toString(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET));
+    Assert.assertEquals(eleven.toString(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET), "[1.2.3.4.5.6.7.8.9.10.11]");
   }
 
   @Test
   public void toString2() throws Exception
   {
-    skPrint(eleven.toString(tupleJoiner));
+    Assert.assertEquals(eleven.toString(tupleJoiner), "[1.2.3.4.5.6.7.8.9.10.11]");
   }
 
   @Test
   public void joinWith0() throws Exception
   {
-    skPrint(Tuple.joinWith(String0.DOT));
+    Assert.assertEquals(Tuple.joinWith(String0.DOT).toString(), "TupleJoiner{open='(', separator='.', close=')'}");
   }
 
   @Test
   public void joinWith1() throws Exception
   {
-    skPrint(Tuple.joinWith(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET));
+    Assert.assertEquals(Tuple.joinWith(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET).toString(), "TupleJoiner{open='[', separator='.', close=']'}");
   }
 
   @Test
   public void prepend() throws Exception
   {
-    skPrint(eleven.prepend(0));
+    Assert.assertEquals(eleven.prepend(0).toString(), "(0,(1,2,3,4,5,6,7,8,9,10,11))");
   }
 
   @Test
   public void of() throws Exception
   {
-    skPrint(Tuple.of());
+    Assert.assertEquals(Tuple.of().toString(), "()");
   }
 
   @Test
   public void of1() throws Exception
   {
-    skPrint(Tuple.of(1));
+    Assert.assertEquals(Tuple.of(1).toString(), "(1)");
   }
 
   @Test
   public void of2() throws Exception
   {
-    skPrint(Tuple.of(1, 2));
+    Assert.assertEquals(Tuple.of(1, 2).toString(), "(1,2)");
   }
 
   @Test
   public void of3() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3));
+    Assert.assertEquals(Tuple.of(1, 2, 3).toString(), "(1,2,3)");
   }
 
   @Test
   public void of4() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4).toString(), "(1,2,3,4)");
   }
 
   @Test
   public void of5() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5).toString(), "(1,2,3,4,5)");
   }
 
   @Test
   public void of6() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5, 6));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5, 6).toString(), "(1,2,3,4,5,6)");
   }
 
   @Test
   public void of7() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5, 6, 7));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5, 6, 7).toString(), "(1,2,3,4,5,6,7)");
   }
 
   @Test
   public void of8() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8).toString(), "(1,2,3,4,5,6,7,8)");
   }
 
   @Test
   public void of9() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9).toString(), "(1,2,3,4,5,6,7,8,9)");
   }
 
   @Test
   public void of10() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).toString(), "(1,2,3,4,5,6,7,8,9,10)");
   }
 
   @Test
   public void of11() throws Exception
   {
-    skPrint(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11));
+    Assert.assertEquals(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11).toString(), "(1,2,3,4,5,6,7,8,9,10,11)");
   }
 
   @Test
   public void getFirst() throws Exception
   {
-    skPrint(Tuple.getFirst(eleven));
+    Assert.assertEquals(Tuple.getFirst(eleven).toString(), "1");
   }
 
   @Test
   public void getSecond() throws Exception
   {
-    skPrint(Tuple.getSecond(eleven));
+    Assert.assertEquals(Tuple.getSecond(eleven).toString(), "2");
   }
 
   @Test
   public void getThird() throws Exception
   {
-    skPrint(Tuple.getThird(eleven));
+    Assert.assertEquals(Tuple.getThird(eleven).toString(), "3");
   }
 
   @Test
   public void getFourth() throws Exception
   {
-    skPrint(Tuple.getFourth(eleven));
+    Assert.assertEquals(Tuple.getFourth(eleven).toString(), "4");
   }
 
   @Test
   public void getFifth() throws Exception
   {
-    skPrint(Tuple.getFifth(eleven));
+    Assert.assertEquals(Tuple.getFifth(eleven).toString(), "5");
   }
 
   @Test
   public void getSixth() throws Exception
   {
-    skPrint(Tuple.getSixth(eleven));
+    Assert.assertEquals(Tuple.getSixth(eleven).toString(), "6");
   }
 
   @Test
   public void getSeventh() throws Exception
   {
-    skPrint(Tuple.getSeventh(eleven));
+    Assert.assertEquals(Tuple.getSeventh(eleven).toString(), "7");
   }
 
   @Test
   public void getEighth() throws Exception
   {
-    skPrint(Tuple.getEighth(eleven));
+    Assert.assertEquals(Tuple.getEighth(eleven).toString(), "8");
   }
 
   @Test
   public void getNinth() throws Exception
   {
-    skPrint(Tuple.getNinth(eleven));
+    Assert.assertEquals(Tuple.getNinth(eleven).toString(), "9");
   }
 
   @Test
   public void getTenth() throws Exception
   {
-    skPrint(Tuple.getTenth(eleven));
+    Assert.assertEquals(Tuple.getTenth(eleven).toString(), "10");
   }
 
   @Test
   public void getN() throws Exception
   {
-    skPrint(Tuple.getN(eleven, 3));
+    Assert.assertEquals(Tuple.getN(eleven, 3).toString(), "4");
   }
 }

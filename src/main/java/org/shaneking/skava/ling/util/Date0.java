@@ -22,27 +22,27 @@ public final class Date0
 
   public static String date()
   {
-    return toString(now(), Y_M_D);
+    return format(now(), Y_M_D);
   }
 
   public static String time()
   {
-    return toString(now(), H_MI_S);
+    return format(now(), H_MI_S);
   }
 
   public static String zone()
   {
-    return toString(now(), XXX);
+    return format(now(), XXX);
   }
 
   public static String dateTime()
   {
-    return toString(now(), DATE_TIME);
+    return format(now(), DATE_TIME);
   }
 
   public static String datetime()
   {
-    return toString(now(), DATETIME);
+    return format(now(), DATETIME);
   }
 
   public static Date now()
@@ -50,7 +50,7 @@ public final class Date0
     return new Date();
   }
 
-  public static String toString(@Nonnull Date date, @Nonnull String pattern)
+  public static String format(@Nonnull Date date, @Nonnull String pattern)
   {
     return new SimpleDateFormat(pattern).format(date);
   }

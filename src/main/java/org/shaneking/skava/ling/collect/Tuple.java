@@ -453,5 +453,11 @@ public class Tuple<First, Rest> implements Iterable<Object>
     {
       return (term instanceof CharSequence) ? (CharSequence) term : String.valueOf(term);
     }
+
+    @Override
+    public String toString()
+    {
+      return "TupleJoiner{" + "open='" + open + '\'' + ", separator='" + separator + '\'' + ", close='" + close + '\'' + '}';
+    }
   }
 }

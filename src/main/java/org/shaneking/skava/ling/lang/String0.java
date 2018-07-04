@@ -84,10 +84,13 @@ public final class String0
   public static final String MALE   = "♂";
   public static final String FEMALE = "♀";
 
-  public static String replaceUpperCase2UnderlineLowerCase(@Nonnull String hasUpperCaseString)
+  /**
+   * firstName -> first_name
+   */
+  public static String upper2lower(@Nonnull String string)
   {
     //jdk8 can't infer it
-    Function<String, String> tmpFunc = (alphabet) -> alphabet.equals(alphabet.toUpperCase()) ? String0.UNDERLINE + alphabet.toLowerCase() : alphabet;
-    return Joiner.on("").join(Lists.transform(Lists.newArrayList(hasUpperCaseString.split("")), tmpFunc));
+    Function<String, String> tmpFunc = (alphabet) -> alphabet != null && alphabet.equals(alphabet.toUpperCase()) ? String0.UNDERLINE + alphabet.toLowerCase() : alphabet;
+    return Joiner.on("").join(Lists.transform(Lists.newArrayList(string.split("")), tmpFunc));
   }
 }

@@ -1,6 +1,7 @@
 package test.skava.ling.collect;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.collect.Tuple;
@@ -29,25 +30,25 @@ public class TupleJoinerTest extends SKUnit
   @Test
   public void appendTo0() throws Exception
   {
-    skPrint(tupleJoiner.appendTo((Appendable) new StringBuilder(), ip));
+    Assert.assertEquals(tupleJoiner.appendTo((Appendable) new StringBuilder(), ip).toString(), "[127.0.0.1]");
   }
 
   @Test
   public void appendTo1() throws Exception
   {
-    skPrint(tupleJoiner.appendTo(new StringBuilder(), ip));
+    Assert.assertEquals(tupleJoiner.appendTo(new StringBuilder(), ip).toString(), "[127.0.0.1]");
   }
 
   @Test
   public void appendTo2() throws Exception
   {
-    skPrint(tupleJoiner.appendTo(ip));
+    Assert.assertEquals(tupleJoiner.appendTo(ip).toString(), "[127.0.0.1]");
   }
 
   @Test
   public void join() throws Exception
   {
-    skPrint(tupleJoiner.join(ip));
+    Assert.assertEquals(tupleJoiner.join(ip), "[127.0.0.1]");
   }
 
 }

@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 public class SKEntity
 {
   private static final Logger LOG = LoggerFactory.getLogger(SKEntity.class);
-  private static SKTable skTable;
-  private static String  tableName;
+  private SKTable skTable;
+  private String  tableName;
 
   private Map<String, String>   dbColumnMap   = Maps.newHashMap();
   private List<String>          fieldNameList = Lists.newArrayList();
@@ -39,9 +39,7 @@ public class SKEntity
   @SKColumn(length = 11, dataType = "INT")
   private Integer version = 1;
   /**
-   * !important, can't be criteria for query
-   * <p>
-   * InnoDB prefix index max 767 bytes(utf8:767/3=255char;gbk:767/2=383char)
+   * !important, can't be criteria for query, no index
    */
   @SKColumn(canWhere = false, dataType = "LONGTEXT")
   private String extJson;
@@ -60,7 +58,7 @@ public class SKEntity
   @SKColumn(length = 36)
   private String lastModifyUserId;
   @SKColumn(length = 1)
-  private String invalid = "0";//0|1
+  private String invalid;//0|1
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
@@ -86,7 +84,7 @@ public class SKEntity
       SKColumn skColumn = field.getAnnotation(SKColumn.class);
       if (skColumn != null)
       {
-        dbColumnMap.put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.replaceUpperCase2UnderlineLowerCase(field.getName()) : skColumn.name());
+        dbColumnMap.put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.upper2lower(field.getName()) : skColumn.name());
         fieldNameList.add(field.getName());
         skColumnMap.put(field.getName(), skColumn);
       }
@@ -101,7 +99,7 @@ public class SKEntity
     }
     if (Strings.isNullOrEmpty(skTable.name()))
     {
-      tableName = String0.replaceUpperCase2UnderlineLowerCase(Lists.reverse(Lists.newArrayList(this.getClass().getName().split("\\."))).get(0));
+      tableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split("\\."))).get(0));
       tableName = "t" + (tableName.startsWith(String0.UNDERLINE) ? tableName : String0.UNDERLINE + tableName);
     }
     else
@@ -152,7 +150,7 @@ public class SKEntity
 
   public void insertStatement(@Nonnull List<String> insertList, @Nonnull List<Object> objectList)
   {
-    Object o = null;
+    Object o;
     for (String fieldName : fieldNameList)
     {
       try

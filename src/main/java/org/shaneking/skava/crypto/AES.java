@@ -37,7 +37,7 @@ public class AES
     secretKeyFactory = SecretKeyFactory.getInstance(KeySpec0.PBKDF2WithHmacSHA1);
   }
 
-  public static synchronized AES ins() throws NoSuchAlgorithmException
+  public static synchronized AES singleton() throws NoSuchAlgorithmException
   {
     if (instance == null)
     {
