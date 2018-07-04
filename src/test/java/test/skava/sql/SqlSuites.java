@@ -8,10 +8,11 @@ package test.skava.sql;/*
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import test.skava.sql.entity.SKEntityTest;
+import test.skava.sql.entity.SKL10nEntityTest;
 import test.skava.sql.entity.SKRefEntityTest;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({SKEntityTest.class, SKRefEntityTest.class})
+@Suite.SuiteClasses({SKEntityTest.class, SKL10nEntityTest.class, SKRefEntityTest.class})
 public class SqlSuites
 {
 }

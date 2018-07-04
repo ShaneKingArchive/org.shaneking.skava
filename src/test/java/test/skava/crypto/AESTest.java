@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package test.skava.crypto.aes;
+package test.skava.crypto;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,7 +18,7 @@ public class AESTest extends SKUnit
   private String cipherText = "2SZ/de9I0rvxO7s9wdCohQ==";
 
   @Test
-  public void ins() throws Exception
+  public void singleton() throws Exception
   {
     Assert.assertSame(AES.singleton(), AES.singleton());
   }
@@ -87,6 +87,12 @@ public class AESTest extends SKUnit
   public void hex() throws Exception
   {
     Assert.assertEquals(new String(AES.hex(AES.DEFAULT_SALT)), "ThisIsSixFourBitSaltForShaneKing");
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void hexException() throws Exception
+  {
+    Assert.assertEquals(new String(AES.hex(AES.DEFAULT_SALT.substring(0, 17))), "ThisIsSixFourBitSaltForShaneKing");
   }
 
   @Test

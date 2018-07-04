@@ -6,57 +6,37 @@
  */
 package org.shaneking.skava.sql.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.shaneking.skava.sql.annotation.SKColumn;
 
+@Accessors(chain = true)
+@ToString(callSuper = true, includeFieldNames = true)
 public class SKL10nEntity extends SKEntity
 {
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
+  @Getter
+  @Setter
   @SKColumn(length = 6)
   private String createTimezone;
+
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
+  @Getter
+  @Setter
   @SKColumn(length = 6)
   private String lastModifyTimezone;
+
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
+  @Getter
+  @Setter
   @SKColumn(length = 6)
   private String invalidTimezone;
-
-  //get/set
-  public String getCreateTimezone()
-  {
-    return createTimezone;
-  }
-
-  public SKL10nEntity setCreateTimezone(String createTimezone)
-  {
-    this.createTimezone = createTimezone;
-    return this;
-  }
-
-  public String getLastModifyTimezone()
-  {
-    return lastModifyTimezone;
-  }
-
-  public SKL10nEntity setLastModifyTimezone(String lastModifyTimezone)
-  {
-    this.lastModifyTimezone = lastModifyTimezone;
-    return this;
-  }
-
-  public String getInvalidTimezone()
-  {
-    return invalidTimezone;
-  }
-
-  public SKL10nEntity setInvalidTimezone(String invalidTimezone)
-  {
-    this.invalidTimezone = invalidTimezone;
-    return this;
-  }
 }

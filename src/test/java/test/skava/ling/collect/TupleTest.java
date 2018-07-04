@@ -200,4 +200,16 @@ public class TupleTest extends SKUnit
   {
     Assert.assertEquals(Tuple.getN(eleven, 3).toString(), "4");
   }
+
+  @Test
+  public void testHashCode() throws Exception
+  {
+    Assert.assertEquals(Tuple.of(127, 0, 0, 1).hashCode(), 4706979);
+  }
+
+  @Test
+  public void testEquals() throws Exception
+  {
+    Assert.assertEquals(Tuple.of(127, 0, 0, 1), Tuple.of(127, 0, 0, 1));
+  }
 }

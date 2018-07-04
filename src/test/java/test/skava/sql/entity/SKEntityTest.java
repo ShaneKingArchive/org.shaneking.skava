@@ -154,4 +154,21 @@ public class SKEntityTest extends SKUnit
     Assert.assertEquals(String0.upper2lower(this.getClass().getName()), "test_.skava_.sql_.entity_._s_k_entity_test");
   }
 
+  @Test
+  public void delete() throws Exception
+  {
+    Assert.assertEquals(userEntity.delete(), 0);
+  }
+
+  @Test
+  public void insert() throws Exception
+  {
+    Assert.assertEquals(userEntity.insert(), 0);
+  }
+
+  @Test
+  public void update() throws Exception
+  {
+    Assert.assertEquals(userEntity.update(), 0);
+  }
 }

@@ -6,38 +6,26 @@
  */
 package org.shaneking.skava.sql.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.shaneking.skava.sql.annotation.SKColumn;
 
+@Accessors(chain = true)
+@ToString(callSuper = true, includeFieldNames = true)
 public class SKRefEntity extends SKEntity
 {
   public static final String TYPE_OF_BRANCH = "branch";
   public static final String TYPE_OF_USER   = "user";
 
+  @Getter
+  @Setter
   @SKColumn(length = 36)
   private String refType;
+
+  @Getter
+  @Setter
   @SKColumn(length = 36)
   private String refUid;
-
-  //get/set
-  public String getRefType()
-  {
-    return refType;
-  }
-
-  public SKRefEntity setRefType(String refType)
-  {
-    this.refType = refType;
-    return this;
-  }
-
-  public String getRefUid()
-  {
-    return refUid;
-  }
-
-  public SKRefEntity setRefUid(String refUid)
-  {
-    this.refUid = refUid;
-    return this;
-  }
 }

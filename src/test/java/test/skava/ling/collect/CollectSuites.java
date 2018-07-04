@@ -1,15 +1,16 @@
-package test.skava.crypto;/*
- * @(#)LingTests.java		Created at 16/3/26
+/*
+ * @(#)TupleSuites.java		Created at 2018/2/3
  *
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
+package test.skava.ling.collect;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({AESTest.class})
-public class CryptoSuites
+@Suite.SuiteClasses({TupleJoinerTest.class, TupleTest.class})
+public class CollectSuites
 {
 }

@@ -11,6 +11,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.sql.annotation.SKColumn;
@@ -24,46 +28,78 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Accessors(chain = true)
+@ToString(callSuper = true, includeFieldNames = true)
 public class SKEntity
 {
   private static final Logger LOG = LoggerFactory.getLogger(SKEntity.class);
+
+  private final Map<String, String>   dbColumnMap   = Maps.newHashMap();
+  private final List<String>          fieldNameList = Lists.newArrayList();
+  private final Map<String, SKColumn> skColumnMap   = Maps.newHashMap();
+
   private SKTable skTable;
   private String  tableName;
 
-  private Map<String, String>   dbColumnMap   = Maps.newHashMap();
-  private List<String>          fieldNameList = Lists.newArrayList();
-  private Map<String, SKColumn> skColumnMap   = Maps.newHashMap();
-
+  @Getter
+  @Setter
   @SKColumn(length = 36)
   private String id;
+
+  @Getter
+  @Setter
   @SKColumn(length = 11, dataType = "INT")
   private Integer version = 1;
+
   /**
    * !important, can't be criteria for query, no index
    */
+  @Getter
+  @Setter
   @SKColumn(canWhere = false, dataType = "LONGTEXT")
   private String extJson;
+
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
+  @Getter
+  @Setter
   @SKColumn(length = 20)
   private String createDatetime;
+
+  @Getter
+  @Setter
   @SKColumn(length = 36)
   private String createUserId;
+
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
+  @Getter
+  @Setter
   @SKColumn(length = 20)
   private String lastModifyDatetime;
+
+  @Getter
+  @Setter
   @SKColumn(length = 36)
   private String lastModifyUserId;
+
+  @Getter
+  @Setter
   @SKColumn(length = 1)
   private String invalid;//0|1
+
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
+  @Getter
+  @Setter
   @SKColumn(length = 20)
   private String invalidDatetime;
+
+  @Getter
+  @Setter
   @SKColumn(length = 36)
   private String invalidUserId;
 
@@ -370,116 +406,5 @@ public class SKEntity
 
   public void whereStatementExt(@Nonnull List<String> whereList, @Nonnull List<Object> objectList)
   {
-  }
-
-  //get/set
-  public String getId()
-  {
-    return id;
-  }
-
-  public SKEntity setId(String id)
-  {
-    this.id = id;
-    return this;
-  }
-
-  public Integer getVersion()
-  {
-    return version;
-  }
-
-  public SKEntity setVersion(Integer version)
-  {
-    this.version = version;
-    return this;
-  }
-
-  public String getExtJson()
-  {
-    return extJson;
-  }
-
-  public SKEntity setExtJson(String extJson)
-  {
-    this.extJson = extJson;
-    return this;
-  }
-
-  public String getCreateDatetime()
-  {
-    return createDatetime;
-  }
-
-  public SKEntity setCreateDatetime(String createDatetime)
-  {
-    this.createDatetime = createDatetime;
-    return this;
-  }
-
-  public String getCreateUserId()
-  {
-    return createUserId;
-  }
-
-  public SKEntity setCreateUserId(String createUserId)
-  {
-    this.createUserId = createUserId;
-    return this;
-  }
-
-  public String getLastModifyDatetime()
-  {
-    return lastModifyDatetime;
-  }
-
-  public SKEntity setLastModifyDatetime(String lastModifyDatetime)
-  {
-    this.lastModifyDatetime = lastModifyDatetime;
-    return this;
-  }
-
-  public String getLastModifyUserId()
-  {
-    return lastModifyUserId;
-  }
-
-  public SKEntity setLastModifyUserId(String lastModifyUserId)
-  {
-    this.lastModifyUserId = lastModifyUserId;
-    return this;
-  }
-
-  public String getInvalid()
-  {
-    return invalid;
-  }
-
-  public SKEntity setInvalid(String invalid)
-  {
-    this.invalid = invalid;
-    return this;
-  }
-
-  public String getInvalidDatetime()
-  {
-    return invalidDatetime;
-  }
-
-  public SKEntity setInvalidDatetime(String invalidDatetime)
-  {
-    this.invalidDatetime = invalidDatetime;
-    return this;
-  }
-
-  public String getInvalidUserId()
-  {
-    return invalidUserId;
-  }
-
-  public SKEntity setInvalidUserId(String invalidUserId)
-  {
-    this.invalidUserId = invalidUserId;
-    return this;
   }
 }
