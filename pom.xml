@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -11,9 +12,11 @@
   <artifactId>org.shaneking.skava</artifactId>
   <version>${project.parent.version}</version>
   <packaging>jar</packaging>
+
   <name>SKava</name>
   <description>Java Core Library for ShaneKing</description>
   <url>https://github.com/ShaneKing/org.shaneking.skava</url>
+
   <organization>
     <name>Azolla</name>
     <url>https://github.com/Azolla</url>
@@ -21,9 +24,9 @@
   <licenses>
     <license>
       <name>MIT</name>
-      <url>https://opensource.org/licenses/MIT</url>
+      <url>https://opensource.org/licenses/Apache-2.0</url>
       <distribution>repo</distribution>
-      <comments>SKava is released under MIT License.</comments>
+      <comments>ShaneKing is released under Apache-2.0 License.</comments>
     </license>
   </licenses>
   <developers>
@@ -59,6 +62,7 @@
       </properties>
     </contributor>
   </contributors>
+
   <scm>
     <connection>scm:git:git@github.com:ShaneKing/org.shaneking.skava.git</connection>
     <developerConnection>scm:git:git@github.com:ShaneKing/org.shaneking.skava.git</developerConnection>
@@ -149,4 +153,5 @@
       </plugin>
     </plugins>
   </build>
+
 </project>
