@@ -85,7 +85,7 @@ public final class String0
   public static final String FEMALE = "♀";
 
   /**
-   * firstName -> first_name
+   * firstName -&gt; first_name
    */
   public static String upper2lower(@Nonnull String string)
   {
