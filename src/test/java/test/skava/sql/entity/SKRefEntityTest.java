@@ -19,12 +19,12 @@ public class SKRefEntityTest extends SKUnit
   {
     AddressEntity addressEntity = new AddressEntity();
     Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (version) values (?),[1])");
-    Assert.assertEquals(addressEntity.selectSql().toString(), "(select id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id,ref_type,ref_uid,postcode,primary from testSchema.t_address where version=?,[1])");
+    Assert.assertEquals(addressEntity.selectSql().toString(), "(select id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id,ref_type,ref_uid,address,postcode,primary from testSchema.t_address where version=?,[1])");
     String uuid = UUID.randomUUID().toString();
-    addressEntity.setId(uuid);
-    Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (id,version) values (?,?),[" + uuid + ", 1])");
-    Assert.assertEquals(addressEntity.updateByIdAndVersionSql().toString(), "(update testSchema.t_address set version=? where id=? and version=?,[2, " + uuid + ", 1])");
-    Assert.assertEquals(addressEntity.selectSql().toString(), "(select id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id,ref_type,ref_uid,postcode,primary from testSchema.t_address where id=? and version=?,[" + uuid + ", 1])");
+    addressEntity.setAddress("Junjin Load No.500").setId(uuid);
+    Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (id,version,address) values (?,?,?),[" + uuid + ", 1, Junjin Load No.500])");
+    Assert.assertEquals(addressEntity.updateByIdAndVersionSql().toString(), "(update testSchema.t_address set version=?,address=? where id=? and version=?,[2, Junjin Load No.500, " + uuid + ", 1])");
+    Assert.assertEquals(addressEntity.selectSql().toString(), "(select id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id,ref_type,ref_uid,address,postcode,primary from testSchema.t_address where id=? and version=? and address=?,[" + uuid + ", 1, Junjin Load No.500])");
   }
 }
 
