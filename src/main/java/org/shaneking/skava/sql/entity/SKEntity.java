@@ -44,7 +44,7 @@ public class SKEntity
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String id;
+  private String uid;
 
   @Getter
   @Setter
@@ -70,7 +70,7 @@ public class SKEntity
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String createUserId;
+  private String createUserUid;
 
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
@@ -83,7 +83,7 @@ public class SKEntity
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String lastModifyUserId;
+  private String lastModifyUserUid;
 
   @Getter
   @Setter
@@ -101,7 +101,7 @@ public class SKEntity
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String invalidUserId;
+  private String invalidUserUid;
 
   public SKEntity()
   {
@@ -293,7 +293,7 @@ public class SKEntity
     return rtnInt;
   }
 
-  public Tuple.Pair<String, List<Object>> updateByIdAndVersionSql()
+  public Tuple.Pair<String, List<Object>> updateByUidAndVersionSql()
   {
     List<Object> rtnObjectList = Lists.newArrayList();
 
@@ -307,8 +307,8 @@ public class SKEntity
     sqlList.add("set");
     sqlList.add(Joiner.on(String0.COMMA).join(updateList));
     sqlList.add("where");
-    sqlList.add("id=? and version=?");
-    rtnObjectList.add(id);
+    sqlList.add("uid=? and version=?");
+    rtnObjectList.add(uid);
     rtnObjectList.add(version);
 
     return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
@@ -317,7 +317,7 @@ public class SKEntity
   public void updateStatement(@Nonnull List<String> updateList, @Nonnull List<Object> objectList)
   {
     Object o = null;
-    for (String fieldName : fieldNameList.stream().filter(fieldName -> !"id".equals(fieldName)).collect(Collectors.toList()))
+    for (String fieldName : fieldNameList.stream().filter(fieldName -> !"uid".equals(fieldName)).collect(Collectors.toList()))
     {
       try
       {

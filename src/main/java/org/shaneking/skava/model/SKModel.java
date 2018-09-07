@@ -1,28 +1,25 @@
 /*
- * @(#)SKRefEntity.java		Created at 2017/9/10
+ * @(#)SKModel.java		Created at 2018/9/7
  *
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.shaneking.skava.sql.entity;
+package org.shaneking.skava.model;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.shaneking.skava.sql.annotation.SKColumn;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-public class SKRefEntity extends SKEntity
+public class SKModel<O, U>
 {
   @Getter
   @Setter
-  @SKColumn(length = 36)
-  private String refType;
+  private O obj;
 
   @Getter
   @Setter
-  @SKColumn(length = 36)
-  private String refUid;
+  private U ui; // The U maybe JSONObject, JsonNode ...
 }
