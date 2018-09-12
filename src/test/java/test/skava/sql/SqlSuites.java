@@ -13,6 +13,5 @@ import test.skava.sql.entity.SKRefEntityTest;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({SKEntityTest.class, SKL10nEntityTest.class, SKRefEntityTest.class})
-public class SqlSuites
-{
+public class SqlSuites {
 }

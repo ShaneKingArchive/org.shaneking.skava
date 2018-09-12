@@ -17,8 +17,7 @@ import org.shaneking.skava.sql.entity.SKRefEntity;
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
 @SKTable(name = "t_address", schema = "testSchema")
-public class AddressEntity extends SKRefEntity
-{
+public class AddressEntity extends SKRefEntity {
   /**
    * InnoDB prefix index max 767 bytes(utf8:767/3=255char;gbk:767/2=383char)
    */

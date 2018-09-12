@@ -13,26 +13,22 @@ import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.shaneking.skava.ling.lang.String0;
 
-public class SKUnit
-{
+public class SKUnit {
   @Rule
-  public  TestName  testName  = new TestName();
+  public TestName testName = new TestName();
   private Stopwatch stopwatch = Stopwatch.createStarted();
 
   @Before
-  public void setUp() throws Exception
-  {
+  public void setUp() throws Exception {
     stopwatch = Stopwatch.createStarted();
   }
 
   @After
-  public void tearDown() throws Exception
-  {
+  public void tearDown() throws Exception {
     System.out.println(testName.getMethodName() + String0.EQUAL + stopwatch.stop());
   }
 
-  public void skPrint(Object o)
-  {
+  public void skPrint(Object o) {
     System.out.println(testName.getMethodName() + String0.EQUAL + String.valueOf(o));
   }
 }

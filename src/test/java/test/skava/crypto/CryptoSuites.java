@@ -10,6 +10,5 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({AESTest.class})
-public class CryptoSuites
-{
+public class CryptoSuites {
 }

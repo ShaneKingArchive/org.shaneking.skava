@@ -19,8 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(FIELD)
 @Retention(RUNTIME)
 @Inherited
-public @interface SKColumn
-{
+public @interface SKColumn {
 
   /**
    * (Optional) The name of the column. Defaults to the property or field name.

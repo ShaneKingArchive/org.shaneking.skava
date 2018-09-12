@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.shaneking</groupId>
     <artifactId>org.shaneking</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.7</version>
   </parent>
 
   <artifactId>org.shaneking.skava</artifactId>
@@ -83,8 +83,8 @@
       <artifactId>pinyin4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>jsr305</artifactId>
+      <groupId>com.github.jsqlparser</groupId>
+      <artifactId>jsqlparser</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>

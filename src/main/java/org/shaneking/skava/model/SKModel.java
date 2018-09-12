@@ -13,8 +13,7 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-public class SKModel<O, U>
-{
+public class SKModel<O, U> {
   @Getter
   @Setter
   private O obj;

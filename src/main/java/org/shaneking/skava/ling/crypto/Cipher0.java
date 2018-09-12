@@ -6,7 +6,6 @@
  */
 package org.shaneking.skava.ling.crypto;
 
-public class Cipher0
-{
+public class Cipher0 {
   public static final String AES_CBC_PKCS5Padding = "AES/CBC/PKCS5Padding";
 }

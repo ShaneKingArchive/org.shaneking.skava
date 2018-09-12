@@ -6,7 +6,6 @@
  */
 package org.shaneking.skava.ling.nio;
 
-public class Charset0
-{
+public class Charset0 {
   public static final String UTF_8 = "UTF-8";
 }

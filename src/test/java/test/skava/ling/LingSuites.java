@@ -19,6 +19,5 @@ import test.skava.ling.util.UtilSuites;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({CryptoSuites.class, CollectSuites.class, Cipher0Test.class, String0Test.class, Charset0Test.class, KeySpec0Test.class, Key0Test.class, UtilSuites.class})
-public class LingSuites
-{
+public class LingSuites {
 }

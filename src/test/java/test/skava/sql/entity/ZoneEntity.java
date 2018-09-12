@@ -14,6 +14,5 @@ import org.shaneking.skava.sql.entity.SKL10nEntity;
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
 @SKTable
-public class ZoneEntity extends SKL10nEntity
-{
+public class ZoneEntity extends SKL10nEntity {
 }

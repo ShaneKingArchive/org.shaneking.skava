@@ -14,6 +14,5 @@ import test.skava.sql.SqlSuites;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({CryptoSuites.class, LingSuites.class, SqlSuites.class})
-public class SKavaSuites
-{
+public class SKavaSuites {
 }

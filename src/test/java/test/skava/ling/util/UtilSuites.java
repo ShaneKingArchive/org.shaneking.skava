@@ -11,6 +11,5 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({Date0Test.class, List0Test.class, Random0Test.class})
-public class UtilSuites
-{
+public class UtilSuites {
 }

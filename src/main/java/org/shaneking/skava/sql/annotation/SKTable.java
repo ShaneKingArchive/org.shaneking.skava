@@ -19,8 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 @Retention(RUNTIME)
 @Inherited
-public @interface SKTable
-{
+public @interface SKTable {
 
   /**
    * (Optional) The name of the table.

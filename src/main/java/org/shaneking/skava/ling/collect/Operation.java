@@ -6,7 +6,6 @@
  */
 package org.shaneking.skava.ling.collect;
 
-public interface Operation<M, N, E>
-{
+public interface Operation<M, N, E> {
   E calculate(M m, N n);
 }

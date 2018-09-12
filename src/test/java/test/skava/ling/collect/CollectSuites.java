@@ -11,6 +11,5 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({TupleJoinerTest.class, TupleTest.class})
-public class CollectSuites
-{
+public class CollectSuites {
 }

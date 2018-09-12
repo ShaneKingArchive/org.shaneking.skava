@@ -17,8 +17,7 @@ import org.shaneking.skava.sql.entity.SKEntity;
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
 @SKTable
-public class UserEntity extends SKEntity
-{
+public class UserEntity extends SKEntity {
   @Getter
   @Setter
   private String name;

@@ -8,29 +8,24 @@ import org.shaneking.skava.ling.util.List0;
 
 import java.util.List;
 
-public class List0Test
-{
+public class List0Test {
   List<String> emptyList3 = List0.fillArrayList("", 3, null);
 
   @Before
-  public void setUp() throws Exception
-  {
+  public void setUp() throws Exception {
   }
 
   @After
-  public void tearDown() throws Exception
-  {
+  public void tearDown() throws Exception {
   }
 
   @Test
-  public void fillArrayList() throws Exception
-  {
+  public void fillArrayList() throws Exception {
     Assert.assertEquals(emptyList3, List0.fillArrayList("", 3, null));
   }
 
   @Test
-  public void operation() throws Exception
-  {
+  public void operation() throws Exception {
     Assert.assertEquals(emptyList3, List0.operation(List0.fillArrayList("", 3, null), List0.fillArrayList("", 3, null), (m, n) -> {
       return m + n;
     }));

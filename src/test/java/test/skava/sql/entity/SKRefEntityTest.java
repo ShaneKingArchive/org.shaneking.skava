@@ -12,11 +12,9 @@ import test.skava.SKUnit;
 
 import java.util.UUID;
 
-public class SKRefEntityTest extends SKUnit
-{
+public class SKRefEntityTest extends SKUnit {
   @Test
-  public void testQueryListSql()
-  {
+  public void testQueryListSql() {
     AddressEntity addressEntity = new AddressEntity();
     Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (version) values (?),[1])");
     Assert.assertEquals(addressEntity.selectSql().toString(), "(select uid,version,ext_json,create_datetime,create_user_uid,last_modify_datetime,last_modify_user_uid,invalid,invalid_datetime,invalid_user_uid,ref_type,ref_uid,address,postcode,primary from testSchema.t_address where version=?,[1])");

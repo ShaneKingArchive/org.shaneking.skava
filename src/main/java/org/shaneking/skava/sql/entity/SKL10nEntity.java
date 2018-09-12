@@ -14,8 +14,7 @@ import org.shaneking.skava.sql.annotation.SKColumn;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-public class SKL10nEntity extends SKEntity
-{
+public class SKL10nEntity extends SKEntity {
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
