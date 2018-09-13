@@ -6,14 +6,15 @@
  */
 package org.shaneking.skava.sql.parser;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.NonNull;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
+import net.sf.jsqlparser.parser.SimpleNode;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
@@ -34,42 +35,42 @@ import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import org.shaneking.skava.ling.collect.Tuple;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Find all select items within an select(or select in insert) statement.
  * <p>
- * update t1 set c1 = t2.c2 from t2 where t2.id = t1.id
+ * UnSupport: update t1 set c1 = t2.c2 from t2 where t2.id = t1.id
  */
 public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, StatementVisitor {
 
   private static final String NOT_SUPPORTED_STATEMENT_TYPE_YET = "Not supported statement type yet";
   private static final String NOT_SUPPORTED_EXPRESSION_YET = "Not supported expression yet";
   private static final String NOT_SUPPORTED_EXPRESSION_LIST_YET = "Not supported expression list yet";
-  private static final String NOT_SUPPORTED_FROM_ITEM_YET = "Not supported from item yet";
+  private static final String NOT_SUPPORTED_FROM_ITEM_TYPE_YET = "Not supported from item type yet";
   private static final String NOT_SUPPORTED_WITH_ITEM_YET = "Not supported with item yet";
   private static final String THE_COLUMN_MUST_BE_LIKE_X_Y = "The column must be like x.y";
-  //select t.a as c from table t
-  //<t, table, List<Tuple.Quadruple<table.c, false, table.a, 1>>>
-  //select * from (select sub(t.a,1,3) as c from table t)
-  //<t, table, List<Tuple.Quadruple<table.c, true, table.a, 2>>>
-  //lifecycle: just store in select or subSelect
-  private List<Tuple.Triple<String, String, List<Tuple.Quadruple<String, Boolean, String, Integer>>>> tables;
-  //select table.column from table; the table is tableName in Column instance
-  //select t.column from table t; the t is tableName in Column instance too
+  private static final String THE_ALIAS_CONFLICTED = "The alias conflicted";
+  private static final String MUST_DEFINE_ALIAS = "Must define alias";
+//  private List<String> tables;
 //  private boolean allowColumnProcessing = true;
 
   /**
    * There are special names, that are not table names but are parsed as tables. These names are
    * collected here and are not included in the tables - names anymore.
    */
-  //private Map<String, List<Tuple.Quadruple<String, Boolean, String, String>>> otherItemNames;
+  //private List<String> otherItemNames;
 
   private int deepSelect = 0;
-  //List<Tuple.Triple<String, transformed, origin, deepSelect>>
-  private List<Tuple.Quadruple<String, Boolean, String, Integer>> columns;
-  //private String withAlias = "";
   private boolean transformed = false;
+  //one aliasTableName mapping multiple realTableName
+  //one alias/readColumnName/* mapping multiple realColumnName
+  //Map<aliasTableName, Map<realTableName, List<Tuple.Quadruple<alias/readColumnName/*, List<realColumnName>, deepSelect, transformed>>>>
+  //lifecycle: just store in select or subSelect
+  private Map<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>> columnMaps = Maps.newHashMap();
 
   /**
    * Override to adapt the tableName generation (e.g. with / without schema).
@@ -84,36 +85,13 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   /**
    * Main entry for this Tool class. A list of found tables is returned.
    *
-   * @param expr
-   * @return
-   */
-  public List<Tuple.Quadruple<String, Boolean, String, Integer>> getSelectItemList(Expression expr) {
-    init();
-    expr.accept(this);
-    return columns;
-  }
-
-  /**
-   * Main entry for this Tool class. A list of found tables is returned.
-   *
    * @param statement
    * @return
    */
-  public List<Tuple.Quadruple<String, Boolean, String, Integer>> getSelectItemList(Statement statement) {
+  public Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> getSelectItemList(Statement statement) {
     init();
     statement.accept(this);
-    return columns;
-  }
-
-  public String getTableNameByAlias(@NonNull String alias) {
-    String rtn = alias;
-    for (Tuple.Triple<String, String, List<Tuple.Quadruple<String, Boolean, String, Integer>>> t : tables) {
-      if (alias.equalsIgnoreCase(Tuple.getFirst(t)) && !Strings.isNullOrEmpty(Tuple.getSecond(t))) {
-        rtn = Tuple.getSecond(t);
-        break;
-      }
-    }
-    return rtn;
+    return merge(columnMaps);
   }
 
   /**
@@ -125,32 +103,64 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
    * //@param allowColumnProcessing
    */
   protected void init() {
-    //otherItemNames = Maps.newHashMap();
-    tables = Lists.newArrayList();
+//    otherItemNames = new ArrayList<String>();
+//    tables = new ArrayList<String>();
 //    this.allowColumnProcessing = allowColumnProcessing;
-    columns = Lists.newArrayList();
     deepSelect = 0;
-    //withAlias = "";
     transformed = false;
+    columnMaps = Maps.newHashMap();
   }
 
-  private void processSubSelect(@NonNull SubSelect subSelect) {
-    List<Tuple.Quadruple<String, Boolean, String, Integer>> handleColumns = columns;
-    columns = Lists.newArrayList();
-    List<Tuple.Triple<String, String, List<Tuple.Quadruple<String, Boolean, String, Integer>>>> handleTables = tables;
-    tables = Lists.newArrayList();
+  private Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> merge(Map<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>> columnMaps) {
+    return columnMaps.values().stream().collect(HashMap<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>::new, (l, i) -> {
+      i.keySet().forEach((item) ->
+      {
+        if (l.containsKey(item)) {
+          l.get(item).addAll(i.get(item));
+        } else {
+          l.put(item, i.get(item));
+        }
+      });
+    }, (l, r) -> {
+      r.keySet().forEach((item) ->
+      {
+        if (l.containsKey(item)) {
+          l.get(item).addAll(r.get(item));
+        } else {
+          l.put(item, r.get(item));
+        }
+      });
+    });
+
+  }
+
+  ;
+
+  private void processSubSelect(@NonNull SubSelect subSelect, Alias alias) {
+    String aliasName = null;
+    if (alias != null && alias.getName() != null) {
+      aliasName = alias.getName().toUpperCase();
+    }
+    if (aliasName == null && subSelect.getAlias() != null && subSelect.getAlias().getName() != null) {
+      aliasName = subSelect.getAlias().getName().toUpperCase();
+    }
+    if (aliasName == null) {
+      throw new UnsupportedOperationException(MUST_DEFINE_ALIAS);
+    }
+    if (columnMaps.get(aliasName) != null) {
+      throw new UnsupportedOperationException(THE_ALIAS_CONFLICTED);
+    }
+    Map<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>> handleColumnMaps = columnMaps;
+    columnMaps = Maps.<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>>newHashMap();
     deepSelect++;
     processSelectBody(subSelect.getSelectBody());
     deepSelect--;
-    handleTables.add(Tuple.of(subSelect.getAlias().getName(), null, columns));
-    tables = handleTables;
-    handleColumns.addAll(columns);
-    columns = handleColumns;
+    handleColumnMaps.put(aliasName, merge(columnMaps));
+    columnMaps = handleColumnMaps;
   }
 
   private void processSelectBody(@NonNull SelectBody selectBody) {
     selectBody.accept(this);
-    tables = Lists.newArrayList();
   }
 
   public void visitBinaryExpression(BinaryExpression binaryExpression) {
@@ -165,26 +175,16 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
         withItem.accept(this);
       }
     }
-
-    List<Tuple.Quadruple<String, Boolean, String, Integer>> handleColumns = columns;
-    columns = Lists.newArrayList();
-    List<Tuple.Triple<String, String, List<Tuple.Quadruple<String, Boolean, String, Integer>>>> handleTables = tables;
-    tables = Lists.newArrayList();
     deepSelect++;
     select.getSelectBody().accept(this);
     deepSelect--;
-    tables = handleTables;
-    handleColumns.addAll(columns);
-    columns = handleColumns;
   }
 
   @Override
   public void visit(WithItem withItem) {
     throw new UnsupportedOperationException(NOT_SUPPORTED_WITH_ITEM_YET);
-    //withAlias = withItem.getName().toLowerCase();
 //    otherItemNames.add(withItem.getName().toLowerCase());
 //    withItem.getSelectBody().accept(this);
-    //withAlias = "";
   }
 
   @Override
@@ -225,10 +225,16 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 //      && !tables.contains(tableWholeName)) {
 //      tables.add(tableWholeName);
 //    }
-    if (!Strings.isNullOrEmpty(getTableNameByAlias(tableName.getAlias().getName()))) {
-      //maybe the table alias exist in tables?//todo
+
+    if (tableName.getAlias() == null || tableName.getAlias().getName() == null) {
+      throw new UnsupportedOperationException(MUST_DEFINE_ALIAS);
     }
-    tables.add(Tuple.of(tableName.getAlias().getName(), tableWholeName, Lists.newArrayList()));
+    if (columnMaps.get(tableName.getAlias().getName().toUpperCase()) != null) {
+      throw new UnsupportedOperationException(THE_ALIAS_CONFLICTED);
+    }
+    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> realTableMap = Maps.newHashMap();
+    realTableMap.put(tableWholeName.toUpperCase(), Lists.newArrayList());
+    columnMaps.put(tableName.getAlias().getName().toUpperCase(), realTableMap);
   }
 
   @Override
@@ -238,7 +244,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
         withItem.accept(this);
       }
     }
-    processSubSelect(subSelect);
+    processSubSelect(subSelect, subSelect.getAlias());
   }
 
   @Override
@@ -263,11 +269,22 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
     if (tableColumn.getTable() == null || tableColumn.getTable().getName() == null) {
       throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
     }
+    Object object = ((SimpleNode) tableColumn.getASTNode().jjtGetParent().jjtGetParent()).jjtGetValue();
+    if (object instanceof SelectExpressionItem) {
+      SelectExpressionItem selectExpressionItem = (SelectExpressionItem) object;
+      Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> realTableMap = columnMaps.get(tableColumn.getTable().getName().toUpperCase());
+      realTableMap.values().forEach((item) -> {
+        String aliasName = tableColumn.getColumnName();
+        if (selectExpressionItem.getAlias() != null && selectExpressionItem.getAlias().getName() != null) {
+          aliasName = selectExpressionItem.getAlias().getName().toUpperCase();
+        }
+        final String columnName = tableColumn.getColumnName();
+        List<String> realColumnList = item.stream().filter(tuple -> columnName.equalsIgnoreCase(Tuple.getFirst(tuple))).collect(ArrayList::new, (l, i) -> l.addAll(Tuple.getSecond(i)), List::addAll);
+        realColumnList.add(tableColumn.getColumnName().toUpperCase());
 
-    if (tableColumn.getASTNode().jjtGetParent().jjtGetParent() instanceof SelectItem) {
-      //todo
+        item.add(Tuple.of(aliasName, realColumnList, deepSelect, false));
+      });
     }
-    //TODO
 //    if (allowColumnProcessing && tableColumn.getTable() != null && tableColumn.getTable().getName() != null) {
 //      visit(tableColumn.getTable());
 //    }
@@ -458,19 +475,21 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(AllComparisonExpression allComparisonExpression) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //just force select & insert, comments by shaneking @ 180913
 //    allComparisonExpression.getSubSelect().getSelectBody().accept(this);
-    processSubSelect(allComparisonExpression.getSubSelect());
   }
 
   @Override
   public void visit(AnyComparisonExpression anyComparisonExpression) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //just force select & insert, comments by shaneking @ 180913
 //    anyComparisonExpression.getSubSelect().getSelectBody().accept(this);
-    processSubSelect(anyComparisonExpression.getSubSelect());
   }
 
   @Override
   public void visit(SubJoin subjoin) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_YET);
+    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_TYPE_YET);
     //just force select & insert, comments by shaneking @ 180912
 //    subjoin.getLeft().accept(this);
 //    for (Join join : subjoin.getJoinList()) {
@@ -534,7 +553,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   @Override
   public void visit(LateralSubSelect lateralSubSelect) {
 //    lateralSubSelect.getSubSelect().getSelectBody().accept(this);
-    processSubSelect(lateralSubSelect.getSubSelect());
+    processSubSelect(lateralSubSelect.getSubSelect(), lateralSubSelect.getAlias());
   }
 
   @Override
@@ -548,7 +567,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(ValuesList valuesList) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_YET);
+    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_TYPE_YET);
     //just force select & insert, comments by shaneking @ 180912
   }
 
@@ -596,15 +615,21 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(AllTableColumns allTableColumns) {
-    String tableNames = getTableNameByAlias(allTableColumns.getTable().getName()) + ".*";
-    columns.add(Tuple.of(tableNames, false, tableNames, deepSelect));
+    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> realTableMap = columnMaps.get(allTableColumns.getTable().getName().toUpperCase());
+    if (realTableMap == null) {
+      throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
+    }
+    realTableMap.values().forEach((columnList) -> {
+      long count = columnList.stream().filter((item) -> "*".equalsIgnoreCase(Tuple.getFirst(item))).count();
+      if (count == 0) {
+        columnList.add(Tuple.of("*", Lists.newArrayList(), deepSelect, transformed));
+      }
+    });
   }
 
   @Override
   public void visit(SelectExpressionItem item) {
-    boolean handleTransformed = transformed;
     item.getExpression().accept(this);
-    transformed = handleTransformed;
   }
 
   @Override
@@ -678,9 +703,11 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   public void visit(Insert insert) {
     //just force select & insert, comments by shaneking @ 180912
 //    visit(insert.getTable());
-//    if (insert.getItemsList() != null) {
+    if (insert.getItemsList() != null) {
+      //TODO test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListFromInsert()
+      throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_LIST_YET);
 //      insert.getItemsList().accept(this);
-//    }
+    }
     if (insert.getSelect() != null) {
       visit(insert.getSelect());
     }
@@ -781,7 +808,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(TableFunction valuesList) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_YET);
+    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_TYPE_YET);
     //just force select & insert, comments by shaneking @ 180912
   }
 
@@ -826,7 +853,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(ParenthesisFromItem parenthesis) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_YET);
+    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_TYPE_YET);
     //just force select & insert, comments by shaneking @ 180912
 //    parenthesis.getFromItem().accept(this);
   }
