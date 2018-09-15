@@ -11,8 +11,8 @@ import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.sql.parser.SelectItemsFinder;
 
 import java.io.StringReader;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SelectItemsFinderTest {
 
@@ -31,7 +31,7 @@ public class SelectItemsFinderTest {
     if (statement instanceof Select) {
       Select selectStatement = (Select) statement;
       SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-      Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
+      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
       System.out.println(selectItemsMap);
 //      assertEquals(4, selectItemsList.size());
 //      int i = 1;
@@ -44,28 +44,55 @@ public class SelectItemsFinderTest {
   }
 
   @Test
+  public void testGetSelectItemListWithoutAlias() throws Exception {
+    String sql = "SELECT MY_TABLE1.* FROM MY_TABLE1";
+    net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
+
+    Select selectStatement = (Select) statement;
+    SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
+    System.out.println(selectItemsMap);
+//    assertEquals(1, tableList.size());
+//    assertEquals("MY_TABLE1", (String) tableList.get(0));
+  }
+
+  @Test
   public void testGetSelectItemListWithAlias() throws Exception {
     String sql = "SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1";
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
     System.out.println(selectItemsMap);
 //    assertEquals(1, tableList.size());
 //    assertEquals("MY_TABLE1", (String) tableList.get(0));
   }
 
   //net.sf.jsqlparser.util.TablesNamesFinder
-  @Test(expected = UnsupportedOperationException.class)
-  public void testGetSelectItemListWithStmt() throws Exception {
-    String sql = "WITH TESTSTMT as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT * FROM TESTSTMT";
+  @Test
+  public void testGetSelectItemListWithItem() throws Exception {
+    String sql = "WITH TESTWITH as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT TESTWITH.* FROM TESTWITH";
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
-    System.out.println(selectItemsMap);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
+    System.out.println(selectItemsMap);//{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}
+//    assertEquals(1, tableList.size());
+//    assertEquals("MY_TABLE1", (String) tableList.get(0));
+  }
+
+  //net.sf.jsqlparser.util.TablesNamesFinder
+  @Test
+  public void testGetSelectItemListWithStmt() throws Exception {
+    String sql = "WITH TESTWITH as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT T.* FROM TESTWITH AS T";
+    net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
+
+    Select selectStatement = (Select) statement;
+    SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
+    System.out.println(selectItemsMap);//{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,2,false)]}), T=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}
 //    assertEquals(1, tableList.size());
 //    assertEquals("MY_TABLE1", (String) tableList.get(0));
   }
@@ -77,7 +104,7 @@ public class SelectItemsFinderTest {
 
     Select selectStatement = (Select) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(selectStatement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -91,7 +118,7 @@ public class SelectItemsFinderTest {
 
     Delete deleteStatement = (Delete) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -105,7 +132,7 @@ public class SelectItemsFinderTest {
 
     Delete deleteStatement = (Delete) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(1, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -118,7 +145,7 @@ public class SelectItemsFinderTest {
 
     Delete deleteStatement = (Delete) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -132,7 +159,7 @@ public class SelectItemsFinderTest {
 
     Insert insertStatement = (Insert) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -146,7 +173,7 @@ public class SelectItemsFinderTest {
 
     Insert insertStatement = (Insert) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(1, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -159,7 +186,7 @@ public class SelectItemsFinderTest {
 
     Replace replaceStatement = (Replace) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -173,7 +200,7 @@ public class SelectItemsFinderTest {
 
     Update updateStatement = (Update) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -187,7 +214,7 @@ public class SelectItemsFinderTest {
 
     Update updateStatement = (Update) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -201,7 +228,7 @@ public class SelectItemsFinderTest {
 
     Update updateStatement = (Update) statement;
     SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
     System.out.println(selectItemsMap);
 //    assertEquals(4, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));

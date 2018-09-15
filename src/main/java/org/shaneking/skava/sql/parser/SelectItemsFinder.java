@@ -6,8 +6,11 @@
  */
 package org.shaneking.skava.sql.parser;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import lombok.Getter;
 import lombok.NonNull;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
@@ -35,15 +38,16 @@ import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import org.shaneking.skava.ling.collect.Tuple;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
+ * Precondition: explain pass
+ *
  * Find all select items within an select(or select in insert) statement.
  * <p>
  * UnSupport: update t1 set c1 = t2.c2 from t2 where t2.id = t1.id
+ * ...
  */
 public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, StatementVisitor {
 
@@ -55,43 +59,32 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   private static final String THE_COLUMN_MUST_BE_LIKE_X_Y = "The column must be like x.y";
   private static final String THE_ALIAS_CONFLICTED = "The alias conflicted";
   private static final String MUST_DEFINE_ALIAS = "Must define alias";
-//  private List<String> tables;
-//  private boolean allowColumnProcessing = true;
 
-  /**
-   * There are special names, that are not table names but are parsed as tables. These names are
-   * collected here and are not included in the tables - names anymore.
-   */
-  //private List<String> otherItemNames;
-
-  private int deepSelect = 0;
+  private int deep = 0;
   private boolean transformed = false;
   //one aliasTableName mapping multiple realTableName
   //one alias/readColumnName/* mapping multiple realColumnName
-  //Map<aliasTableName, Map<realTableName, List<Tuple.Quadruple<alias/readColumnName/*, List<realColumnName>, deepSelect, transformed>>>>
   //lifecycle: just store in select or subSelect
-  private Map<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>> columnMaps = Maps.newHashMap();
+  //Map<aliasTable, Tuple.Pair<List<realTable>, Map<alias/realColumn/*, List<Tuple.Quadruple<realTable, realColumn, deep, transformed>>>>>
+  private Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> columns = Maps.newHashMap();
+
+  @Getter
+  private Stack<Object> stack = new Stack<Object>();
 
   /**
    * Override to adapt the tableName generation (e.g. with / without schema).
-   *
-   * @param table
-   * @return
    */
-  protected String extractTableName(Table table) {
+  private String fullTableName(Table table) {
     return table.getFullyQualifiedName();
   }
 
   /**
    * Main entry for this Tool class. A list of found tables is returned.
-   *
-   * @param statement
-   * @return
    */
-  public Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> getSelectItemList(Statement statement) {
+  public Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> getSelectItemList(Statement statement) {
     init();
     statement.accept(this);
-    return merge(columnMaps);
+    return columns;
   }
 
   /**
@@ -99,71 +92,100 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
    * names. This is only allowed for expression parsing, where a better place for tablenames could
    * not be there. For complete statements only from items are used to avoid some alias as
    * tablenames.
-   * <p>
-   * //@param allowColumnProcessing
    */
-  protected void init() {
-//    otherItemNames = new ArrayList<String>();
-//    tables = new ArrayList<String>();
-//    this.allowColumnProcessing = allowColumnProcessing;
-    deepSelect = 0;
+  private void init() {
+    deep = 0;
     transformed = false;
-    columnMaps = Maps.newHashMap();
+    columns = Maps.newHashMap();
+    stack = new Stack<Object>();
   }
 
-  private Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> merge(Map<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>> columnMaps) {
-    return columnMaps.values().stream().collect(HashMap<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>::new, (l, i) -> {
-      i.keySet().forEach((item) ->
-      {
-        if (l.containsKey(item)) {
-          l.get(item).addAll(i.get(item));
+  private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> mergeAliasTableMap(Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> columns) {
+    return mergeAliasTableTuplePairCollection(columns.values());
+  }
+
+  private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> mergeAliasTableTuplePairCollection(@NonNull Collection<Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> collection) {
+    final Set<String> rtnRealTableSet = Sets.newHashSet();
+    final Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> rtnAliasColumnMap = Maps.newHashMap();
+    collection.forEach(realTableTuple -> {
+      rtnRealTableSet.addAll(Tuple.getFirst(realTableTuple));
+      Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(realTableTuple);
+      aliasColumnMap.keySet().forEach(aliasColumn -> {
+        if (rtnAliasColumnMap.get(aliasColumn) == null) {
+          rtnAliasColumnMap.put(aliasColumn, aliasColumnMap.get(aliasColumn));
         } else {
-          l.put(item, i.get(item));
-        }
-      });
-    }, (l, r) -> {
-      r.keySet().forEach((item) ->
-      {
-        if (l.containsKey(item)) {
-          l.get(item).addAll(r.get(item));
-        } else {
-          l.put(item, r.get(item));
+          rtnAliasColumnMap.get(aliasColumn).addAll(aliasColumnMap.get(aliasColumn));
         }
       });
     });
-
+    return Tuple.of(rtnRealTableSet, rtnAliasColumnMap);
   }
 
-  ;
-
-  private void processSubSelect(@NonNull SubSelect subSelect, Alias alias) {
-    String aliasName = null;
+  private void processFromItem(@NonNull FromItem fromItem, Alias alias) {
+    String aliasTableName = null;
     if (alias != null && alias.getName() != null) {
-      aliasName = alias.getName().toUpperCase();
+      aliasTableName = alias.getName().toUpperCase();
     }
-    if (aliasName == null && subSelect.getAlias() != null && subSelect.getAlias().getName() != null) {
-      aliasName = subSelect.getAlias().getName().toUpperCase();
+    if (aliasTableName == null && fromItem.getAlias() != null && fromItem.getAlias().getName() != null) {
+      aliasTableName = fromItem.getAlias().getName().toUpperCase();
     }
-    if (aliasName == null) {
+    if (aliasTableName == null) {
       throw new UnsupportedOperationException(MUST_DEFINE_ALIAS);
+    } else {
+      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> handleColumns = columns;
+      columns = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newHashMap();
+      deep++;
+      fromItem.accept(this);
+      deep--;
+      if (handleColumns.get(aliasTableName) == null) {
+        handleColumns.put(aliasTableName, mergeAliasTableMap(columns));
+      } else {
+        handleColumns.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(columns), handleColumns.get(aliasTableName))));
+      }
+      columns = handleColumns;
     }
-    if (columnMaps.get(aliasName) != null) {
-      throw new UnsupportedOperationException(THE_ALIAS_CONFLICTED);
-    }
-    Map<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>> handleColumnMaps = columnMaps;
-    columnMaps = Maps.<String, Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>>>newHashMap();
-    deepSelect++;
-    processSelectBody(subSelect.getSelectBody());
-    deepSelect--;
-    handleColumnMaps.put(aliasName, merge(columnMaps));
-    columnMaps = handleColumnMaps;
   }
 
   private void processSelectBody(@NonNull SelectBody selectBody) {
+    deep++;
     selectBody.accept(this);
+    deep--;
   }
 
-  public void visitBinaryExpression(BinaryExpression binaryExpression) {
+  private void processSubSelect(@NonNull SubSelect subSelect, Alias alias) {
+    String aliasTableName = null;
+    if (alias != null && alias.getName() != null) {
+      aliasTableName = alias.getName().toUpperCase();
+    }
+    if (aliasTableName == null && subSelect.getAlias() != null && subSelect.getAlias().getName() != null) {
+      aliasTableName = subSelect.getAlias().getName().toUpperCase();
+    }
+    if (aliasTableName == null) {
+      processSelectBody(subSelect.getSelectBody());
+    } else {
+      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> handleColumns = columns;
+      columns = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newHashMap();
+      processSelectBody(subSelect.getSelectBody());
+      if (handleColumns.get(aliasTableName) == null) {
+        handleColumns.put(aliasTableName, mergeAliasTableMap(columns));
+      } else {
+        handleColumns.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(columns), handleColumns.get(aliasTableName))));
+      }
+      columns = handleColumns;
+    }
+  }
+
+  private void processWithItem(@NonNull WithItem withItem) {
+    deep++;
+    withItem.accept(this);
+    deep--;
+  }
+
+  private Set<Tuple.Quadruple<String, String, Integer, Boolean>> updateDeepAndTransformed(@NonNull Set<Tuple.Quadruple<String, String, Integer, Boolean>> realColumnSet) {
+    return realColumnSet.stream().map((tuple) -> Tuple.of(Tuple.getFirst(tuple), Tuple.getSecond(tuple), Math.min(deep, Tuple.getThird(tuple)), transformed || Tuple.getFourth(tuple))).collect(Collectors.toSet());
+  }
+
+  private void visitBinaryExpression(BinaryExpression binaryExpression) {
     binaryExpression.getLeftExpression().accept(this);
     binaryExpression.getRightExpression().accept(this);
   }
@@ -172,19 +194,24 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   public void visit(Select select) {
     if (select.getWithItemsList() != null) {
       for (WithItem withItem : select.getWithItemsList()) {
-        withItem.accept(this);
+        processWithItem(withItem);
       }
     }
-    deepSelect++;
-    select.getSelectBody().accept(this);
-    deepSelect--;
+    processSelectBody(select.getSelectBody());
   }
 
   @Override
   public void visit(WithItem withItem) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_WITH_ITEM_YET);
-//    otherItemNames.add(withItem.getName().toLowerCase());
-//    withItem.getSelectBody().accept(this);
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> handleColumns = columns;
+    columns = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newHashMap();
+    processSelectBody(withItem.getSelectBody());
+    String aliasTableName = withItem.getName().toUpperCase();
+    if (handleColumns.get(aliasTableName) == null) {
+      handleColumns.put(aliasTableName, mergeAliasTableMap(columns));
+    } else {
+      handleColumns.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(columns), handleColumns.get(aliasTableName))));
+    }
+    columns = handleColumns;
   }
 
   @Override
@@ -220,28 +247,38 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(Table tableName) {
-    String tableWholeName = extractTableName(tableName);
-//    if (!otherItemNames.contains(tableWholeName.toLowerCase())
-//      && !tables.contains(tableWholeName)) {
-//      tables.add(tableWholeName);
-//    }
+    String realTableName = fullTableName(tableName).toUpperCase();
 
-    if (tableName.getAlias() == null || tableName.getAlias().getName() == null) {
-      throw new UnsupportedOperationException(MUST_DEFINE_ALIAS);
+    String aliasTableName = realTableName;
+    if (tableName.getAlias() != null && tableName.getAlias().getName() != null) {
+      aliasTableName = tableName.getAlias().getName().toUpperCase();
     }
-    if (columnMaps.get(tableName.getAlias().getName().toUpperCase()) != null) {
-      throw new UnsupportedOperationException(THE_ALIAS_CONFLICTED);
+
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> realTableTuplePair = columns.get(realTableName);
+    if (realTableTuplePair == null) {
+      if (columns.get(aliasTableName) != null) {
+        throw new UnsupportedOperationException(THE_ALIAS_CONFLICTED);
+      }
+      columns.put(aliasTableName, Tuple.of(Sets.newHashSet(realTableName), Maps.newHashMap()));
+    } else {
+      //@see test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListWith()
+      //WITH TESTWITH as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT TESTWITH.* FROM TESTWITH
+      //above ignore
+
+
+      //@see test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListWithStmt()
+      //WITH TESTWITH as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT T.* FROM TESTWITH AS T
+      if (!aliasTableName.equalsIgnoreCase(realTableName)) {
+        columns.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.<Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newArrayList(realTableTuplePair)));
+      }
     }
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> realTableMap = Maps.newHashMap();
-    realTableMap.put(tableWholeName.toUpperCase(), Lists.newArrayList());
-    columnMaps.put(tableName.getAlias().getName().toUpperCase(), realTableMap);
   }
 
   @Override
   public void visit(SubSelect subSelect) {
     if (subSelect.getWithItemsList() != null) {
       for (WithItem withItem : subSelect.getWithItemsList()) {
-        withItem.accept(this);
+        processWithItem(withItem);
       }
     }
     processSubSelect(subSelect, subSelect.getAlias());
@@ -266,24 +303,41 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(Column tableColumn) {
-    if (tableColumn.getTable() == null || tableColumn.getTable().getName() == null) {
+    if (tableColumn.getTable() == null) {
       throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
     }
+    String aliasTableName = fullTableName(tableColumn.getTable());
+    if (Strings.isNullOrEmpty(aliasTableName)) {
+      throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
+    }
+    aliasTableName = aliasTableName.toUpperCase();
+
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> aliasTableTuple = columns.get(aliasTableName);
+    if (aliasTableTuple == null) {
+      //schema.table.column or schema.table.*
+      aliasTableTuple = Tuple.of(Sets.newHashSet(aliasTableName), Maps.newHashMap());
+      columns.put(aliasTableName, aliasTableTuple);
+    }
+
     Object object = ((SimpleNode) tableColumn.getASTNode().jjtGetParent().jjtGetParent()).jjtGetValue();
     if (object instanceof SelectExpressionItem) {
       SelectExpressionItem selectExpressionItem = (SelectExpressionItem) object;
-      Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> realTableMap = columnMaps.get(tableColumn.getTable().getName().toUpperCase());
-      realTableMap.values().forEach((item) -> {
-        String aliasName = tableColumn.getColumnName();
-        if (selectExpressionItem.getAlias() != null && selectExpressionItem.getAlias().getName() != null) {
-          aliasName = selectExpressionItem.getAlias().getName().toUpperCase();
-        }
-        final String columnName = tableColumn.getColumnName();
-        List<String> realColumnList = item.stream().filter(tuple -> columnName.equalsIgnoreCase(Tuple.getFirst(tuple))).collect(ArrayList::new, (l, i) -> l.addAll(Tuple.getSecond(i)), List::addAll);
-        realColumnList.add(tableColumn.getColumnName().toUpperCase());
 
-        item.add(Tuple.of(aliasName, realColumnList, deepSelect, false));
-      });
+      String columnName = tableColumn.getColumnName().toUpperCase();
+      String aliasColumnName = columnName;
+      if (selectExpressionItem.getAlias() != null && selectExpressionItem.getAlias().getName() != null) {
+        aliasColumnName = selectExpressionItem.getAlias().getName().toUpperCase();
+      }
+
+      Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+      Set<Tuple.Quadruple<String, String, Integer, Boolean>> aliasColumnSet = aliasColumnMap.get(columnName);
+      if (aliasColumnSet == null) {
+        //columnName is realColumnName
+        aliasColumnMap.put(aliasColumnName, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
+      } else {
+        //columnName is aliasColumnName
+        aliasColumnMap.put(aliasColumnName, updateDeepAndTransformed(aliasColumnSet));
+      }
     }
 //    if (allowColumnProcessing && tableColumn.getTable() != null && tableColumn.getTable().getName() != null) {
 //      visit(tableColumn.getTable());
@@ -475,26 +529,20 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(AllComparisonExpression allComparisonExpression) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
-    //just force select & insert, comments by shaneking @ 180913
-//    allComparisonExpression.getSubSelect().getSelectBody().accept(this);
+    processSubSelect(allComparisonExpression.getSubSelect(), null);
   }
 
   @Override
   public void visit(AnyComparisonExpression anyComparisonExpression) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
-    //just force select & insert, comments by shaneking @ 180913
-//    anyComparisonExpression.getSubSelect().getSelectBody().accept(this);
+    processSubSelect(anyComparisonExpression.getSubSelect(), null);
   }
 
   @Override
   public void visit(SubJoin subjoin) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_TYPE_YET);
-    //just force select & insert, comments by shaneking @ 180912
-//    subjoin.getLeft().accept(this);
-//    for (Join join : subjoin.getJoinList()) {
-//      join.getRightItem().accept(this);
-//    }
+    processFromItem(subjoin.getLeft(), subjoin.getAlias());
+    for (Join join : subjoin.getJoinList()) {
+      processFromItem(join.getRightItem(), null);
+    }
   }
 
   @Override
@@ -541,8 +589,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   @Override
   public void visit(SetOperationList list) {
     for (SelectBody plainSelect : list.getSelects()) {
-//      plainSelect.accept(this);
-      processSelectBody(plainSelect);
+      plainSelect.accept(this);
     }
   }
 
@@ -552,7 +599,6 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(LateralSubSelect lateralSubSelect) {
-//    lateralSubSelect.getSubSelect().getSelectBody().accept(this);
     processSubSelect(lateralSubSelect.getSubSelect(), lateralSubSelect.getAlias());
   }
 
@@ -615,16 +661,36 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(AllTableColumns allTableColumns) {
-    Map<String, List<Tuple.Quadruple<String, List<String>, Integer, Boolean>>> realTableMap = columnMaps.get(allTableColumns.getTable().getName().toUpperCase());
-    if (realTableMap == null) {
+    if (allTableColumns.getTable() == null) {
       throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
     }
-    realTableMap.values().forEach((columnList) -> {
-      long count = columnList.stream().filter((item) -> "*".equalsIgnoreCase(Tuple.getFirst(item))).count();
-      if (count == 0) {
-        columnList.add(Tuple.of("*", Lists.newArrayList(), deepSelect, transformed));
+    String aliasTableName = fullTableName(allTableColumns.getTable());
+    if (Strings.isNullOrEmpty(aliasTableName)) {
+      throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
+    }
+    aliasTableName = aliasTableName.toUpperCase();
+
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> aliasTableTuple = columns.get(aliasTableName);
+    if (aliasTableTuple == null) {
+      //schema.table.*
+      aliasTableTuple = Tuple.of(Sets.newHashSet(aliasTableName), Maps.newHashMap());
+      columns.put(aliasTableName, aliasTableTuple);
+    }
+
+    Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+    Set<Tuple.Quadruple<String, String, Integer, Boolean>> aliasColumnSet = aliasColumnMap.get("*");
+    if (aliasColumnSet == null) {
+      //columnName is realColumnName
+      Set<Tuple.Quadruple<String, String, Integer, Boolean>> allAliasColumnSet = aliasColumnMap.values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
+      if (allAliasColumnSet.size() == 0) {
+        aliasColumnMap.put("*", Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, "*", deep, transformed)).collect(Collectors.toSet()));
+      } else {
+        aliasColumnMap.put("*", updateDeepAndTransformed(allAliasColumnSet));
       }
-    });
+    } else {
+      //columnName is aliasColumnName
+      aliasColumnMap.put("*", updateDeepAndTransformed(aliasColumnSet));
+    }
   }
 
   @Override
@@ -705,8 +771,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 //    visit(insert.getTable());
     if (insert.getItemsList() != null) {
       //TODO test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListFromInsert()
-      throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_LIST_YET);
-//      insert.getItemsList().accept(this);
+      insert.getItemsList().accept(this);
     }
     if (insert.getSelect() != null) {
       visit(insert.getSelect());
@@ -823,7 +888,6 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(DateTimeLiteralExpression literal) {
-
   }
 
   @Override
@@ -853,8 +917,6 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(ParenthesisFromItem parenthesis) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_FROM_ITEM_TYPE_YET);
-    //just force select & insert, comments by shaneking @ 180912
-//    parenthesis.getFromItem().accept(this);
+    processFromItem(parenthesis.getFromItem(), parenthesis.getAlias());
   }
 }

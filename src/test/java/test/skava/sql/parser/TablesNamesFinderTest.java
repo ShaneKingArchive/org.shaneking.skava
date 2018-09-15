@@ -55,7 +55,7 @@ public class TablesNamesFinderTest {
 
   @Test
   public void testGetTableListWithAlias() throws Exception {
-    String sql = "SELECT * FROM MY_TABLE1 as ALIAS_TABLE1";
+    String sql = "SELECT * FROM MY_SCHEMA.MY_TABLE1 as ALIAS_TABLE1";
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
@@ -67,7 +67,7 @@ public class TablesNamesFinderTest {
       }
     });
     assertEquals(1, tableList.size());
-    assertEquals("MY_TABLE1", (String) tableList.get(0));
+    assertEquals("MY_SCHEMA.MY_TABLE1", (String) tableList.get(0));
   }
 
   @Test(expected = UnsupportedOperationException.class)
