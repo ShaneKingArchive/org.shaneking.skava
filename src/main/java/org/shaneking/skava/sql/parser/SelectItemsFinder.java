@@ -12,12 +12,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
-import net.sf.jsqlparser.parser.SimpleNode;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
@@ -38,7 +38,10 @@ import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import org.shaneking.skava.ling.collect.Tuple;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -61,6 +64,9 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   private static final String MUST_DEFINE_ALIAS = "Must define alias";
 
   private int deep = 0;
+
+  @Getter
+  @Setter
   private boolean transformed = false;
   //one aliasTableName mapping multiple realTableName
   //one alias/readColumnName/* mapping multiple realColumnName
@@ -68,8 +74,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
   //Map<aliasTable, Tuple.Pair<List<realTable>, Map<alias/realColumn/*, List<Tuple.Quadruple<realTable, realColumn, deep, transformed>>>>>
   private Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> columns = Maps.newHashMap();
 
-  @Getter
-  private Stack<Object> stack = new Stack<Object>();
+  private String selectExpressionItemAlias = null;
 
   /**
    * Override to adapt the tableName generation (e.g. with / without schema).
@@ -97,7 +102,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
     deep = 0;
     transformed = false;
     columns = Maps.newHashMap();
-    stack = new Stack<Object>();
+    selectExpressionItemAlias = null;
   }
 
   private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> mergeAliasTableMap(Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> columns) {
@@ -284,6 +289,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
     processSubSelect(subSelect, subSelect.getAlias());
   }
 
+  @SelectItemsFinderTransformed
   @Override
   public void visit(Addition addition) {
     visitBinaryExpression(addition);
@@ -319,24 +325,25 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
       columns.put(aliasTableName, aliasTableTuple);
     }
 
-    Object object = ((SimpleNode) tableColumn.getASTNode().jjtGetParent().jjtGetParent()).jjtGetValue();
-    if (object instanceof SelectExpressionItem) {
-      SelectExpressionItem selectExpressionItem = (SelectExpressionItem) object;
+    Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+    String columnName = tableColumn.getColumnName().toUpperCase();
+    Set<Tuple.Quadruple<String, String, Integer, Boolean>> columnSet = aliasColumnMap.get(columnName);
+    if (columnSet == null) {
+      //columnName is realColumnName
+      aliasColumnMap.put(columnName, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
+    } else {
+      //columnName is aliasColumnName
+      aliasColumnMap.put(columnName, updateDeepAndTransformed(columnSet));
+    }
 
-      String columnName = tableColumn.getColumnName().toUpperCase();
-      String aliasColumnName = columnName;
-      if (selectExpressionItem.getAlias() != null && selectExpressionItem.getAlias().getName() != null) {
-        aliasColumnName = selectExpressionItem.getAlias().getName().toUpperCase();
-      }
-
-      Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+    if (!Strings.isNullOrEmpty(selectExpressionItemAlias)) {
       Set<Tuple.Quadruple<String, String, Integer, Boolean>> aliasColumnSet = aliasColumnMap.get(columnName);
       if (aliasColumnSet == null) {
         //columnName is realColumnName
-        aliasColumnMap.put(aliasColumnName, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
+        aliasColumnMap.put(selectExpressionItemAlias, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
       } else {
         //columnName is aliasColumnName
-        aliasColumnMap.put(aliasColumnName, updateDeepAndTransformed(aliasColumnSet));
+        aliasColumnMap.put(selectExpressionItemAlias, updateDeepAndTransformed(aliasColumnSet));
       }
     }
 //    if (allowColumnProcessing && tableColumn.getTable() != null && tableColumn.getTable().getName() != null) {
@@ -344,6 +351,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 //    }
   }
 
+  @SelectItemsFinderTransformed
   @Override
   public void visit(Division division) {
     visitBinaryExpression(division);
@@ -351,6 +359,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(DoubleValue doubleValue) {
+    //no column, ignore
   }
 
   @Override
@@ -393,10 +402,13 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(IsNullExpression isNullExpression) {
+    isNullExpression.getLeftExpression().accept(this);
   }
 
   @Override
   public void visit(JdbcParameter jdbcParameter) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
@@ -411,6 +423,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(LongValue longValue) {
+    //no column, ignore
   }
 
   @Override
@@ -435,6 +448,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(NullValue nullValue) {
+    //no column, ignore
   }
 
   @Override
@@ -449,6 +463,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(StringValue stringValue) {
+    //no column, ignore
   }
 
   @Override
@@ -482,14 +497,17 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(DateValue dateValue) {
+    //no column, ignore
   }
 
   @Override
   public void visit(TimestampValue timestampValue) {
+    //no column, ignore
   }
 
   @Override
   public void visit(TimeValue timeValue) {
+    //no column, ignore
   }
 
   /*
@@ -582,7 +600,12 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(AnalyticExpression analytic) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    analytic.getExpression().accept(this);
+    analytic.getPartitionExpressionList().accept(this);
+    analytic.getOffset().accept(this);
+    analytic.getDefaultValue().accept(this);
+    analytic.getKeep().accept(this);
+//    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
     //just force select & insert, comments by shaneking @ 180912
   }
 
@@ -595,6 +618,8 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(ExtractExpression eexpr) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
@@ -619,10 +644,14 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(IntervalExpression iexpr) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
   public void visit(JdbcNamedParameter jdbcNamedParameter) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
@@ -648,10 +677,14 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(JsonExpression jsonExpr) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
   public void visit(JsonOperator jsonExpr) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
@@ -695,24 +728,33 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(SelectExpressionItem item) {
+    String handleSelectExpressionItemAlias = selectExpressionItemAlias;
+    selectExpressionItemAlias = (item.getAlias() == null ? null : (item.getAlias().getName() == null ? null : item.getAlias().getName().toUpperCase()));
     item.getExpression().accept(this);
+    selectExpressionItemAlias = handleSelectExpressionItemAlias;
   }
 
   @Override
   public void visit(UserVariable var) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
   public void visit(NumericBind bind) {
-
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
   public void visit(KeepExpression aexpr) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
   public void visit(MySQLGroupConcat groupConcat) {
+    groupConcat.getExpressionList().accept(this);
   }
 
   @Override
@@ -852,7 +894,7 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(HexValue hexValue) {
-
+    //no column, ignore
   }
 
   @Override
@@ -869,6 +911,8 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(OracleHint hint) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override
@@ -884,10 +928,13 @@ public class SelectItemsFinder implements SelectVisitor, FromItemVisitor, Expres
 
   @Override
   public void visit(TimeKeyExpression timeKeyExpression) {
+    //no column, ignore
   }
 
   @Override
   public void visit(DateTimeLiteralExpression literal) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_EXPRESSION_YET);
+    //unknown expression, fix when meeting
   }
 
   @Override

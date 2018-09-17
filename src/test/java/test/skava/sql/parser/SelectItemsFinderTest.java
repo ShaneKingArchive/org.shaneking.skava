@@ -44,6 +44,21 @@ public class SelectItemsFinderTest {
   }
 
   @Test
+  public void testGetSelectItemListWithAddExpr() throws Exception {
+
+    String sql = "SELECT mt1.a + mt1.c as b FROM MY_TABLE1 as mt1, MY_TABLE2 as mt2, (SELECT mt3i.* FROM MY_TABLE3 as mt3i) as mt3 LEFT OUTER JOIN MY_TABLE4 as mt4 "
+      + " WHERE mt2.ID = (SELECT MAX(mt.ID) FROM MY_TABLE5 as mt) AND mt3.ID2 IN (SELECT mt6.* FROM MY_TABLE6 as mt6)";
+    net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
+
+    if (statement instanceof Select) {
+      SelectItemsFinder selectItemsFinder = new SelectItemsFinder();
+      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> selectItemsMap = selectItemsFinder.getSelectItemList(statement);
+      System.out.println(selectItemsMap);
+    }
+
+  }
+
+  @Test
   public void testGetSelectItemListWithoutAlias() throws Exception {
     String sql = "SELECT MY_TABLE1.* FROM MY_TABLE1";
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));

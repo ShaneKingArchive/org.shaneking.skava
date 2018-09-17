@@ -13,9 +13,10 @@ import org.aspectj.lang.annotation.Aspect;
 @Aspect
 public class SelectItemsFinderAspect {
 
-  //  @Around("@annotation(com.test.YourAnnotation) && execution(* *(..))")
-  @Around("execution(* org.shaneking.skava.sql.parser.SelectItemsFinder.visit(..))")
-  public Object aroundVisit(ProceedingJoinPoint joinPoint) throws Throwable {
+  //  @Around("execution(* org.shaneking.skava.sql.parser.SelectItemsFinder.visit(..))")
+  @Around("@annotation(org.shaneking.skava.sql.parser.SelectItemsFinderTransformed)")
+  public Object aroundTransformed(ProceedingJoinPoint joinPoint) throws Throwable {
+    Boolean handleTransformed = null;
     Object originInstance = joinPoint.getThis();
     if (originInstance == null) {
       originInstance = joinPoint.getTarget();
@@ -23,12 +24,14 @@ public class SelectItemsFinderAspect {
     SelectItemsFinder selectItemsFinder = null;
     if (originInstance instanceof SelectItemsFinder) {
       selectItemsFinder = (SelectItemsFinder) originInstance;
-      selectItemsFinder.getStack().push(joinPoint.getArgs()[0]);
     }
-    System.out.println(selectItemsFinder.getStack());
+    if (selectItemsFinder != null) {
+      handleTransformed = selectItemsFinder.isTransformed();
+      selectItemsFinder.setTransformed(true);
+    }
     Object result = joinPoint.proceed();
-    if (originInstance != null) {
-      selectItemsFinder.getStack().pop();
+    if (selectItemsFinder != null) {
+      selectItemsFinder.setTransformed(handleTransformed);
     }
     return result;
   }
