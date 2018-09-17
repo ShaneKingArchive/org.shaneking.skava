@@ -6,6 +6,7 @@
  */
 package org.shaneking.skava.sql.parser;
 
+import lombok.Getter;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -39,11 +40,12 @@ import java.util.List;
  * <p>
  * Override extractTableName method to modify the extracted table names (e.g. without schema).
  */
-public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, StatementVisitor {
+public class TableNamesFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, StatementVisitor {
 
   private static final String NOT_SUPPORTED_STATEMENT_TYPE_YET = "Not supported statement type yet";
   private static final String NOT_SUPPORTED_WITH_STATEMENT_YET = "Not supported with statement yet";
   //Tuple.Pair<SCHEMA.TABLE, ALIAS>
+  @Getter
   private List<Tuple.Pair<String, String>> tables;
   //select table.column from table; the table is tableName in Column instance
   //select t.column from table t; the t is tableName in Column instance too
@@ -56,13 +58,17 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
   private List<String> otherItemNames;
 
   /**
-   * Override to adapt the tableName generation (e.g. with / without schema).
+   * Initializes table names collector. Important is the usage of Column instances to find table
+   * names. This is only allowed for expression parsing, where a better place for tablenames could
+   * not be there. For complete statements only from items are used to avoid some alias as
+   * tablenames.
    *
-   * @param table
-   * @return
+   * @param allowColumnProcessing
    */
-  protected String extractTableName(Table table) {
-    return table.getFullyQualifiedName();
+  private TableNamesFinder(boolean allowColumnProcessing) {
+    otherItemNames = new ArrayList<String>();
+    tables = new ArrayList<Tuple.Pair<String, String>>();
+    this.allowColumnProcessing = allowColumnProcessing;
   }
 
   /**
@@ -71,10 +77,10 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
    * @param expr
    * @return
    */
-  public List<Tuple.Pair<String, String>> getTableList(Expression expr) {
-    init(true);
-    expr.accept(this);
-    return tables;
+  public static List<Tuple.Pair<String, String>> getTableList(Expression expr) {
+    TableNamesFinder tableNamesFinder = new TableNamesFinder(true);
+    expr.accept(tableNamesFinder);
+    return tableNamesFinder.getTables();
   }
 
   /**
@@ -83,27 +89,23 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
    * @param statement
    * @return
    */
-  public List<Tuple.Pair<String, String>> getTableList(Statement statement) {
-    init(false);
-    statement.accept(this);
-    return tables;
+  public static List<Tuple.Pair<String, String>> getTableList(Statement statement) {
+    TableNamesFinder tableNamesFinder = new TableNamesFinder(false);
+    statement.accept(tableNamesFinder);
+    return tableNamesFinder.getTables();
   }
 
   /**
-   * Initializes table names collector. Important is the usage of Column instances to find table
-   * names. This is only allowed for expression parsing, where a better place for tablenames could
-   * not be there. For complete statements only from items are used to avoid some alias as
-   * tablenames.
+   * Override to adapt the tableName generation (e.g. with / without schema).
    *
-   * @param allowColumnProcessing
+   * @param table
+   * @return
    */
-  protected void init(boolean allowColumnProcessing) {
-    otherItemNames = new ArrayList<String>();
-    tables = new ArrayList<Tuple.Pair<String, String>>();
-    this.allowColumnProcessing = allowColumnProcessing;
+  private String extractTableName(Table table) {
+    return table.getFullyQualifiedName();
   }
 
-  public void visitBinaryExpression(BinaryExpression binaryExpression) {
+  private void visitBinaryExpression(BinaryExpression binaryExpression) {
     binaryExpression.getLeftExpression().accept(this);
     binaryExpression.getRightExpression().accept(this);
   }

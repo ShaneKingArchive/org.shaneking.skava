@@ -11,27 +11,27 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 @Aspect
-public class SelectItemsFinderAspect {
+public class SensitiveItemsFinderAspect {
 
-  //  @Around("execution(* org.shaneking.skava.sql.parser.SelectItemsFinder.visit(..))")
-  @Around("@annotation(org.shaneking.skava.sql.parser.SelectItemsFinderTransformed)")
+  //    @Around("execution(* org.shaneking.skava.sql.parser.SensitiveItemsFinder.visit(..))")
+  @Around("@annotation(org.shaneking.skava.sql.parser.SensitiveItemsFinderTransformed)")
   public Object aroundTransformed(ProceedingJoinPoint joinPoint) throws Throwable {
     Boolean handleTransformed = null;
     Object originInstance = joinPoint.getThis();
     if (originInstance == null) {
       originInstance = joinPoint.getTarget();
     }
-    SelectItemsFinder selectItemsFinder = null;
-    if (originInstance instanceof SelectItemsFinder) {
-      selectItemsFinder = (SelectItemsFinder) originInstance;
+    SensitiveItemsFinder sensitiveItemsFinder = null;
+    if (originInstance instanceof SensitiveItemsFinder) {
+      sensitiveItemsFinder = (SensitiveItemsFinder) originInstance;
     }
-    if (selectItemsFinder != null) {
-      handleTransformed = selectItemsFinder.isTransformed();
-      selectItemsFinder.setTransformed(true);
+    if (sensitiveItemsFinder != null) {
+      handleTransformed = sensitiveItemsFinder.isTransformed();
+      sensitiveItemsFinder.setTransformed(true);
     }
     Object result = joinPoint.proceed();
-    if (selectItemsFinder != null) {
-      selectItemsFinder.setTransformed(handleTransformed);
+    if (sensitiveItemsFinder != null) {
+      sensitiveItemsFinder.setTransformed(handleTransformed);
     }
     return result;
   }

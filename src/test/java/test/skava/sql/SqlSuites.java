@@ -7,11 +7,10 @@ package test.skava.sql;/*
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import test.skava.sql.entity.SKEntityTest;
-import test.skava.sql.entity.SKL10nEntityTest;
-import test.skava.sql.entity.SKRefEntityTest;
+import test.skava.sql.entity.EntitySuites;
+import test.skava.sql.parser.ParserSuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({SKEntityTest.class, SKL10nEntityTest.class, SKRefEntityTest.class})
+@Suite.SuiteClasses({EntitySuites.class, ParserSuites.class})
 public class SqlSuites {
 }

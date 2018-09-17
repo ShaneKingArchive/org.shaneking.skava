@@ -8,7 +8,6 @@ package test.skava.ling;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import test.skava.crypto.CryptoSuites;
 import test.skava.ling.collect.CollectSuites;
 import test.skava.ling.crypto.Cipher0Test;
 import test.skava.ling.lang.String0Test;
@@ -18,6 +17,6 @@ import test.skava.ling.security.spec.KeySpec0Test;
 import test.skava.ling.util.UtilSuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({CryptoSuites.class, CollectSuites.class, Cipher0Test.class, String0Test.class, Charset0Test.class, KeySpec0Test.class, Key0Test.class, UtilSuites.class})
+@Suite.SuiteClasses({CollectSuites.class, Cipher0Test.class, String0Test.class, Charset0Test.class, KeySpec0Test.class, Key0Test.class, UtilSuites.class})
 public class LingSuites {
 }
