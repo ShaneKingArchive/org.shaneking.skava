@@ -22,7 +22,7 @@ public class SensitiveExpressionReplacerTest {
   @Before
   public void setUp() throws Exception {
     itemMap.put("T.A", Tuple.of(Joiner.on(String0.ARROW).join(SensitiveItemsFinder.PATH_OF_SELECT, SensitiveItemsFinder.PATH_OF_SELECT_EXPRESSION_ITEM), "hash(", ")"));
-    tableMap.put("SCHEMA.TABLE".toUpperCase(), "(SELECT * FROM SCHEMA.TABLE)");
+    tableMap.put("SCHEMA.TABLE", "(SELECT * FROM SCHEMA.TABLE)");
   }
 
   @After
@@ -35,7 +35,7 @@ public class SensitiveExpressionReplacerTest {
     Statement statement = CCJSqlParserUtil.parse("select t.a as ta,t.* from schema.table t");
     statement.accept(SensitiveStatementReplacerFactory.create(itemMap, sb, tableMap));
 //    System.out.println(sb);
-    Assert.assertEquals("SELECT hash(t.a) AS ta, t.* FROM (SELECT * FROM SCHEMA.TABLE) t", sb);
+    Assert.assertEquals("SELECT hash(t.a) AS ta, t.* FROM (SELECT * FROM SCHEMA.TABLE) t", sb.toString());
   }
 
 }

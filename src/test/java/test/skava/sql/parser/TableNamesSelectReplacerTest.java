@@ -29,7 +29,7 @@ public class TableNamesSelectReplacerTest {
     Statement statement = CCJSqlParserUtil.parse("select t.* from schema.table t");
     statement.accept(TableNamesStatementReplacerFactory.create(sb, tableMap));
 //    System.out.println(sb);
-    Assert.assertEquals("SELECT t.* FROM (SELECT * FROM SCHEMA.TABLE) t", sb);
+    Assert.assertEquals("SELECT t.* FROM (SELECT * FROM SCHEMA.TABLE) t", sb.toString());
   }
 
 }
