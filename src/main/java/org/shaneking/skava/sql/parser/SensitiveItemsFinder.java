@@ -6,6 +6,7 @@
  */
 package org.shaneking.skava.sql.parser;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,45 +38,161 @@ import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import org.shaneking.skava.ling.collect.Tuple;
+import org.shaneking.skava.ling.lang.String0;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Precondition: explain pass
- *
- * Find all select items within an select(or select in insert) statement.
+ * Order: inter -> outer
+ * Focus:
+ * 1.select item (x.y)
+ * 2.column transformed
  * <p>
- * UnSupport: update t1 set c1 = t2.c2 from t2 where t2.id = t1.id
- * ...
+ * https://www.postgresql.org/docs/current/static/sql-select.html
+ * [ WITH [ RECURSIVE ] with_query [, ...] ]
+ * SELECT [ ALL | DISTINCT [ ON ( expression [, ...] ) ] ]
+ * [ * | expression [ [ AS ] output_name ] [, ...] ]
+ * [ FROM from_item [, ...] ]
+ * [ WHERE condition ]
+ * [ GROUP BY grouping_element [, ...] ]
+ * [ HAVING condition [, ...] ]
+ * [ WINDOW window_name AS ( window_definition ) [, ...] ]
+ * [ { UNION | INTERSECT | EXCEPT } [ ALL | DISTINCT ] select ]
+ * [ ORDER BY expression [ ASC | DESC | USING operator ] [ NULLS { FIRST | LAST } ] [, ...] ]
+ * [ LIMIT { count | ALL } ]
+ * [ OFFSET start [ ROW | ROWS ] ]
+ * [ FETCH { FIRST | NEXT } [ count ] { ROW | ROWS } ONLY ]
+ * [ FOR { UPDATE | NO KEY UPDATE | SHARE | KEY SHARE } [ OF table_name [, ...] ] [ NOWAIT | SKIP LOCKED ] [...] ]
+ * <p>
+ * where from_item can be one of:
+ * <p>
+ * [ ONLY ] table_name [ * ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+ * [ TABLESAMPLE sampling_method ( argument [, ...] ) [ REPEATABLE ( seed ) ] ]
+ * [ LATERAL ] ( select ) [ AS ] alias [ ( column_alias [, ...] ) ]
+ * with_query_name [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+ * [ LATERAL ] function_name ( [ argument [, ...] ] )
+ * [ WITH ORDINALITY ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+ * [ LATERAL ] function_name ( [ argument [, ...] ] ) [ AS ] alias ( column_definition [, ...] )
+ * [ LATERAL ] function_name ( [ argument [, ...] ] ) AS ( column_definition [, ...] )
+ * [ LATERAL ] ROWS FROM( function_name ( [ argument [, ...] ] ) [ AS ( column_definition [, ...] ) ] [, ...] )
+ * [ WITH ORDINALITY ] [ [ AS ] alias [ ( column_alias [, ...] ) ] ]
+ * from_item [ NATURAL ] join_type from_item [ ON join_condition | USING ( join_column [, ...] ) ]
+ * <p>
+ * and grouping_element can be one of:
+ * <p>
+ * ( )
+ * expression
+ * ( expression [, ...] )
+ * ROLLUP ( { expression | ( expression [, ...] ) } [, ...] )
+ * CUBE ( { expression | ( expression [, ...] ) } [, ...] )
+ * GROUPING SETS ( grouping_element [, ...] )
+ * <p>
+ * and with_query is:
+ * <p>
+ * with_query_name [ ( column_name [, ...] ) ] AS ( select | values | insert | update | delete )
+ * <p>
+ * TABLE [ ONLY ] table_name [ * ]
  */
 public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, StatementVisitor {
 
+  public static final String PATH_OF_SELECT = "Select";
+  public static final String PATH_OF_SELECT_EXPRESSION_ITEM = "SelectExpressionItem";
+  public static final String PATH_OF_SUB_SELECT = "SubSelect";
+  public static final String PATH_OF_WITH_ITEM = "WithItem";
   private static final String NOT_SUPPORTED_STATEMENT_TYPE_YET = "Not supported statement type yet";
   private static final String NOT_SUPPORTED_EXPRESSION_YET = "Not supported expression yet";
   private static final String NOT_SUPPORTED_EXPRESSION_LIST_YET = "Not supported expression list yet";
+  private static final String NOT_SUPPORTED_SELECT_ITEM_LIST_IN_WITH_ITEM_YET = "Not supported select item list in with item yet";
   private static final String NOT_SUPPORTED_FROM_ITEM_TYPE_YET = "Not supported from item type yet";
   private static final String NOT_SUPPORTED_WITH_ITEM_YET = "Not supported with item yet";
   private static final String THE_COLUMN_MUST_BE_LIKE_X_Y = "The column must be like x.y";
   private static final String THE_ALIAS_CONFLICTED = "The alias conflicted";
   private static final String MUST_DEFINE_ALIAS = "Must define alias";
+  /**
+   * one aliasTableName mapping multiple realTableName
+   * one alias/readColumnName/* mapping multiple realColumnName
+   * lifecycle: just store in select or subSelect
+   * Map<aliasTable, Tuple.Pair<List<realTable>, Map<alias/realColumn/*, List<Tuple.Quadruple<realTable, realColumn, path, transformed>>>>>
+   */
+  @Getter
+  @Setter
+  private Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = Maps.newHashMap();
+  /**
+   * SensitiveItemsFinderPath
+   * <p>
+   * (Sub)Select/WithItem/SelectExpressionItem
+   */
+  @Getter
+  private Stack<String> pathStack = new Stack<>();
+  /**
+   * can't handle itemMap in select expression item
+   * <p>
+   * null:out select expression item
+   * String0.EMPTY:in select expression item without alias
+   * alias:in select expression item with alias
+   */
+  private String selectExpressionItemAlias = null;
 
-  private int deep = 0;
-
+  /**
+   * In (Sub)Select of selectExpressionItem: table can see withStack, column can see selectExpressionItemStack.
+   * <p>
+   * SELECT (select (select a.host+b.host+c.host as c3 from mysql.user c where c.user = a.user) as c2 from mysql.user b where b.user = a.user) as c1 FROM mysql.user a;
+   */
+  private Stack<Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>> selectExpressionItemStack = new Stack<>();
+  /**
+   * SensitiveItemsFinderTransformed
+   * <p>
+   * Addition...
+   */
   @Getter
   @Setter
   private boolean transformed = false;
-  //one aliasTableName mapping multiple realTableName
-  //one alias/readColumnName/* mapping multiple realColumnName
-  //lifecycle: just store in select or subSelect
-  //Map<aliasTable, Tuple.Pair<List<realTable>, Map<alias/realColumn/*, List<Tuple.Quadruple<realTable, realColumn, deep, transformed>>>>>
-  @Getter
-  private Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> items = Maps.newHashMap();
 
-  private String selectExpressionItemAlias = null;
+  /**
+   * Control access range, all (Sub)Select can see WithItemsList content, withStack exchanged by self in annotation
+   * <p>
+   * push when (Sub)Select has WithItemsList
+   * pop when exit (Sub)Select  //SensitiveItemsFinderPath
+   * <p>
+   * scenario1:with a as (...), b as (...a...) select * from (with c as (...), d as (...c...))
+   * solution1:because c can use a, but a can't use c, so need stack pull pop
+   */
+  private Stack<Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>> withStack = new Stack<>();
+
+  /**
+   * Main entry for this Tool class. A list of found tables is returned.
+   */
+  public Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> findItemMap(Statement statement) {
+    init();
+    statement.accept(this);
+    return itemMap;
+  }
+
+  private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> firstTuple(Stack<Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>> stack, String key) {
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> rtn = null;
+    if (stack.size() > 0) {
+      for (int i = stack.size() - 1; i >= 0; i--) {
+        rtn = stack.get(i).get(key);
+        if (rtn != null) {
+          break;
+        }
+      }
+    }
+    return rtn;
+  }
+
+  private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> firstTuple(String key) {
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> rtn = firstTuple(selectExpressionItemStack, key);
+    if (rtn == null) {
+      rtn = itemMap.get(key);
+    }
+    if (rtn == null) {
+      rtn = firstTuple(withStack, key);
+    }
+    return rtn;
+  }
 
   /**
    * Initializes table names collector. Important is the usage of Column instances to find table
@@ -83,39 +200,25 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
    * not be there. For complete statements only from items are used to avoid some alias as
    * tablenames.
    */
-  private SensitiveItemsFinder() {
-    deep = 0;
-    transformed = false;
-    items = Maps.newHashMap();
+  private void init() {
+    itemMap = Maps.newHashMap();
+    pathStack = new Stack<>();
     selectExpressionItemAlias = null;
+    selectExpressionItemStack = new Stack<>();
+    transformed = false;
+    withStack = new Stack<>();
   }
 
-  /**
-   * Main entry for this Tool class. A list of found tables is returned.
-   */
-  public static Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> getItemMap(Statement statement) {
-    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    statement.accept(sensitiveItemsFinder);
-    return sensitiveItemsFinder.getItems();
-  }
-
-  /**
-   * Override to adapt the tableName generation (e.g. with / without schema).
-   */
-  private String fullTableName(Table table) {
-    return table.getFullyQualifiedName();
-  }
-
-  private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> mergeAliasTableMap(Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> columns) {
+  Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> mergeAliasTableMap(Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> columns) {
     return mergeAliasTableTuplePairCollection(columns.values());
   }
 
-  private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> mergeAliasTableTuplePairCollection(@NonNull Collection<Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> collection) {
+  Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> mergeAliasTableTuplePairCollection(@NonNull Collection<Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> collection) {
     final Set<String> rtnRealTableSet = Sets.newHashSet();
-    final Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> rtnAliasColumnMap = Maps.newHashMap();
+    final Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>> rtnAliasColumnMap = Maps.newHashMap();
     collection.forEach(realTableTuple -> {
       rtnRealTableSet.addAll(Tuple.getFirst(realTableTuple));
-      Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(realTableTuple);
+      Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>> aliasColumnMap = Tuple.getSecond(realTableTuple);
       aliasColumnMap.keySet().forEach(aliasColumn -> {
         if (rtnAliasColumnMap.get(aliasColumn) == null) {
           rtnAliasColumnMap.put(aliasColumn, aliasColumnMap.get(aliasColumn));
@@ -127,68 +230,77 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     return Tuple.of(rtnRealTableSet, rtnAliasColumnMap);
   }
 
-  private void processFromItem(@NonNull FromItem fromItem, Alias alias) {
-    String aliasTableName = null;
-    if (alias != null && alias.getName() != null) {
-      aliasTableName = alias.getName().toUpperCase();
+//  private void processFromItem(@NonNull FromItem fromItem, Alias alias) {
+//    String aliasTableName = null;
+//    if (alias != null && alias.getName() != null) {
+//      aliasTableName = alias.getName().toUpperCase();
+//    }
+//    if (aliasTableName == null && fromItem.getAlias() != null && fromItem.getAlias().getName() != null) {
+//      aliasTableName = fromItem.getAlias().getName().toUpperCase();
+//    }
+//    if (aliasTableName == null) {
+//      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(Lists.newArrayList(MUST_DEFINE_ALIAS, fromItem)));
+//    } else {
+//      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> handleItemMap = itemMap;
+//      itemMap = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>newHashMap();
+//      fromItem.accept(this);
+//      if (handleItemMap.get(aliasTableName) == null) {
+//        handleItemMap.put(aliasTableName, mergeAliasTableMap(itemMap));
+//      } else {
+//        handleItemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(itemMap), handleItemMap.get(aliasTableName))));
+//      }
+//      itemMap = handleItemMap;
+//    }
+//  }
+//
+//  /**
+//   * add subSelect layer for alias
+//   */
+//  private void processSubSelect(@NonNull SubSelect subSelect, Alias alias) {
+//    String aliasTableName = null;
+//    if (alias != null && alias.getName() != null) {
+//      aliasTableName = alias.getName().toUpperCase();
+//    }
+//    if (aliasTableName == null && subSelect.getAlias() != null && subSelect.getAlias().getName() != null) {
+//      aliasTableName = subSelect.getAlias().getName().toUpperCase();
+//    }
+//    if (aliasTableName == null) {
+//      subSelect.getSelectBody().accept(this);
+//    } else {
+//      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> handleItemMap = itemMap;
+//      itemMap = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>newHashMap();
+//      subSelect.getSelectBody().accept(this);
+//      if (handleItemMap.get(aliasTableName) == null) {
+//        handleItemMap.put(aliasTableName, mergeAliasTableMap(itemMap));
+//      } else {
+//        handleItemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(itemMap), handleItemMap.get(aliasTableName))));
+//      }
+//      itemMap = handleItemMap;
+//    }
+//  }
+
+  /**
+   * add withItemsList layer
+   */
+  private void processWithItemsList(@NonNull List<WithItem> withItemsList) {
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> handleItemMap = itemMap;
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> withItemMap = Maps.newHashMap();
+    for (WithItem withItem : withItemsList) {
+      itemMap = Maps.newHashMap();
+      withItem.accept(this);
+      withItemMap.put(withItem.getName().toUpperCase(), mergeAliasTableMap(itemMap));
     }
-    if (aliasTableName == null && fromItem.getAlias() != null && fromItem.getAlias().getName() != null) {
-      aliasTableName = fromItem.getAlias().getName().toUpperCase();
-    }
-    if (aliasTableName == null) {
-      throw new UnsupportedOperationException(MUST_DEFINE_ALIAS);
-    } else {
-      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> handleItems = items;
-      items = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newHashMap();
-      deep++;
-      fromItem.accept(this);
-      deep--;
-      if (handleItems.get(aliasTableName) == null) {
-        handleItems.put(aliasTableName, mergeAliasTableMap(items));
-      } else {
-        handleItems.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(items), handleItems.get(aliasTableName))));
-      }
-      items = handleItems;
-    }
+    //key point of the method
+    withStack.push(withItemMap);
+    itemMap = handleItemMap;
   }
 
-  private void processSelectBody(@NonNull SelectBody selectBody) {
-    deep++;
-    selectBody.accept(this);
-    deep--;
+  private String updatePath(String path) {
+    return path.endsWith(PATH_OF_SELECT_EXPRESSION_ITEM) ? path : (path.split(String0.ARROW).length < pathStack.size() ? path : Joiner.on(String0.ARROW).join(pathStack));
   }
 
-  private void processSubSelect(@NonNull SubSelect subSelect, Alias alias) {
-    String aliasTableName = null;
-    if (alias != null && alias.getName() != null) {
-      aliasTableName = alias.getName().toUpperCase();
-    }
-    if (aliasTableName == null && subSelect.getAlias() != null && subSelect.getAlias().getName() != null) {
-      aliasTableName = subSelect.getAlias().getName().toUpperCase();
-    }
-    if (aliasTableName == null) {
-      processSelectBody(subSelect.getSelectBody());
-    } else {
-      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> handleItems = items;
-      items = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newHashMap();
-      processSelectBody(subSelect.getSelectBody());
-      if (handleItems.get(aliasTableName) == null) {
-        handleItems.put(aliasTableName, mergeAliasTableMap(items));
-      } else {
-        handleItems.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(items), handleItems.get(aliasTableName))));
-      }
-      items = handleItems;
-    }
-  }
-
-  private void processWithItem(@NonNull WithItem withItem) {
-    deep++;
-    withItem.accept(this);
-    deep--;
-  }
-
-  private Set<Tuple.Quadruple<String, String, Integer, Boolean>> updateDeepAndTransformed(@NonNull Set<Tuple.Quadruple<String, String, Integer, Boolean>> realColumnSet) {
-    return realColumnSet.stream().map((tuple) -> Tuple.of(Tuple.getFirst(tuple), Tuple.getSecond(tuple), Math.min(deep, Tuple.getThird(tuple)), transformed || Tuple.getFourth(tuple))).collect(Collectors.toSet());
+  private Set<Tuple.Quadruple<String, String, String, Boolean>> updatePathAndTransformed(@NonNull Set<Tuple.Quadruple<String, String, String, Boolean>> realColumnSet) {
+    return realColumnSet.stream().map((tuple) -> Tuple.of(Tuple.getFirst(tuple), Tuple.getSecond(tuple), updatePath(Tuple.getThird(tuple)), transformed || Tuple.getFourth(tuple))).collect(Collectors.toSet());
   }
 
   private void visitBinaryExpression(BinaryExpression binaryExpression) {
@@ -196,28 +308,22 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     binaryExpression.getRightExpression().accept(this);
   }
 
+  @SensitiveItemsFinderPath
   @Override
   public void visit(Select select) {
-    if (select.getWithItemsList() != null) {
-      for (WithItem withItem : select.getWithItemsList()) {
-        processWithItem(withItem);
-      }
+    if (select.getWithItemsList() != null && select.getWithItemsList().size() > 0) {
+      processWithItemsList(select.getWithItemsList());
     }
-    processSelectBody(select.getSelectBody());
+    select.getSelectBody().accept(this);
   }
 
+  @SensitiveItemsFinderPath
   @Override
   public void visit(WithItem withItem) {
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> handleItems = items;
-    items = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newHashMap();
-    processSelectBody(withItem.getSelectBody());
-    String aliasTableName = withItem.getName().toUpperCase();
-    if (handleItems.get(aliasTableName) == null) {
-      handleItems.put(aliasTableName, mergeAliasTableMap(items));
-    } else {
-      handleItems.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(items), handleItems.get(aliasTableName))));
+    if (withItem.getWithItemList() != null) {
+      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(Lists.newArrayList(NOT_SUPPORTED_SELECT_ITEM_LIST_IN_WITH_ITEM_YET, withItem)));
     }
-    items = handleItems;
+    withItem.getSelectBody().accept(this);
   }
 
   @Override
@@ -251,43 +357,78 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
 //    }
   }
 
+  /**
+   * can use itemStack, or new
+   */
   @Override
   public void visit(Table tableName) {
-    String realTableName = fullTableName(tableName).toUpperCase();
+    String realTableName = tableName.getFullyQualifiedName().toUpperCase();
 
     String aliasTableName = realTableName;
     if (tableName.getAlias() != null && tableName.getAlias().getName() != null) {
       aliasTableName = tableName.getAlias().getName().toUpperCase();
     }
 
-    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> realTableTuplePair = items.get(realTableName);
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> realTableTuplePair = firstTuple(realTableName);
     if (realTableTuplePair == null) {
-      if (items.get(aliasTableName) != null) {
-        throw new UnsupportedOperationException(THE_ALIAS_CONFLICTED);
+      if (itemMap.get(aliasTableName) == null) {
+        itemMap.put(aliasTableName, Tuple.of(Sets.newHashSet(realTableName), Maps.newHashMap()));
       }
-      items.put(aliasTableName, Tuple.of(Sets.newHashSet(realTableName), Maps.newHashMap()));
+      //ignore else
     } else {
-      //@see test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListWith()
-      //WITH TESTWITH as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT TESTWITH.* FROM TESTWITH
-      //above ignore
-
-
-      //@see test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListWithStmt()
-      //WITH TESTWITH as (SELECT ALIAS_TABLE1.* FROM MY_TABLE1 as ALIAS_TABLE1) SELECT T.* FROM TESTWITH AS T
-      if (!aliasTableName.equalsIgnoreCase(realTableName)) {
-        items.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.<Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>>newArrayList(realTableTuplePair)));
+      if (itemMap.get(aliasTableName) == null) {
+        //for clone
+        itemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.<Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>newArrayList(realTableTuplePair)));
+      } else {
+        itemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(itemMap.get(aliasTableName), realTableTuplePair)));
       }
     }
   }
 
+  //  @SensitiveItemsFinderSub
+  @SensitiveItemsFinderPath
   @Override
   public void visit(SubSelect subSelect) {
-    if (subSelect.getWithItemsList() != null) {
-      for (WithItem withItem : subSelect.getWithItemsList()) {
-        processWithItem(withItem);
-      }
+    //1
+    String handleSelectExpressionItemAlias = selectExpressionItemAlias;
+    selectExpressionItemAlias = null;
+    //2
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> handleItemMap = null;
+    if (handleSelectExpressionItemAlias == null) {
+      //if not in select expression item, need handle
+      handleItemMap = itemMap;
+    } else {
+      //if in select expression item, will two stack, he he
+      selectExpressionItemStack.push(itemMap);
     }
-    processSubSelect(subSelect, subSelect.getAlias());
+    itemMap = Maps.<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>>newHashMap();
+
+    //process
+    if (subSelect.getWithItemsList() != null && subSelect.getWithItemsList().size() > 0) {
+      processWithItemsList(subSelect.getWithItemsList());
+    }
+    subSelect.getSelectBody().accept(this);
+
+    //2
+    String aliasTableName = (subSelect.getAlias() != null && subSelect.getAlias().getName() != null) ? subSelect.getAlias().getName().toUpperCase() : null;
+    if (Strings.isNullOrEmpty(aliasTableName)) {
+      aliasTableName = String0.ASTERISK;
+    }
+    if (handleSelectExpressionItemAlias != null) {
+      handleItemMap = selectExpressionItemStack.pop();
+    }
+    if (handleItemMap.get(aliasTableName) == null) {
+      handleItemMap.put(aliasTableName, mergeAliasTableMap(itemMap));
+    } else {
+      handleItemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(itemMap), handleItemMap.get(aliasTableName))));
+    }
+    itemMap = handleItemMap;
+    //1
+    selectExpressionItemAlias = handleSelectExpressionItemAlias;
+    //0: if WithItem not used, will ignore
+    if (subSelect.getWithItemsList() != null && subSelect.getWithItemsList().size() > 0) {
+      withStack.pop();
+    }
   }
 
   //a+b as c
@@ -314,38 +455,38 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     if (tableColumn.getTable() == null) {
       throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
     }
-    String aliasTableName = fullTableName(tableColumn.getTable());
+    String aliasTableName = tableColumn.getTable().getFullyQualifiedName();
     if (Strings.isNullOrEmpty(aliasTableName)) {
       throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
     }
     aliasTableName = aliasTableName.toUpperCase();
 
-    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> aliasTableTuple = items.get(aliasTableName);
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> aliasTableTuple = firstTuple(aliasTableName);
     if (aliasTableTuple == null) {
       //schema.table.column or schema.table.*
       aliasTableTuple = Tuple.of(Sets.newHashSet(aliasTableName), Maps.newHashMap());
-      items.put(aliasTableName, aliasTableTuple);
+      itemMap.put(aliasTableName, aliasTableTuple);
     }
 
-    Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+    Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
     String columnName = tableColumn.getColumnName().toUpperCase();
-    Set<Tuple.Quadruple<String, String, Integer, Boolean>> columnSet = aliasColumnMap.get(columnName);
+    Set<Tuple.Quadruple<String, String, String, Boolean>> columnSet = aliasColumnMap.get(columnName);
     if (columnSet == null) {
       //columnName is realColumnName
-      aliasColumnMap.put(columnName, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
+      aliasColumnMap.put(columnName, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), Joiner.on(String0.ARROW).join(pathStack), transformed)).collect(Collectors.toSet()));
     } else {
       //columnName is aliasColumnName
-      aliasColumnMap.put(columnName, updateDeepAndTransformed(columnSet));
+      aliasColumnMap.put(columnName, updatePathAndTransformed(columnSet));
     }
 
     if (!Strings.isNullOrEmpty(selectExpressionItemAlias)) {
-      Set<Tuple.Quadruple<String, String, Integer, Boolean>> aliasColumnSet = aliasColumnMap.get(selectExpressionItemAlias);
+      Set<Tuple.Quadruple<String, String, String, Boolean>> aliasColumnSet = aliasColumnMap.get(selectExpressionItemAlias);
       if (aliasColumnSet == null) {
         //(a.b + a.c) as a.d : a.b
-        aliasColumnMap.put(selectExpressionItemAlias, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
+        aliasColumnMap.put(selectExpressionItemAlias, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), Joiner.on(String0.ARROW).join(pathStack), transformed)).collect(Collectors.toSet()));
       } else {
         //(a.b + a.c) as a.d : a.c
-        aliasColumnSet.addAll(Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), deep, transformed)).collect(Collectors.toSet()));
+        aliasColumnSet.addAll(Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), Joiner.on(String0.ARROW).join(pathStack), transformed)).collect(Collectors.toSet()));
       }
     }
 //    if (allowColumnProcessing && tableColumn.getTable() != null && tableColumn.getTable().getName() != null) {
@@ -561,19 +702,24 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
 
   @Override
   public void visit(AllComparisonExpression allComparisonExpression) {
-    processSubSelect(allComparisonExpression.getSubSelect(), null);
+//    processSubSelect(allComparisonExpression.getSubSelect(), null);
+    allComparisonExpression.getSubSelect().accept((ExpressionVisitor) this);
   }
 
   @Override
   public void visit(AnyComparisonExpression anyComparisonExpression) {
-    processSubSelect(anyComparisonExpression.getSubSelect(), null);
+//    processSubSelect(anyComparisonExpression.getSubSelect(), null);
+    anyComparisonExpression.getSubSelect().accept((ExpressionVisitor) this);
   }
 
+  @SensitiveItemsFinderAsterisk
   @Override
   public void visit(SubJoin subjoin) {
-    processFromItem(subjoin.getLeft(), subjoin.getAlias());
+//    processFromItem(subjoin.getLeft(), subjoin.getAlias());
+    subjoin.getLeft().accept(this);
     for (Join join : subjoin.getJoinList()) {
-      processFromItem(join.getRightItem(), null);
+//      processFromItem(join.getRightItem(), null);
+      join.getRightItem().accept(this);
     }
   }
 
@@ -632,6 +778,9 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     //just force select & insert, comments by shaneking @ 180912
   }
 
+  /**
+   * TODO:select sub(t.a,1,3) from (select t1.a from tab1 union select t2.m from tab2) t
+   */
   @Override
   public void visit(SetOperationList list) {
     for (SelectBody plainSelect : list.getSelects()) {
@@ -645,9 +794,11 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     //unknown expression, fix when meeting
   }
 
+  @SensitiveItemsFinderAsterisk
   @Override
   public void visit(LateralSubSelect lateralSubSelect) {
-    processSubSelect(lateralSubSelect.getSubSelect(), lateralSubSelect.getAlias());
+//    processSubSelect(lateralSubSelect.getSubSelect(), lateralSubSelect.getAlias());
+    lateralSubSelect.getSubSelect().accept((ExpressionVisitor) this);
   }
 
   @Override
@@ -718,41 +869,42 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
   @Override
   public void visit(AllTableColumns allTableColumns) {
     if (allTableColumns.getTable() == null) {
-      throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
+      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, allTableColumns));
     }
-    String aliasTableName = fullTableName(allTableColumns.getTable());
+    String aliasTableName = allTableColumns.getTable().getFullyQualifiedName();
     if (Strings.isNullOrEmpty(aliasTableName)) {
-      throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
+      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, allTableColumns));
     }
     aliasTableName = aliasTableName.toUpperCase();
 
-    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>> aliasTableTuple = items.get(aliasTableName);
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>> aliasTableTuple = firstTuple(aliasTableName);
     if (aliasTableTuple == null) {
       //schema.table.*
       aliasTableTuple = Tuple.of(Sets.newHashSet(aliasTableName), Maps.newHashMap());
-      items.put(aliasTableName, aliasTableTuple);
+      itemMap.put(aliasTableName, aliasTableTuple);
     }
-
-    Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
-    Set<Tuple.Quadruple<String, String, Integer, Boolean>> aliasColumnSet = aliasColumnMap.get("*");
+    //todo ?
+    Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+    Set<Tuple.Quadruple<String, String, String, Boolean>> aliasColumnSet = aliasColumnMap.get(String0.ASTERISK);
     if (aliasColumnSet == null) {
       //columnName is realColumnName
-      Set<Tuple.Quadruple<String, String, Integer, Boolean>> allAliasColumnSet = aliasColumnMap.values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
+      Set<Tuple.Quadruple<String, String, String, Boolean>> allAliasColumnSet = aliasColumnMap.values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
       if (allAliasColumnSet.size() == 0) {
-        aliasColumnMap.put("*", Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, "*", deep, transformed)).collect(Collectors.toSet()));
+        aliasColumnMap.put(String0.ASTERISK, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, String0.ASTERISK, Joiner.on(String0.ARROW).join(pathStack), transformed)).collect(Collectors.toSet()));
       } else {
-        aliasColumnMap.put("*", updateDeepAndTransformed(allAliasColumnSet));
+        aliasColumnMap.put(String0.ASTERISK, updatePathAndTransformed(allAliasColumnSet));
       }
     } else {
       //columnName is aliasColumnName
-      aliasColumnMap.put("*", updateDeepAndTransformed(aliasColumnSet));
+      aliasColumnMap.put(String0.ASTERISK, updatePathAndTransformed(aliasColumnSet));
     }
   }
 
+  @SensitiveItemsFinderPath
   @Override
   public void visit(SelectExpressionItem item) {
     String handleSelectExpressionItemAlias = selectExpressionItemAlias;
-    selectExpressionItemAlias = (item.getAlias() == null ? null : (item.getAlias().getName() == null ? null : item.getAlias().getName().toUpperCase()));
+    selectExpressionItemAlias = (item.getAlias() == null ? String0.EMPTY : (item.getAlias().getName() == null ? String0.EMPTY : item.getAlias().getName().toUpperCase()));
     item.getExpression().accept(this);
     selectExpressionItemAlias = handleSelectExpressionItemAlias;
   }
@@ -835,7 +987,7 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     //just force select & insert, comments by shaneking @ 180912
 //    visit(insert.getTable());
     if (insert.getItemsList() != null) {
-      //TODO test.skava.sql.parser.SelectItemsFinderTest.testGetSelectItemListFromInsert()
+      //TODO test.skava.sql.parser.SensitiveItemsFinderTest.testGetItemListFromInsert()
       insert.getItemsList().accept(this);
     }
     if (insert.getSelect() != null) {
@@ -985,8 +1137,10 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     //just force select & insert, comments by shaneking @ 180912
   }
 
+  @SensitiveItemsFinderAsterisk
   @Override
   public void visit(ParenthesisFromItem parenthesis) {
-    processFromItem(parenthesis.getFromItem(), parenthesis.getAlias());
+//    processFromItem(parenthesis.getFromItem(), parenthesis.getAlias());
+    parenthesis.getFromItem().accept(this);
   }
 }

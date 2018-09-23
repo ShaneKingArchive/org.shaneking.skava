@@ -82,6 +82,8 @@ public final class String0 {
   public static final String MALE = "♂";
   public static final String FEMALE = "♀";
 
+  public static final String EMPTY = "";
+
   /**
    * firstName -&gt; first_name
    */

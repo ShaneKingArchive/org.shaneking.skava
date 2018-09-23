@@ -31,10 +31,11 @@ public class SensitiveItemsFinderTest {
     // interested in SELECTS
     if (statement instanceof Select) {
       Select selectStatement = (Select) statement;
-//      SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(selectStatement);
+      SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
       System.out.println(itemMap);
-      Assert.assertEquals("{MT2=([MY_TABLE2],{}), MT1=([MY_TABLE1],{A=[(MY_TABLE1,A,1,false)], B=[(MY_TABLE1,A,1,false)]}), MT4=([MY_TABLE4],{}), MT3=([MY_TABLE3],{*=[(MY_TABLE3,*,2,false)]})}", itemMap.toString());
+//      Assert.assertEquals("{MT2=([MY_TABLE2],{}), MT1=([MY_TABLE1],{A=[(MY_TABLE1,A,1,false)], B=[(MY_TABLE1,A,1,false)]}), MT4=([MY_TABLE4],{}), MT3=([MY_TABLE3],{*=[(MY_TABLE3,*,2,false)]})}", itemMap.toString());
+      Assert.assertEquals("{MT2=([MY_TABLE2],{}), MT1=([MY_TABLE1],{A=[(MY_TABLE1,A,Select→SelectExpressionItem,false)], B=[(MY_TABLE1,A,Select→SelectExpressionItem,false)]}), MT4=([MY_TABLE4],{}), MT3=([MY_TABLE3],{*=[(MY_TABLE3,*,Select→SubSelect,false)]})}", itemMap.toString());
 //      assertEquals(4, selectItemsList.size());
 //      int i = 1;
 //      for (Iterator iter = selectItemsList.iterator(); iter.hasNext(); i++) {
@@ -53,10 +54,11 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     if (statement instanceof Select) {
-//      SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+      SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+      Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
       System.out.println(itemMap);
-      Assert.assertEquals("{MT2=([MY_TABLE2],{D=[(MY_TABLE2,D,1,false)]}), MT1=([MY_TABLE1],{A=[(MY_TABLE1,A,1,true)], B=[(MY_TABLE1,C,1,true), (MY_TABLE1,A,1,true)], C=[(MY_TABLE1,C,1,true)]}), MT4=([MY_TABLE4],{}), MT3=([MY_TABLE3],{*=[(MY_TABLE3,*,2,false)]})}", itemMap.toString());
+//      Assert.assertEquals("{MT2=([MY_TABLE2],{D=[(MY_TABLE2,D,1,false)]}), MT1=([MY_TABLE1],{A=[(MY_TABLE1,A,1,true)], B=[(MY_TABLE1,C,1,true), (MY_TABLE1,A,1,true)], C=[(MY_TABLE1,C,1,true)]}), MT4=([MY_TABLE4],{}), MT3=([MY_TABLE3],{*=[(MY_TABLE3,*,2,false)]})}", itemMap.toString());
+      Assert.assertEquals("{MT2=([MY_TABLE2],{D=[(MY_TABLE2,D,Select→SelectExpressionItem,false)]}), MT1=([MY_TABLE1],{A=[(MY_TABLE1,A,Select→SelectExpressionItem,true)], B=[(MY_TABLE1,A,Select→SelectExpressionItem,true), (MY_TABLE1,C,Select→SelectExpressionItem,true)], C=[(MY_TABLE1,C,Select→SelectExpressionItem,true)]}), MT4=([MY_TABLE4],{}), MT3=([MY_TABLE3],{*=[(MY_TABLE3,*,Select→SubSelect,false)]})}", itemMap.toString());
     }
 
   }
@@ -67,10 +69,11 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(selectStatement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     System.out.println(itemMap);
-    Assert.assertEquals("{MY_TABLE1=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+//    Assert.assertEquals("{MY_TABLE1=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+    Assert.assertEquals("{MY_TABLE1=([MY_TABLE1],{*=[(MY_TABLE1,*,Select,false)]})}", itemMap.toString());
 //    assertEquals(1, tableList.size());
 //    assertEquals("MY_TABLE1", (String) tableList.get(0));
   }
@@ -81,10 +84,11 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(selectStatement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     System.out.println(itemMap);
-    Assert.assertEquals("{ALIAS_TABLE1=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+//    Assert.assertEquals("{ALIAS_TABLE1=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+    Assert.assertEquals("{ALIAS_TABLE1=([MY_TABLE1],{*=[(MY_TABLE1,*,Select,false)]})}", itemMap.toString());
 //    assertEquals(1, tableList.size());
 //    assertEquals("MY_TABLE1", (String) tableList.get(0));
   }
@@ -96,10 +100,11 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(selectStatement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     System.out.println(itemMap);//{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}
-    Assert.assertEquals("{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+//    Assert.assertEquals("{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+    Assert.assertEquals("{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,Select,false)]})}", itemMap.toString());
 //    assertEquals(1, tableList.size());
 //    assertEquals("MY_TABLE1", (String) tableList.get(0));
   }
@@ -111,10 +116,11 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(selectStatement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     System.out.println(itemMap);//{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,2,false)]}), T=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}
-    Assert.assertEquals("{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,2,false)]}), T=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+//    Assert.assertEquals("{TESTWITH=([MY_TABLE1],{*=[(MY_TABLE1,*,2,false)]}), T=([MY_TABLE1],{*=[(MY_TABLE1,*,1,false)]})}", itemMap.toString());
+    Assert.assertEquals("{T=([MY_TABLE1],{*=[(MY_TABLE1,*,Select,false)]})}", itemMap.toString());
 //    assertEquals(1, tableList.size());
 //    assertEquals("MY_TABLE1", (String) tableList.get(0));
   }
@@ -125,10 +131,11 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(selectStatement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     System.out.println(itemMap);
-    Assert.assertEquals("{MT1=([MY_TABLE1],{}), AL=([MY_TABLE2],{A=[(MY_TABLE2,A,2,false)], *=[(MY_TABLE2,A,1,false)]})}", itemMap.toString());
+//    Assert.assertEquals("{MT1=([MY_TABLE1],{}), AL=([MY_TABLE2],{A=[(MY_TABLE2,A,2,false)], *=[(MY_TABLE2,A,1,false)]})}", itemMap.toString());
+    Assert.assertEquals("{MT1=([MY_TABLE1],{}), AL=([MY_TABLE2],{A=[(MY_TABLE2,A,Select→SubSelect→SelectExpressionItem,false)], *=[(MY_TABLE2,A,Select→SubSelect→SelectExpressionItem,false)]})}", itemMap.toString());
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
 //    assertTrue(tableList.contains("MY_TABLE2"));
@@ -140,8 +147,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Delete deleteStatement = (Delete) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -154,8 +161,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Delete deleteStatement = (Delete) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(1, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -167,8 +174,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Delete deleteStatement = (Delete) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -181,8 +188,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Insert insertStatement = (Insert) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -195,8 +202,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Insert insertStatement = (Insert) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(1, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -208,8 +215,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Replace replaceStatement = (Replace) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -222,8 +229,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Update updateStatement = (Update) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -236,8 +243,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Update updateStatement = (Update) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(2, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));
@@ -250,8 +257,8 @@ public class SensitiveItemsFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Update updateStatement = (Update) statement;
-//    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
-    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Integer, Boolean>>>>> itemMap = SensitiveItemsFinder.getItemMap(statement);
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, String, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(statement);
     System.out.println(itemMap);
 //    assertEquals(4, tableList.size());
 //    assertTrue(tableList.contains("MY_TABLE1"));

@@ -6,6 +6,8 @@
  */
 package org.shaneking.skava.sql.annotation;
 
+import org.shaneking.skava.ling.lang.String0;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -24,7 +26,7 @@ public @interface SKColumn {
   /**
    * (Optional) The name of the column. Defaults to the property or field name.
    */
-  String name() default "";
+  String name() default String0.EMPTY;
 
   /**
    * (Optional) The column length. (Applies only if a string-valued column is used.)

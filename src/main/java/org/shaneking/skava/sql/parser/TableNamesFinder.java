@@ -6,7 +6,6 @@
  */
 package org.shaneking.skava.sql.parser;
 
-import lombok.Getter;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -43,9 +42,7 @@ import java.util.List;
 public class TableNamesFinder implements SelectVisitor, FromItemVisitor, ExpressionVisitor, ItemsListVisitor, SelectItemVisitor, StatementVisitor {
 
   private static final String NOT_SUPPORTED_STATEMENT_TYPE_YET = "Not supported statement type yet";
-  private static final String NOT_SUPPORTED_WITH_STATEMENT_YET = "Not supported with statement yet";
   //Tuple.Pair<SCHEMA.TABLE, ALIAS>
-  @Getter
   private List<Tuple.Pair<String, String>> tables;
   //select table.column from table; the table is tableName in Column instance
   //select t.column from table t; the t is tableName in Column instance too
@@ -58,29 +55,15 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
   private List<String> otherItemNames;
 
   /**
-   * Initializes table names collector. Important is the usage of Column instances to find table
-   * names. This is only allowed for expression parsing, where a better place for tablenames could
-   * not be there. For complete statements only from items are used to avoid some alias as
-   * tablenames.
-   *
-   * @param allowColumnProcessing
-   */
-  private TableNamesFinder(boolean allowColumnProcessing) {
-    otherItemNames = new ArrayList<String>();
-    tables = new ArrayList<Tuple.Pair<String, String>>();
-    this.allowColumnProcessing = allowColumnProcessing;
-  }
-
-  /**
    * Main entry for this Tool class. A list of found tables is returned.
    *
    * @param expr
    * @return
    */
-  public static List<Tuple.Pair<String, String>> getTableList(Expression expr) {
-    TableNamesFinder tableNamesFinder = new TableNamesFinder(true);
-    expr.accept(tableNamesFinder);
-    return tableNamesFinder.getTables();
+  public List<Tuple.Pair<String, String>> findTableList(Expression expr) {
+    init(true);
+    expr.accept(this);
+    return tables;
   }
 
   /**
@@ -89,10 +72,10 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    * @param statement
    * @return
    */
-  public static List<Tuple.Pair<String, String>> getTableList(Statement statement) {
-    TableNamesFinder tableNamesFinder = new TableNamesFinder(false);
-    statement.accept(tableNamesFinder);
-    return tableNamesFinder.getTables();
+  public List<Tuple.Pair<String, String>> findTableList(Statement statement) {
+    init(false);
+    statement.accept(this);
+    return tables;
   }
 
   /**
@@ -103,6 +86,20 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    */
   private String extractTableName(Table table) {
     return table.getFullyQualifiedName();
+  }
+
+  /**
+   * Initializes table names collector. Important is the usage of Column instances to find table
+   * names. This is only allowed for expression parsing, where a better place for tablenames could
+   * not be there. For complete statements only from items are used to avoid some alias as
+   * tablenames.
+   *
+   * @param allowColumnProcessing
+   */
+  private void init(boolean allowColumnProcessing) {
+    otherItemNames = new ArrayList<String>();
+    tables = new ArrayList<Tuple.Pair<String, String>>();
+    this.allowColumnProcessing = allowColumnProcessing;
   }
 
   private void visitBinaryExpression(BinaryExpression binaryExpression) {
@@ -122,9 +119,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(WithItem withItem) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_WITH_STATEMENT_YET);
-//    otherItemNames.add(withItem.getName().toLowerCase());
-//    withItem.getSelectBody().accept(this);
+    otherItemNames.add(withItem.getName().toLowerCase());
+    withItem.getSelectBody().accept(this);
   }
 
   @Override

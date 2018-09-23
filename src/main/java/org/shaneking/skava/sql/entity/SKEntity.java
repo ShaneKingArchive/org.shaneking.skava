@@ -129,7 +129,7 @@ public class SKEntity {
       tableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split("\\."))).get(0));
       tableName = "t" + (tableName.startsWith(String0.UNDERLINE) ? tableName : String0.UNDERLINE + tableName);
     } else {
-      tableName = (Strings.isNullOrEmpty(skTable.schema()) ? "" : skTable.schema() + String0.DOT) + skTable.name();
+      tableName = (Strings.isNullOrEmpty(skTable.schema()) ? String0.EMPTY : skTable.schema() + String0.DOT) + skTable.name();
     }
   }
 

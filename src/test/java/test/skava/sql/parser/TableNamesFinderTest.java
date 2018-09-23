@@ -32,7 +32,7 @@ public class TableNamesFinderTest {
     // interested in SELECTS
     if (statement instanceof Select) {
       Select selectStatement = (Select) statement;
-//      TableNamesFinder tableNamesFinder = new TableNamesFinder();
+      TableNamesFinder tableNamesFinder = new TableNamesFinder();
       net.sf.jsqlparser.util.TablesNamesFinder tablesNamesFinder = new net.sf.jsqlparser.util.TablesNamesFinder();
       List<String> tableList = tablesNamesFinder.getTableList(selectStatement);
       System.out.println(tableList);
@@ -52,7 +52,7 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
     net.sf.jsqlparser.util.TablesNamesFinder tablesNamesFinder = new net.sf.jsqlparser.util.TablesNamesFinder();
     List<String> tableList = tablesNamesFinder.getTableList(selectStatement);
     System.out.println(tableList);
@@ -66,7 +66,7 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
     net.sf.jsqlparser.util.TablesNamesFinder tablesNamesFinder = new net.sf.jsqlparser.util.TablesNamesFinder();
     List<String> tableList = tablesNamesFinder.getTableList(selectStatement);
     System.out.println(tableList);
@@ -94,7 +94,7 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Select selectStatement = (Select) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
     net.sf.jsqlparser.util.TablesNamesFinder tablesNamesFinder = new net.sf.jsqlparser.util.TablesNamesFinder();
     List<String> tableList = tablesNamesFinder.getTableList(selectStatement);
     System.out.println(tableList);
@@ -109,7 +109,7 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Delete deleteStatement = (Delete) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
     net.sf.jsqlparser.util.TablesNamesFinder tablesNamesFinder = new net.sf.jsqlparser.util.TablesNamesFinder();
     List<String> tableList = tablesNamesFinder.getTableList(deleteStatement);
     System.out.println(tableList);
@@ -125,8 +125,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Delete deleteStatement = (Delete) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(deleteStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(deleteStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null)]", tableList.toString());
 //    assertEquals(1, tableList.size());
@@ -139,8 +139,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Delete deleteStatement = (Delete) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(deleteStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(deleteStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,t1), (MY_TABLE2,t2)]", tableList.toString());
 //    assertEquals(2, tableList.size());
@@ -154,8 +154,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Insert insertStatement = (Insert) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(insertStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(insertStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null), (MY_TABLE2,null)]", tableList.toString());
 //    assertEquals(2, tableList.size());
@@ -169,8 +169,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Insert insertStatement = (Insert) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(insertStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(insertStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null)]", tableList.toString());
 //    assertEquals(1, tableList.size());
@@ -183,8 +183,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Replace replaceStatement = (Replace) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(replaceStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(replaceStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null), (MY_TABLE2,null)]", tableList.toString());
 //    assertEquals(2, tableList.size());
@@ -198,8 +198,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Update updateStatement = (Update) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(updateStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(updateStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null), (MY_TABLE2,null)]", tableList.toString());
 //    assertEquals(2, tableList.size());
@@ -213,8 +213,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Update updateStatement = (Update) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(updateStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(updateStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null), (MY_TABLE3,null)]", tableList.toString());
 //    assertEquals(2, tableList.size());
@@ -228,8 +228,8 @@ public class TableNamesFinderTest {
     net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
 
     Update updateStatement = (Update) statement;
-//    TableNamesFinder tableNamesFinder = new TableNamesFinder();
-    List<Tuple.Pair<String, String>> tableList = TableNamesFinder.getTableList(updateStatement);
+    TableNamesFinder tableNamesFinder = new TableNamesFinder();
+    List<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(updateStatement);
     System.out.println(tableList);
     Assert.assertEquals("[(MY_TABLE1,null), (MY_TABLE1,null), (MY_TABLE2,null), (MY_TABLE3,null)]", tableList.toString());
 //    assertEquals(4, tableList.size());
