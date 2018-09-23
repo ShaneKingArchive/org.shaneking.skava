@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.collect.Tuple;
@@ -33,7 +34,8 @@ public class SensitiveExpressionReplacerTest {
     StringBuilder sb = new StringBuilder();
     Statement statement = CCJSqlParserUtil.parse("select t.a as ta,t.* from schema.table t");
     statement.accept(SensitiveStatementReplacerFactory.create(itemMap, sb, tableMap));
-    System.out.println(sb);
+//    System.out.println(sb);
+    Assert.assertEquals("SELECT hash(t.a) AS ta, t.* FROM (SELECT * FROM SCHEMA.TABLE) t", sb);
   }
 
 }

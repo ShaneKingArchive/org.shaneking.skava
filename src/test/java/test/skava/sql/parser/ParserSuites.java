@@ -10,6 +10,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({SensitiveItemsFinderTest.class, TableNamesFinderTest.class})
+@Suite.SuiteClasses({SensitiveExpressionReplacerTest.class, SensitiveItemsFinderTest.class, TableNamesFinderTest.class, TableNamesSelectReplacerTest.class})
 public class ParserSuites {
 }
