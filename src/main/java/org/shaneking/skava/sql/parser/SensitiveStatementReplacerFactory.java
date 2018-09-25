@@ -10,11 +10,12 @@ import net.sf.jsqlparser.util.deparser.StatementDeParser;
 import org.shaneking.skava.ling.collect.Tuple;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 public class SensitiveStatementReplacerFactory {
 
-  public static StatementDeParser create(Map<String, Tuple.Triple<String, String, String>> itemMap, StringBuilder stringBuilder, Map<String, String> tableMap) {
+  public static StatementDeParser create(Map<String, Tuple.Triple<Set<String>, String, String>> itemMap, StringBuilder stringBuilder, Map<String, String> tableMap) {
     SensitiveExpressionReplacer expressionDeParser = new SensitiveExpressionReplacer(new Stack<String>(), itemMap);
     TableNamesSelectReplacer tableNamesSelectReplacer = new TableNamesSelectReplacer(expressionDeParser, stringBuilder, tableMap);
     expressionDeParser.setSelectVisitor(tableNamesSelectReplacer);

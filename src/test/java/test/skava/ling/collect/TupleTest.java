@@ -1,5 +1,6 @@
 package test.skava.ling.collect;
 
+import com.google.common.collect.Sets;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -178,4 +179,16 @@ public class TupleTest extends SKUnit {
   public void testEquals() throws Exception {
     Assert.assertEquals(Tuple.of(127, 0, 0, 1), Tuple.of(127, 0, 0, 1));
   }
+
+  @Test
+  public void testEqualsSetInteger() throws Exception {
+    Assert.assertEquals(Tuple.of(127, 0, Sets.newHashSet(1, 2, 3), 1), Tuple.of(127, 0, Sets.newHashSet(3, 2, 1), 1));
+  }
+
+  @Test
+  public void testEqualsSetString() throws Exception {
+    Assert.assertEquals(Tuple.of(127, 0, Sets.newHashSet("1", "2", "3"), 1), Tuple.of(127, 0, Sets.newHashSet("3", "2", "1"), 1));
+  }
+
+
 }

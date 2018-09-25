@@ -19,6 +19,7 @@ import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 public class SensitiveExpressionReplacer extends ExpressionDeParser {
@@ -32,9 +33,9 @@ public class SensitiveExpressionReplacer extends ExpressionDeParser {
 
   //Map<TABLE.COLUMN, Tuple.Triple<PATH, HASH(, )>>
   @Getter
-  private Map<String, Tuple.Triple<String, String, String>> itemMap = Maps.newHashMap();
+  private Map<String, Tuple.Triple<Set<String>, String, String>> itemMap = Maps.newHashMap();
 
-  SensitiveExpressionReplacer(@NonNull Stack<String> pathStack, Map<String, Tuple.Triple<String, String, String>> itemMap) {
+  SensitiveExpressionReplacer(@NonNull Stack<String> pathStack, Map<String, Tuple.Triple<Set<String>, String, String>> itemMap) {
     super();
     this.pathStack = pathStack;
     this.itemMap = itemMap;
@@ -69,8 +70,8 @@ public class SensitiveExpressionReplacer extends ExpressionDeParser {
     }
 
     String fullColumnName = tableName + "." + tableColumn.getColumnName();
-    Tuple.Triple<String, String, String> replaceTuplePair = itemMap.get(fullColumnName.toUpperCase());
-    if (replaceTuplePair != null && Joiner.on(String0.ARROW).join(pathStack).equalsIgnoreCase(Tuple.getFirst(replaceTuplePair))) {
+    Tuple.Triple<Set<String>, String, String> replaceTuplePair = itemMap.get(fullColumnName.toUpperCase());
+    if (replaceTuplePair != null && Tuple.getFirst(replaceTuplePair) != null && Tuple.getFirst(replaceTuplePair).contains(Joiner.on(String0.ARROW).join(pathStack))) {
       getBuffer().append(Tuple.getSecond(replaceTuplePair)).append(fullColumnName).append(Tuple.getThird(replaceTuplePair));
     } else {
       getBuffer().append(fullColumnName);

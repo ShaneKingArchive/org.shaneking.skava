@@ -6,6 +6,7 @@
  */
 package org.shaneking.skava.sql.parser;
 
+import com.google.common.collect.Sets;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -31,8 +32,7 @@ import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
 import org.shaneking.skava.ling.collect.Tuple;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Find all used tables within an select statement.
@@ -43,7 +43,7 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   private static final String NOT_SUPPORTED_STATEMENT_TYPE_YET = "Not supported statement type yet";
   //Tuple.Pair<SCHEMA.TABLE, ALIAS>
-  private List<Tuple.Pair<String, String>> tables;
+  private Set<Tuple.Pair<String, String>> tables;
   //select table.column from table; the table is tableName in Column instance
   //select t.column from table t; the t is tableName in Column instance too
   private boolean allowColumnProcessing = false;
@@ -52,7 +52,7 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    * There are special names, that are not table names but are parsed as tables. These names are
    * collected here and are not included in the tables - names anymore.
    */
-  private List<String> otherItemNames;
+  private Set<String> otherItemNames;
 
   /**
    * Main entry for this Tool class. A list of found tables is returned.
@@ -60,7 +60,7 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    * @param expr
    * @return
    */
-  public List<Tuple.Pair<String, String>> findTableList(Expression expr) {
+  public Set<Tuple.Pair<String, String>> findTableList(Expression expr) {
     init(true);
     expr.accept(this);
     return tables;
@@ -72,7 +72,7 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    * @param statement
    * @return
    */
-  public List<Tuple.Pair<String, String>> findTableList(Statement statement) {
+  public Set<Tuple.Pair<String, String>> findTableList(Statement statement) {
     init(false);
     statement.accept(this);
     return tables;
@@ -97,8 +97,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    * @param allowColumnProcessing
    */
   private void init(boolean allowColumnProcessing) {
-    otherItemNames = new ArrayList<String>();
-    tables = new ArrayList<Tuple.Pair<String, String>>();
+    otherItemNames = Sets.newHashSet();
+    tables = Sets.newHashSet();
     this.allowColumnProcessing = allowColumnProcessing;
   }
 
@@ -192,7 +192,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
   @Override
   public void visit(Column tableColumn) {
     if (allowColumnProcessing && tableColumn.getTable() != null && tableColumn.getTable().getName() != null) {
-      visit(tableColumn.getTable());
+//      visit(tableColumn.getTable());
+      tableColumn.getTable().accept(this);
     }
   }
 
@@ -214,7 +215,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
   public void visit(Function function) {
     ExpressionList exprList = function.getParameters();
     if (exprList != null) {
-      visit(exprList);
+//      visit(exprList);
+      exprList.accept(this);
     }
   }
 
@@ -535,8 +537,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(Delete delete) {
-    visit(delete.getTable());
-
+//    visit(delete.getTable());
+    delete.getTable().accept(this);
     if (delete.getJoins() != null) {
       for (Join join : delete.getJoins()) {
         join.getRightItem().accept(this);
@@ -551,7 +553,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
   @Override
   public void visit(Update update) {
     for (Table table : update.getTables()) {
-      visit(table);
+//      visit(table);
+      table.accept(this);
     }
     if (update.getExpressions() != null) {
       for (Expression expression : update.getExpressions()) {
@@ -576,18 +579,21 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(Insert insert) {
-    visit(insert.getTable());
+//    visit(insert.getTable());
+    insert.getTable().accept(this);
     if (insert.getItemsList() != null) {
       insert.getItemsList().accept(this);
     }
     if (insert.getSelect() != null) {
-      visit(insert.getSelect());
+//      visit(insert.getSelect());
+      insert.getSelect().accept(this);
     }
   }
 
   @Override
   public void visit(Replace replace) {
-    visit(replace.getTable());
+//    visit(replace.getTable());
+    replace.getTable().accept(this);
     if (replace.getExpressions() != null) {
       for (Expression expression : replace.getExpressions()) {
         expression.accept(this);
@@ -605,7 +611,7 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(Truncate truncate) {
-    throw new UnsupportedOperationException(NOT_SUPPORTED_STATEMENT_TYPE_YET);
+    truncate.getTable().accept(this);
   }
 
   @Override
@@ -615,7 +621,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(CreateTable create) {
-    visit(create.getTable());
+//    visit(create.getTable());
+    create.getTable().accept(this);
     if (create.getSelect() != null) {
       create.getSelect().accept(this);
     }
@@ -660,7 +667,8 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(Merge merge) {
-    visit(merge.getTable());
+//    visit(merge.getTable());
+    merge.getTable().accept(this);
     if (merge.getUsingTable() != null) {
       merge.getUsingTable().accept(this);
     } else if (merge.getUsingSelect() != null) {
@@ -697,12 +705,14 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
 
   @Override
   public void visit(Upsert upsert) {
-    visit(upsert.getTable());
+//    visit(upsert.getTable());
+    upsert.getTable().accept(this);
     if (upsert.getItemsList() != null) {
       upsert.getItemsList().accept(this);
     }
     if (upsert.getSelect() != null) {
-      visit(upsert.getSelect());
+//      visit(upsert.getSelect());
+      upsert.getSelect().accept(this);
     }
   }
 

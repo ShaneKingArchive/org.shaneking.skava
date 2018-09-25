@@ -12,10 +12,7 @@ import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.ExpressionVisitor;
 import net.sf.jsqlparser.expression.MySQLIndexHint;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.select.Pivot;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SubSelect;
-import net.sf.jsqlparser.statement.select.WithItem;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.util.deparser.SelectDeParser;
 
 import java.util.Map;
@@ -72,5 +69,23 @@ public class TableNamesSelectReplacer extends SelectDeParser {
   @Override
   public void visit(SelectExpressionItem selectExpressionItem) {
     super.visit(selectExpressionItem);
+  }
+
+  @SensitiveExpressionReplacerPath
+  @Override
+  public void visit(LateralSubSelect lateralSubSelect) {
+    super.visit(lateralSubSelect);
+  }
+
+  @SensitiveExpressionReplacerPath
+  @Override
+  public void visit(ParenthesisFromItem parenthesis) {
+    super.visit(parenthesis);
+  }
+
+  @SensitiveExpressionReplacerPath
+  @Override
+  public void visit(SubJoin subjoin) {
+    super.visit(subjoin);
   }
 }
