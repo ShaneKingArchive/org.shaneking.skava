@@ -179,7 +179,6 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
 
   private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> firstTuple(String aliasTableName) {
     Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> rtn = itemMap.get(aliasTableName);
-    ;
     if (rtn == null) {
       rtn = withItemMap.get(aliasTableName);
     }
@@ -361,8 +360,9 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     if (realTableTuplePair == null) {
       if (itemMap.get(aliasTableName) == null) {
         itemMap.put(aliasTableName, Tuple.of(Sets.newHashSet(realTableName), Maps.newHashMap()));
+      } else {
+        itemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(itemMap.get(aliasTableName), Tuple.of(Sets.newHashSet(realTableName), Maps.newHashMap()))));
       }
-      //ignore else
     } else {
       if (itemMap.get(aliasTableName) == null) {
         //for clone
@@ -373,6 +373,7 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     }
   }
 
+  //TODO DOING:SELECT (select (select a.host+b.host+c.host as c3 from mysql.user c where c.user = a.user) as c2 from mysql.user b where b.user = a.user) as c1 FROM mysql.user a;
   @SensitiveItemsFinderPath
   @Override
   public void visit(SubSelect subSelect) {
@@ -396,6 +397,14 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     }
     subSelect.getSelectBody().accept(this);
 
+    //add all column to handleSelectExpressionItemAlias
+    if (!Strings.isNullOrEmpty(handleSelectExpressionItemAlias)) {
+      itemMap.values().forEach(tableTuple -> {
+        Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> allAliasColumnSet = Tuple.getSecond(tableTuple).values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
+        Tuple.getSecond(tableTuple).clear();
+        Tuple.getSecond(tableTuple).put(handleSelectExpressionItemAlias, updatePathAndTransformed(allAliasColumnSet));
+      });
+    }
     //2
     String aliasTableName = (subSelect.getAlias() != null && subSelect.getAlias().getName() != null) ? subSelect.getAlias().getName().toUpperCase() : null;
     if (Strings.isNullOrEmpty(aliasTableName)) {

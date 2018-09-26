@@ -48,7 +48,7 @@ public class SensitiveItemsFinderAspect {
 
   //1
   @Around("@annotation(org.shaneking.skava.sql.parser.SensitiveItemsFinderPath)")
-  public Object aroundDeep(ProceedingJoinPoint joinPoint) throws Throwable {
+  public Object aroundPath(ProceedingJoinPoint joinPoint) throws Throwable {
     Object originInstance = joinPoint.getThis();
     if (originInstance == null) {
       originInstance = joinPoint.getTarget();
