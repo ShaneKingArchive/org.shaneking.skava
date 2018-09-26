@@ -6,6 +6,7 @@
  */
 package org.shaneking.skava.sql.parser;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import net.sf.jsqlparser.expression.*;
 import net.sf.jsqlparser.expression.operators.arithmetic.*;
@@ -54,36 +55,21 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    */
   private Set<String> otherItemNames;
 
-  /**
-   * Main entry for this Tool class. A list of found tables is returned.
-   *
-   * @param expr
-   * @return
-   */
+  //Main entry for this Tool class. A list of found tables is returned.
   public Set<Tuple.Pair<String, String>> findTableList(Expression expr) {
     init(true);
     expr.accept(this);
     return tables;
   }
 
-  /**
-   * Main entry for this Tool class. A list of found tables is returned.
-   *
-   * @param statement
-   * @return
-   */
+  //Main entry for this Tool class. A list of found tables is returned.
   public Set<Tuple.Pair<String, String>> findTableList(Statement statement) {
     init(false);
     statement.accept(this);
     return tables;
   }
 
-  /**
-   * Override to adapt the tableName generation (e.g. with / without schema).
-   *
-   * @param table
-   * @return
-   */
+  //Override to adapt the tableName generation (e.g. with / without schema).
   private String extractTableName(Table table) {
     return table.getFullyQualifiedName();
   }
@@ -93,8 +79,6 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
    * names. This is only allowed for expression parsing, where a better place for tablenames could
    * not be there. For complete statements only from items are used to avoid some alias as
    * tablenames.
-   *
-   * @param allowColumnProcessing
    */
   private void init(boolean allowColumnProcessing) {
     otherItemNames = Sets.newHashSet();
@@ -158,7 +142,7 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
     String tableWholeName = extractTableName(tableName);
     if (!otherItemNames.contains(tableWholeName.toLowerCase())) {
 //      && !tables.contains(tableWholeName)) {
-      tables.add(Tuple.of(tableWholeName, tableName.getAlias() == null ? null : tableName.getAlias().getName()));
+      tables.add(Tuple.of(tableWholeName.toUpperCase(), tableName.getAlias() == null ? null : Strings.nullToEmpty(tableName.getAlias().getName()).toUpperCase()));
     }
   }
 

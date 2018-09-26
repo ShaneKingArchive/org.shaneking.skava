@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 /**
  * Precondition: explain pass
- * Order: inter -> outer
+ * Order: inter -&gt; outer
  * Focus:
  * 1.select item (x.y)
  * 2.column transformed
@@ -178,12 +178,13 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
   }
 
   private Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> firstTuple(String aliasTableName) {
-    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> rtn = firstTuple(selectExpressionItemStack, aliasTableName);
-    if (rtn == null) {
-      rtn = itemMap.get(aliasTableName);
-    }
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> rtn = itemMap.get(aliasTableName);
+    ;
     if (rtn == null) {
       rtn = withItemMap.get(aliasTableName);
+    }
+    if (rtn == null) {
+      rtn = firstTuple(selectExpressionItemStack, aliasTableName);
     }
     if (rtn == null) {
       rtn = firstTuple(withStack, aliasTableName);
@@ -228,6 +229,45 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     return Tuple.of(rtnRealTableSet, rtnAliasColumnMap);
   }
 
+  private void processAllColumns(String alias) {
+    String aliasTableName = null;
+    if (!Strings.isNullOrEmpty(alias)) {
+      aliasTableName = alias;
+    }
+    //only one table, not need x.y
+    if (Strings.isNullOrEmpty(aliasTableName) && itemMap.keySet().size() == 1) {
+      aliasTableName = itemMap.keySet().toArray(new String[0])[0];
+      if (Tuple.getFirst(itemMap.get(aliasTableName)).size() != 1) {
+        aliasTableName = null;
+      }
+    }
+    if (Strings.isNullOrEmpty(aliasTableName)) {
+      throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
+    }
+    aliasTableName = aliasTableName.toUpperCase();
+
+    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> aliasTableTuple = firstTuple(aliasTableName);
+    if (aliasTableTuple == null) {
+      //schema.table.*
+      aliasTableTuple = Tuple.of(Sets.newHashSet(aliasTableName), Maps.newHashMap());
+      itemMap.put(aliasTableName, aliasTableTuple);
+    }
+    Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
+    Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> aliasColumnSet = aliasColumnMap.get(String0.ASTERISK);
+    if (aliasColumnSet == null) {
+      //columnName is realColumnName
+      Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> allAliasColumnSet = aliasColumnMap.values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
+      if (allAliasColumnSet.size() == 0) {
+        aliasColumnMap.put(String0.ASTERISK, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, String0.ASTERISK, addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet()));
+      } else {
+        aliasColumnMap.put(String0.ASTERISK, updatePathAndTransformed(allAliasColumnSet));
+      }
+    } else {
+      //columnName is aliasColumnName
+      aliasColumnMap.put(String0.ASTERISK, updatePathAndTransformed(aliasColumnSet));
+    }
+  }
+
   //add withItemsList layer
   private void processWithItemsList(@NonNull List<WithItem> withItemsList) {
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> handleItemMap = itemMap;
@@ -244,8 +284,10 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
   }
 
   private Set<String> addPath(@NonNull Set<String> pathSet) {
-    pathSet.add(Joiner.on(String0.ARROW).join(pathStack));
-    return pathSet;
+    Set<String> rtn = Sets.newHashSet();
+    rtn.addAll(pathSet);
+    rtn.add(Joiner.on(String0.ARROW).join(pathStack));
+    return rtn;
   }
 
   private Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> updatePathAndTransformed(@NonNull Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> realColumnSet) {
@@ -397,10 +439,17 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
 
   @Override
   public void visit(Column tableColumn) {
-    if (tableColumn.getTable() == null) {
-      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, tableColumn));
+    String aliasTableName = null;
+    if (tableColumn.getTable() != null) {
+      aliasTableName = tableColumn.getTable().getFullyQualifiedName();
     }
-    String aliasTableName = tableColumn.getTable().getFullyQualifiedName();
+    //only one table, not need x.y
+    if (Strings.isNullOrEmpty(aliasTableName) && itemMap.keySet().size() == 1) {
+      aliasTableName = itemMap.keySet().toArray(new String[0])[0];
+      if (Tuple.getFirst(itemMap.get(aliasTableName)).size() != 1) {
+        aliasTableName = null;
+      }
+    }
     if (Strings.isNullOrEmpty(aliasTableName)) {
       throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, tableColumn));
     }
@@ -416,22 +465,29 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
     String columnName = tableColumn.getColumnName().toUpperCase();
     Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> columnSet = aliasColumnMap.get(columnName);
+    Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> newColumnSet = Sets.newHashSet();
     if (columnSet == null) {
       //columnName is realColumnName
-      aliasColumnMap.put(columnName, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet()));
+      columnSet = aliasColumnMap.get(String0.ASTERISK);
+      if (columnSet == null) {
+        newColumnSet = Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet());
+      } else {
+        newColumnSet = columnSet.stream().map(tupleQuadruple -> Tuple.of(Tuple.getFirst(tupleQuadruple), tableColumn.getColumnName().toUpperCase(), addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet());
+      }
     } else {
       //columnName is aliasColumnName
-      aliasColumnMap.put(columnName, updatePathAndTransformed(columnSet));
+      newColumnSet = updatePathAndTransformed(columnSet);
     }
+    aliasColumnMap.put(columnName, newColumnSet);
 
     if (!Strings.isNullOrEmpty(selectExpressionItemAlias)) {
       Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> aliasColumnSet = aliasColumnMap.get(selectExpressionItemAlias);
       if (aliasColumnSet == null) {
         //(a.b + a.c) as a.d : a.b
-        aliasColumnMap.put(selectExpressionItemAlias, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet()));
+        aliasColumnMap.put(selectExpressionItemAlias, updatePathAndTransformed(newColumnSet));
       } else {
         //(a.b + a.c) as a.d : a.c
-        aliasColumnSet.addAll(Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, tableColumn.getColumnName().toUpperCase(), addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet()));
+        aliasColumnSet.addAll(updatePathAndTransformed(newColumnSet));
       }
     }
 //    if (allowColumnProcessing && tableColumn.getTable() != null && tableColumn.getTable().getName() != null) {
@@ -801,40 +857,12 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
 
   @Override
   public void visit(AllColumns allColumns) {
-    throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, allColumns));
+    processAllColumns(null);
   }
 
   @Override
   public void visit(AllTableColumns allTableColumns) {
-    if (allTableColumns.getTable() == null) {
-      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, allTableColumns));
-    }
-    String aliasTableName = allTableColumns.getTable().getFullyQualifiedName();
-    if (Strings.isNullOrEmpty(aliasTableName)) {
-      throw new UnsupportedOperationException(Joiner.on(String0.COLON).join(THE_COLUMN_MUST_BE_LIKE_X_Y, allTableColumns));
-    }
-    aliasTableName = aliasTableName.toUpperCase();
-
-    Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>> aliasTableTuple = firstTuple(aliasTableName);
-    if (aliasTableTuple == null) {
-      //schema.table.*
-      aliasTableTuple = Tuple.of(Sets.newHashSet(aliasTableName), Maps.newHashMap());
-      itemMap.put(aliasTableName, aliasTableTuple);
-    }
-    Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>> aliasColumnMap = Tuple.getSecond(aliasTableTuple);
-    Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> aliasColumnSet = aliasColumnMap.get(String0.ASTERISK);
-    if (aliasColumnSet == null) {
-      //columnName is realColumnName
-      Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> allAliasColumnSet = aliasColumnMap.values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
-      if (allAliasColumnSet.size() == 0) {
-        aliasColumnMap.put(String0.ASTERISK, Tuple.getFirst(aliasTableTuple).stream().map(realTable -> Tuple.of(realTable, String0.ASTERISK, addPath(Sets.newHashSet()), transformed)).collect(Collectors.toSet()));
-      } else {
-        aliasColumnMap.put(String0.ASTERISK, updatePathAndTransformed(allAliasColumnSet));
-      }
-    } else {
-      //columnName is aliasColumnName
-      aliasColumnMap.put(String0.ASTERISK, updatePathAndTransformed(aliasColumnSet));
-    }
+    processAllColumns(allTableColumns.getTable().getFullyQualifiedName());
   }
 
   @SensitiveItemsFinderPath

@@ -213,9 +213,9 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(selectStatement);
     assertEquals(3, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("tbl0"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("tbl"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("tbl2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("TBL0"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("TBL"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("TBL2"));
   }
 
   @Test
@@ -227,8 +227,8 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(insertStatement);
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE2"));
   }
 
   @Test
@@ -240,8 +240,8 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(createTable);
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE2"));
   }
 
   @Test
@@ -251,8 +251,8 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(insert);
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("Customers"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("Suppliers"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("CUSTOMERS"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("SUPPLIERS"));
   }
 
   @Test
@@ -262,7 +262,7 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(expr);
     assertEquals(1, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE"));
   }
 
   @Test
@@ -312,8 +312,8 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(statement);
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("component"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("component_temp"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("COMPONENT"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("COMPONENT_TEMP"));
   }
 
   @Test
@@ -323,8 +323,8 @@ public class TableNamesFinderTest {
 
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList((Merge) CCJSqlParserUtil.parse(sql));
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("employees"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("hr_records"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("EMPLOYEES"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("HR_RECORDS"));
 //    assertEquals("employees", Tuple.getFirst(tableList.get(0)));
 //    assertEquals("hr_records", Tuple.getFirst(tableList.get(1)));
   }
@@ -335,8 +335,8 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList((Merge) CCJSqlParserUtil.parse(sql));
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("employees"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("hr_records"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("EMPLOYEES"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("HR_RECORDS"));
 //    assertEquals("employees", Tuple.getFirst(tableList.get(0)));
 //    assertEquals("hr_records", Tuple.getFirst(tableList.get(1)));
   }
@@ -362,8 +362,8 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(insertStatement);
     assertEquals(2, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable"));
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE2"));
   }
 
   @Test
@@ -373,7 +373,7 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(stmt);
     assertEquals(1, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE2"));
   }
 
   @Test
@@ -383,7 +383,7 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(stmt);
     assertEquals(1, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE2"));
   }
 
   @Test
@@ -393,7 +393,7 @@ public class TableNamesFinderTest {
     TableNamesFinder tableNamesFinder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = tableNamesFinder.findTableList(stmt);
     assertEquals(1, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("mytable2"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("MYTABLE2"));
   }
 
   @Test
@@ -432,7 +432,7 @@ public class TableNamesFinderTest {
     TableNamesFinder finder = new TableNamesFinder();
     Set<Tuple.Pair<String, String>> tableList = finder.findTableList(CCJSqlParserUtil.parse(sql));
     assertEquals(1, tableList.size());
-    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("schema.table"));
+    assertTrue(tableList.stream().map(Tuple::getFirst).collect(Collectors.toList()).contains("SCHEMA.TABLE"));
   }
 
 

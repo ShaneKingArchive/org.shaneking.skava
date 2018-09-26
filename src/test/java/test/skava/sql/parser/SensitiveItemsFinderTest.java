@@ -91,7 +91,7 @@ public class SensitiveItemsFinderTest {
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     assertEquals(2, itemMap.size());
-    assertEquals("{AL=([MY_TABLE2],{A=[(MY_TABLE2,A,[Select, Select→FromItem→SubSelect→SelectExpressionItem],false)], *=[(MY_TABLE2,A,[Select, Select→FromItem→SubSelect→SelectExpressionItem],false)]}), MY_TABLE1=([MY_TABLE1],{})}", itemMap.toString());
+    assertEquals("{AL=([MY_TABLE2],{A=[(MY_TABLE2,A,[Select→FromItem→SubSelect→SelectExpressionItem],false)], *=[(MY_TABLE2,A,[Select, Select→FromItem→SubSelect→SelectExpressionItem],false)]}), MY_TABLE1=([MY_TABLE1],{})}", itemMap.toString());
   }
 
   @Test(expected = UnsupportedOperationException.class)
@@ -258,7 +258,7 @@ public class SensitiveItemsFinderTest {
     assertEquals("{TABLE=([TABLE],{MYCOL=[(TABLE,MYCOL,[],false)]}), *=([MYTABLE],{COL2=[(MYTABLE,COL2,[SubSelect→SelectExpressionItem],false)]})}", itemMap.toString());
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void testOracleHint() throws JSQLParserException {
     String sql = "select --+ HINT\ncol2 from mytable";
     Select select = (Select) CCJSqlParserUtil.parse(sql);
@@ -273,8 +273,8 @@ public class SensitiveItemsFinderTest {
 
     };
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(select);
-    System.out.println(itemMap);
     assertNull(holder[0]);
+    assertEquals("{MYTABLE=([MYTABLE],{COL2=[(MYTABLE,COL2,[Select→SelectExpressionItem],false)]})}", itemMap.toString());
   }
 
   @Test
@@ -402,13 +402,13 @@ public class SensitiveItemsFinderTest {
     assertEquals("{TABLE1=([TABLE1],{*=[(TABLE1,*,[Select],false)]})}", itemMap.toString());
   }
 
-  @Test(expected = UnsupportedOperationException.class)
+  @Test
   public void testMySQLValueListExpression() throws JSQLParserException {
     String sql = "SELECT * FROM TABLE1 WHERE (a, b) = (c, d)";
     SensitiveItemsFinder finder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = finder.findItemMap(CCJSqlParserUtil.parse(sql));
-    System.out.println(itemMap);
     assertEquals(1, itemMap.size());
+    assertEquals("{TABLE1=([TABLE1],{*=[(TABLE1,*,[Select],false)]})}", itemMap.toString());
   }
 
   @Test(expected = UnsupportedOperationException.class)
