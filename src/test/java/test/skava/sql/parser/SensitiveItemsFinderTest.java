@@ -30,12 +30,21 @@ public class SensitiveItemsFinderTest {
   private static CCJSqlParserManager pm = new CCJSqlParserManager();
 
   @Test
+  public void skTestSelectExpressionWith() throws Exception {
+    String sql = "with a as (select c from t), b as (select * from a) select * from (with c as (select * from b), d as (select * from c) select * from d) t2";
+    SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
+    Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(CCJSqlParserUtil.parse(sql));
+    assertEquals(1, itemMap.size());
+    assertEquals("{T2=([T],{C=[(T,C,[Select→WithItem→SelectExpressionItem],false)], *=[(T,C,[Select→WithItem→SelectExpressionItem, Select→SubSelect→WithItem, Select, Select→SubSelect, Select→WithItem],false)]})}", itemMap.toString());
+  }
+
+  @Test
   public void skTestSelectExpressionAlias() throws Exception {
     String sql = "SELECT (select (select a.host1+b.host2+c.host3 as c3 from mysql.user c where c.user = a.user) as c2 from mysql.user b where b.user = a.user) as c1 FROM mysql.user a";
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(CCJSqlParserUtil.parse(sql));
-    assertEquals(2, itemMap.size());
-    assertEquals("{A=([MYSQL.USER],{C3=[(MYSQL.USER,HOST1,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)], HOST1=[(MYSQL.USER,HOST1,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)]}), *=([MYSQL.USER],{C1=[(MYSQL.USER,HOST3,[Select→SelectExpressionItem→SubSelect, Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem, Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect],true), (MYSQL.USER,HOST2,[Select→SelectExpressionItem→SubSelect, Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)]})}", itemMap.toString());
+    assertEquals(3, itemMap.size());
+    assertEquals("{A=([MYSQL.USER],{C3=[(MYSQL.USER,HOST1,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)], HOST1=[(MYSQL.USER,HOST1,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)]}), B=([MYSQL.USER],{C3=[(MYSQL.USER,HOST2,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)], HOST2=[(MYSQL.USER,HOST2,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)]}), C=([MYSQL.USER],{HOST3=[(MYSQL.USER,HOST3,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)], C3=[(MYSQL.USER,HOST3,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem→SubSelect→SelectExpressionItem],true)]})}", itemMap.toString());
   }
 
   //TODO
@@ -222,7 +231,7 @@ public class SensitiveItemsFinderTest {
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     assertEquals(2, itemMap.size());
-    assertEquals("{*=([TBL0],{NAME1=[(TBL0,NAME,[Select→SelectExpressionItem→SubSelect, Select→SelectExpressionItem→SubSelect→SelectExpressionItem],false)]}), TBL=([TBL],{ORIGINAL_ID=[(TBL,ORIGINAL_ID,[Select→SelectExpressionItem],false)], BC_ID=[(TBL,ORIGINAL_ID,[Select→SelectExpressionItem],false)], CID=[(TBL,CID,[Select→SelectExpressionItem],false)]})}", itemMap.toString());
+    assertEquals("{TBL0=([TBL0],{NAME=[(TBL0,NAME,[Select→SelectExpressionItem→SubSelect→SelectExpressionItem],false)]}), TBL=([TBL],{ORIGINAL_ID=[(TBL,ORIGINAL_ID,[Select→SelectExpressionItem],false)], BC_ID=[(TBL,ORIGINAL_ID,[Select→SelectExpressionItem],false)], CID=[(TBL,CID,[Select→SelectExpressionItem],false)]})}", itemMap.toString());
   }
 
   @Test
@@ -307,7 +316,7 @@ public class SensitiveItemsFinderTest {
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(selectStatement);
     assertEquals(2, itemMap.size());
-    assertEquals("{*=([DUAL],{A=[]}), TEST1=([TEST1],{})}", itemMap.toString());
+    assertEquals("{DUAL=([DUAL],{}), TEST1=([TEST1],{})}", itemMap.toString());
   }
 
   @Test(expected = UnsupportedOperationException.class)
@@ -370,7 +379,7 @@ public class SensitiveItemsFinderTest {
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(stmt);
     assertEquals(1, itemMap.size());
-    assertEquals("{*=([MYTABLE2],{})}", itemMap.toString());
+    assertEquals("{MYTABLE2=([MYTABLE2],{})}", itemMap.toString());
   }
 
   @Test
@@ -380,7 +389,7 @@ public class SensitiveItemsFinderTest {
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(stmt);
     assertEquals(1, itemMap.size());
-    assertEquals("{*=([MYTABLE2],{})}", itemMap.toString());
+    assertEquals("{MYTABLE2=([MYTABLE2],{})}", itemMap.toString());
   }
 
   @Test
@@ -390,7 +399,7 @@ public class SensitiveItemsFinderTest {
     SensitiveItemsFinder sensitiveItemsFinder = new SensitiveItemsFinder();
     Map<String, Tuple.Pair<Set<String>, Map<String, Set<Tuple.Quadruple<String, String, Set<String>, Boolean>>>>> itemMap = sensitiveItemsFinder.findItemMap(stmt);
     assertEquals(1, itemMap.size());
-    assertEquals("{*=([MYTABLE2],{})}", itemMap.toString());
+    assertEquals("{MYTABLE2=([MYTABLE2],{})}", itemMap.toString());
   }
 
   @Test

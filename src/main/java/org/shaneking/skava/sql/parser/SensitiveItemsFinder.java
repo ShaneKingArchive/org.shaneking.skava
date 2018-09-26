@@ -128,6 +128,8 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
    * String0.EMPTY:in select expression item without alias
    * alias:in select expression item with alias
    */
+  @Getter
+  @Setter
   private String selectExpressionItemAlias = null;
 
   /**
@@ -373,7 +375,6 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     }
   }
 
-  //TODO DOING:SELECT (select (select a.host+b.host+c.host as c3 from mysql.user c where c.user = a.user) as c2 from mysql.user b where b.user = a.user) as c1 FROM mysql.user a;
   @SensitiveItemsFinderPath
   @Override
   public void visit(SubSelect subSelect) {
@@ -397,14 +398,6 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     }
     subSelect.getSelectBody().accept(this);
 
-    //add all column to handleSelectExpressionItemAlias
-    if (!Strings.isNullOrEmpty(handleSelectExpressionItemAlias)) {
-      itemMap.values().forEach(tableTuple -> {
-        Set<Tuple.Quadruple<String, String, Set<String>, Boolean>> allAliasColumnSet = Tuple.getSecond(tableTuple).values().stream().collect(HashSet::new, Set::addAll, Set::addAll);
-        Tuple.getSecond(tableTuple).clear();
-        Tuple.getSecond(tableTuple).put(handleSelectExpressionItemAlias, updatePathAndTransformed(allAliasColumnSet));
-      });
-    }
     //2
     String aliasTableName = (subSelect.getAlias() != null && subSelect.getAlias().getName() != null) ? subSelect.getAlias().getName().toUpperCase() : null;
     if (Strings.isNullOrEmpty(aliasTableName)) {
@@ -412,11 +405,20 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     }
     if (handleSelectExpressionItemAlias != null) {
       handleItemMap = selectExpressionItemStack.pop();
-    }
-    if (handleItemMap.get(aliasTableName) == null) {
-      handleItemMap.put(aliasTableName, mergeAliasTableMap(itemMap));
+      for (String aliasName : itemMap.keySet()) {
+        if (handleItemMap.get(aliasName) == null) {
+          handleItemMap.put(aliasName, itemMap.get(aliasName));
+        } else {
+          handleItemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(itemMap), handleItemMap.get(aliasTableName))));
+        }
+      }
+      ;
     } else {
-      handleItemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(itemMap), handleItemMap.get(aliasTableName))));
+      if (handleItemMap.get(aliasTableName) == null) {
+        handleItemMap.put(aliasTableName, mergeAliasTableMap(itemMap));
+      } else {
+        handleItemMap.put(aliasTableName, mergeAliasTableTuplePairCollection(Lists.newArrayList(mergeAliasTableMap(itemMap), handleItemMap.get(aliasTableName))));
+      }
     }
     itemMap = handleItemMap;
     //1
@@ -715,8 +717,9 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     anyComparisonExpression.getSubSelect().accept((ExpressionVisitor) this);
   }
 
-  @SensitiveItemsFinderPath
+  @SensitiveItemsFinderAlias
   @SensitiveItemsFinderAsterisk
+  @SensitiveItemsFinderPath
   @Override
   public void visit(SubJoin subjoin) {
 //    processFromItem(subjoin.getLeft(), subjoin.getAlias());
@@ -796,8 +799,9 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     //unknown expression, fix when meeting
   }
 
-  @SensitiveItemsFinderPath
+  @SensitiveItemsFinderAlias
   @SensitiveItemsFinderAsterisk
+  @SensitiveItemsFinderPath
   @Override
   public void visit(LateralSubSelect lateralSubSelect) {
 //    processSubSelect(lateralSubSelect.getSubSelect(), lateralSubSelect.getAlias());
@@ -1113,8 +1117,9 @@ public class SensitiveItemsFinder implements SelectVisitor, FromItemVisitor, Exp
     //just force select & insert, comments by shaneking @ 180912
   }
 
-  @SensitiveItemsFinderPath
+  @SensitiveItemsFinderAlias
   @SensitiveItemsFinderAsterisk
+  @SensitiveItemsFinderPath
   @Override
   public void visit(ParenthesisFromItem parenthesis) {
 //    processFromItem(parenthesis.getFromItem(), parenthesis.getAlias());

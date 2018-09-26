@@ -46,6 +46,27 @@ public class SensitiveItemsFinderAspect {
     return result;
   }
 
+  //0
+  @Around("@annotation(org.shaneking.skava.sql.parser.SensitiveItemsFinderAlias)")
+  public Object aroundAlias(ProceedingJoinPoint joinPoint) throws Throwable {
+    String handleSelectExpressionItem = null;
+    Object originInstance = joinPoint.getThis();
+    if (originInstance == null) {
+      originInstance = joinPoint.getTarget();
+    }
+    SensitiveItemsFinder sensitiveItemsFinder = null;
+    if (originInstance instanceof SensitiveItemsFinder) {
+      sensitiveItemsFinder = (SensitiveItemsFinder) originInstance;
+      handleSelectExpressionItem = sensitiveItemsFinder.getSelectExpressionItemAlias();
+      sensitiveItemsFinder.setSelectExpressionItemAlias(null);
+    }
+    Object result = joinPoint.proceed();
+    if (sensitiveItemsFinder != null) {
+      sensitiveItemsFinder.setSelectExpressionItemAlias(handleSelectExpressionItem);
+    }
+    return result;
+  }
+
   //1
   @Around("@annotation(org.shaneking.skava.sql.parser.SensitiveItemsFinderPath)")
   public Object aroundPath(ProceedingJoinPoint joinPoint) throws Throwable {
