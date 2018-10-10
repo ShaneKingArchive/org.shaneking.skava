@@ -11,4 +11,15 @@ public class String0Test extends SKUnit {
     Assert.assertEquals(String0.upper2lower("firstName"), "first_name");
   }
 
+  @Test
+  public void upper2lower2() throws Exception {
+    Assert.assertEquals(String0.upper2lower("firstName", String0.UNDERLINE), "first_name");
+  }
+
+  @Test
+  public void null2empty2() throws Exception {
+    Assert.assertEquals(String0.null2empty2("firstName", ""), "firstName");
+    Assert.assertEquals(String0.null2empty2("", "firstName"), "firstName");
+  }
+
 }

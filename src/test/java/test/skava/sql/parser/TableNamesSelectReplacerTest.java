@@ -26,7 +26,7 @@ public class TableNamesSelectReplacerTest {
   @Test
   public void testPlainSelect() throws Exception {
     StringBuilder sb = new StringBuilder();
-    Statement statement = CCJSqlParserUtil.parse("select t.* from schema.table t");
+    Statement statement = CCJSqlParserUtil.parse("select t.*--comments\n from schema.table t");
     statement.accept(TableNamesStatementReplacerFactory.create(sb, tableMap));
 //    System.out.println(sb);
     Assert.assertEquals("SELECT t.* FROM (SELECT * FROM SCHEMA.TABLE) t", sb.toString());

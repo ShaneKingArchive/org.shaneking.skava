@@ -12,11 +12,10 @@ import test.skava.ling.collect.CollectSuites;
 import test.skava.ling.crypto.Cipher0Test;
 import test.skava.ling.lang.String0Test;
 import test.skava.ling.nio.Charset0Test;
-import test.skava.ling.security.Key0Test;
-import test.skava.ling.security.spec.KeySpec0Test;
+import test.skava.ling.security.SecuritySuites;
 import test.skava.ling.util.UtilSuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({CollectSuites.class, Cipher0Test.class, String0Test.class, Charset0Test.class, KeySpec0Test.class, Key0Test.class, UtilSuites.class})
+@Suite.SuiteClasses({CollectSuites.class, Cipher0Test.class, String0Test.class, Charset0Test.class, SecuritySuites.class, UtilSuites.class})
 public class LingSuites {
 }

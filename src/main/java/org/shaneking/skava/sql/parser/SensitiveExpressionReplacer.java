@@ -69,7 +69,7 @@ public class SensitiveExpressionReplacer extends ExpressionDeParser {
       throw new UnsupportedOperationException(THE_COLUMN_MUST_BE_LIKE_X_Y);
     }
 
-    String fullColumnName = tableName + "." + tableColumn.getColumnName();
+    String fullColumnName = tableName + String0.DOT + tableColumn.getColumnName();
     Tuple.Triple<Set<String>, String, String> replaceTuplePair = itemMap.get(fullColumnName.toUpperCase());
     if (replaceTuplePair != null && Tuple.getFirst(replaceTuplePair) != null && Tuple.getFirst(replaceTuplePair).contains(Joiner.on(String0.ARROW).join(pathStack))) {
       getBuffer().append(Tuple.getSecond(replaceTuplePair)).append(fullColumnName).append(Tuple.getThird(replaceTuplePair));

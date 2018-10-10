@@ -6,10 +6,12 @@
  */
 package org.shaneking.skava.ling.lang;
 
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.NonNull;
+
+import java.util.stream.Collectors;
 
 public final class String0 {
   public static final String AMPERSAND = "&";
@@ -74,7 +76,6 @@ public final class String0 {
   public static final String SQUARE = "√";
   public static final String TRIANGLE = "△";
   public static final String UNDERLINE = "_";
-  public static final String UNDERLINE_DOUBLE = "__";
   public static final String UNION = "∪";
   public static final String VARIES = "∝";
   public static final String VERTICAL = "|";
@@ -84,12 +85,17 @@ public final class String0 {
 
   public static final String EMPTY = "";
 
-  /**
-   * firstName -&gt; first_name
-   */
+  //firstName -&gt; first_name
   public static String upper2lower(@NonNull String string) {
-    //jdk8 can't infer it
-    Function<String, String> tmpFunc = (alphabet) -> alphabet != null && alphabet.equals(alphabet.toUpperCase()) ? String0.UNDERLINE + alphabet.toLowerCase() : alphabet;
-    return Joiner.on("").join(Lists.transform(Lists.newArrayList(string.split("")), tmpFunc));
+    return upper2lower(string, UNDERLINE);
+  }
+
+  public static String upper2lower(@NonNull String string, @NonNull String with) {
+    return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(EMPTY)).stream().map(alphabet -> (alphabet != null && alphabet.equals(alphabet.toUpperCase())) ? with + alphabet.toLowerCase() : alphabet).collect(Collectors.toList()));
+  }
+
+  //null er empty to
+  public static String null2empty2(String s, @NonNull String d) {
+    return Strings.isNullOrEmpty(s) ? d : s;
   }
 }

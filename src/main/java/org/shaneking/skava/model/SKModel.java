@@ -12,7 +12,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
-@ToString(callSuper = true, includeFieldNames = true)
+@ToString(includeFieldNames = true)
 public class SKModel<O, U> {
   @Getter
   @Setter

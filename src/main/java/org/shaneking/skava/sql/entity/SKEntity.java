@@ -18,6 +18,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
+import org.shaneking.skava.ling.lang.String20;
 import org.shaneking.skava.sql.annotation.SKColumn;
 import org.shaneking.skava.sql.annotation.SKTable;
 import org.slf4j.Logger;
@@ -29,7 +30,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Accessors(chain = true)
-@ToString(callSuper = true, includeFieldNames = true)
+@ToString(includeFieldNames = true)
 public class SKEntity {
   private static final Logger LOG = LoggerFactory.getLogger(SKEntity.class);
 
@@ -126,7 +127,7 @@ public class SKEntity {
       skTable = this.getClass().getAnnotation(SKTable.class);
     }
     if (Strings.isNullOrEmpty(skTable.name())) {
-      tableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split("\\."))).get(0));
+      tableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split(String20.BACKSLASH_DOT))).get(0));
       tableName = "t" + (tableName.startsWith(String0.UNDERLINE) ? tableName : String0.UNDERLINE + tableName);
     } else {
       tableName = (Strings.isNullOrEmpty(skTable.schema()) ? String0.EMPTY : skTable.schema() + String0.DOT) + skTable.name();
@@ -243,7 +244,7 @@ public class SKEntity {
       sqlList.add(Joiner.on(String0.COMMA).join(orderByList));
     }
 
-    return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
+    return Tuple.of(Joiner.on(String0.BLACK).join(sqlList), rtnObjectList);
   }
 
   public void selectStatement(@NonNull List<String> selectList, @NonNull List<Object> objectList) {
@@ -279,7 +280,7 @@ public class SKEntity {
     rtnObjectList.add(uid);
     rtnObjectList.add(version);
 
-    return Tuple.of(Joiner.on(" ").join(sqlList), rtnObjectList);
+    return Tuple.of(Joiner.on(String0.BLACK).join(sqlList), rtnObjectList);
   }
 
   public void updateStatement(@NonNull List<String> updateList, @NonNull List<Object> objectList) {
@@ -292,7 +293,7 @@ public class SKEntity {
         LOG.warn(e.toString());
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString())) {
-        updateList.add(dbColumnMap.get(fieldName) + "=?");
+        updateList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
         if ("version".equals(fieldName)) {
           objectList.add((Integer) o + 1);
         } else {
@@ -342,7 +343,7 @@ public class SKEntity {
         LOG.warn(e.toString());
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString()) && (skColumnMap.get(fieldName) == null || skColumnMap.get(fieldName).canWhere())) {
-        whereList.add(dbColumnMap.get(fieldName) + "=?");
+        whereList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
         objectList.add(o);
       }
     }
