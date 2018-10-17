@@ -16,13 +16,12 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.lang.String20;
 import org.shaneking.skava.sql.annotation.SKColumn;
 import org.shaneking.skava.sql.annotation.SKTable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -30,21 +29,20 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Accessors(chain = true)
+@Slf4j
 @ToString(includeFieldNames = true)
 public class SKEntity {
-  private static final Logger LOG = LoggerFactory.getLogger(SKEntity.class);
-
   private final Map<String, String> dbColumnMap = Maps.newHashMap();
   private final List<String> fieldNameList = Lists.newArrayList();
   private final Map<String, SKColumn> skColumnMap = Maps.newHashMap();
 
   private SKTable skTable;
-  private String tableName;
+  private String fullTableName;
 
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String uid;
+  private String id;
 
   @Getter
   @Setter
@@ -64,26 +62,26 @@ public class SKEntity {
    */
   @Getter
   @Setter
-  @SKColumn(length = 20)
+  @SKColumn(length = 20, useLike = true)
   private String createDatetime;
 
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String createUserUid;
+  private String createUserId;
 
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
   @Getter
   @Setter
-  @SKColumn(length = 20)
+  @SKColumn(length = 20, useLike = true)
   private String lastModifyDatetime;
 
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String lastModifyUserUid;
+  private String lastModifyUserId;
 
   @Getter
   @Setter
@@ -95,13 +93,13 @@ public class SKEntity {
    */
   @Getter
   @Setter
-  @SKColumn(length = 20)
+  @SKColumn(length = 20, useLike = true)
   private String invalidDatetime;
 
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String invalidUserUid;
+  private String invalidUserId;
 
   public SKEntity() {
     initTableInfo();
@@ -109,16 +107,16 @@ public class SKEntity {
   }
 
   public void initColumnInfo(Class<? extends Object> skEntityClass) {
-    if (SKEntity.class.isAssignableFrom(skEntityClass.getSuperclass())) {
-      initColumnInfo(skEntityClass.getSuperclass());
-    }
     for (Field field : skEntityClass.getDeclaredFields()) {
       SKColumn skColumn = field.getAnnotation(SKColumn.class);
-      if (skColumn != null) {
+      if (skColumn != null && fieldNameList.indexOf(field.getName()) == -1) {
         dbColumnMap.put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.upper2lower(field.getName()) : skColumn.name());
         fieldNameList.add(field.getName());
         skColumnMap.put(field.getName(), skColumn);
       }
+    }
+    if (SKEntity.class.isAssignableFrom(skEntityClass.getSuperclass())) {
+      initColumnInfo(skEntityClass.getSuperclass());
     }
   }
 
@@ -126,11 +124,12 @@ public class SKEntity {
     if (skTable == null) {
       skTable = this.getClass().getAnnotation(SKTable.class);
     }
+    fullTableName = Strings.isNullOrEmpty(skTable.schema()) ? String0.EMPTY : skTable.schema() + String0.DOT;
     if (Strings.isNullOrEmpty(skTable.name())) {
-      tableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split(String20.BACKSLASH_DOT))).get(0));
-      tableName = "t" + (tableName.startsWith(String0.UNDERLINE) ? tableName : String0.UNDERLINE + tableName);
+      String classTableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split(String20.BACKSLASH_DOT))).get(0));
+      fullTableName = fullTableName + "t" + (classTableName.startsWith(String0.UNDERLINE) ? classTableName : String0.UNDERLINE + classTableName);
     } else {
-      tableName = (Strings.isNullOrEmpty(skTable.schema()) ? String0.EMPTY : skTable.schema() + String0.DOT) + skTable.name();
+      fullTableName = fullTableName + skTable.name();
     }
   }
 
@@ -162,7 +161,7 @@ public class SKEntity {
 
     List<String> sqlList = Lists.newArrayList();
     sqlList.add("insert into");
-    sqlList.add(tableName);
+    sqlList.add(fullTableName);
     sqlList.add(String0.OPEN_PARENTHESIS + Joiner.on(String0.COMMA).join(insertList) + String0.CLOSE_PARENTHESIS);
     sqlList.add("values");
     sqlList.add(String0.OPEN_PARENTHESIS + Strings.repeat(String0.COMMA + String0.QUESTION, insertList.size()).substring(1) + String0.CLOSE_PARENTHESIS);
@@ -177,7 +176,7 @@ public class SKEntity {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
         o = null;
-        LOG.warn(e.toString());
+        log.warn(e.toString());
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString())) {
         insertList.add(dbColumnMap.get(fieldName));
@@ -263,7 +262,7 @@ public class SKEntity {
     return rtnInt;
   }
 
-  public Tuple.Pair<String, List<Object>> updateByUidAndVersionSql() {
+  public Tuple.Pair<String, List<Object>> updateByIdAndVersionSql() {
     List<Object> rtnObjectList = Lists.newArrayList();
 
     List<String> updateList = Lists.newArrayList();
@@ -272,12 +271,12 @@ public class SKEntity {
 
     List<String> sqlList = Lists.newArrayList();
     sqlList.add("update");
-    sqlList.add(tableName);
+    sqlList.add(fullTableName);
     sqlList.add("set");
     sqlList.add(Joiner.on(String0.COMMA).join(updateList));
     sqlList.add("where");
-    sqlList.add("uid=? and version=?");
-    rtnObjectList.add(uid);
+    sqlList.add("id=? and version=?");
+    rtnObjectList.add(id);
     rtnObjectList.add(version);
 
     return Tuple.of(Joiner.on(String0.BLACK).join(sqlList), rtnObjectList);
@@ -285,12 +284,12 @@ public class SKEntity {
 
   public void updateStatement(@NonNull List<String> updateList, @NonNull List<Object> objectList) {
     Object o = null;
-    for (String fieldName : fieldNameList.stream().filter(fieldName -> !"uid".equals(fieldName)).collect(Collectors.toList())) {
+    for (String fieldName : fieldNameList.stream().filter(fieldName -> !"id".equals(fieldName)).collect(Collectors.toList())) {
       try {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
         o = null;
-        LOG.warn(e.toString());
+        log.warn(e.toString());
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString())) {
         updateList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
@@ -309,7 +308,7 @@ public class SKEntity {
 
   //others
   public void fromStatement(@NonNull List<String> fromList, @NonNull List<Object> objectList) {
-    fromList.add(tableName);
+    fromList.add(fullTableName);
   }
 
   public void fromStatementExt(@NonNull List<String> fromList, @NonNull List<Object> objectList) {
@@ -340,11 +339,16 @@ public class SKEntity {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
         o = null;
-        LOG.warn(e.toString());
+        log.warn(e.toString());
       }
-      if (o != null && !Strings.isNullOrEmpty(o.toString()) && (skColumnMap.get(fieldName) == null || skColumnMap.get(fieldName).canWhere())) {
-        whereList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
-        objectList.add(o);
+      if (o != null && !Strings.isNullOrEmpty(o.toString()) && skColumnMap.get(fieldName) != null && skColumnMap.get(fieldName).canWhere()) {
+        if (skColumnMap.get(fieldName).useLike()) {
+          whereList.add(dbColumnMap.get(fieldName) + " like ");
+          objectList.add(String0.PERCENT + o.toString() + String0.PERCENT);
+        } else {
+          whereList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
+          objectList.add(o);
+        }
       }
     }
   }

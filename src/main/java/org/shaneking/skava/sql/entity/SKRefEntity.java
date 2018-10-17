@@ -23,5 +23,5 @@ public class SKRefEntity extends SKEntity {
   @Getter
   @Setter
   @SKColumn(length = 36)
-  private String refUid;
+  private String refId;
 }

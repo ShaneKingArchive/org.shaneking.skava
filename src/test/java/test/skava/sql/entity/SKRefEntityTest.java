@@ -17,12 +17,12 @@ public class SKRefEntityTest extends SKUnit {
   public void testQueryListSql() {
     AddressEntity addressEntity = new AddressEntity();
     Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (version) values (?),[1])");
-    Assert.assertEquals(addressEntity.selectSql().toString(), "(select uid,version,ext_json,create_datetime,create_user_uid,last_modify_datetime,last_modify_user_uid,invalid,invalid_datetime,invalid_user_uid,ref_type,ref_uid,address,postcode,primary from testSchema.t_address where version=?,[1])");
+    Assert.assertEquals(addressEntity.selectSql().toString(), "(select address,postcode,primary,ref_type,ref_id,id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id from testSchema.t_address where version=?,[1])");
     String uuid = UUID.randomUUID().toString();
-    addressEntity.setAddress("Junjin Load No.500").setUid(uuid);
-    Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (uid,version,address) values (?,?,?),[" + uuid + ", 1, Junjin Load No.500])");
-    Assert.assertEquals(addressEntity.updateByUidAndVersionSql().toString(), "(update testSchema.t_address set version=?,address=? where uid=? and version=?,[2, Junjin Load No.500, " + uuid + ", 1])");
-    Assert.assertEquals(addressEntity.selectSql().toString(), "(select uid,version,ext_json,create_datetime,create_user_uid,last_modify_datetime,last_modify_user_uid,invalid,invalid_datetime,invalid_user_uid,ref_type,ref_uid,address,postcode,primary from testSchema.t_address where uid=? and version=? and address=?,[" + uuid + ", 1, Junjin Load No.500])");
+    addressEntity.setAddress("Junjin Load No.500").setId(uuid);
+    Assert.assertEquals(addressEntity.insertSql().toString(), "(insert into testSchema.t_address (address,id,version) values (?,?,?),[Junjin Load No.500, " + uuid + ", 1])");
+    Assert.assertEquals(addressEntity.updateByIdAndVersionSql().toString(), "(update testSchema.t_address set address=?,version=? where id=? and version=?,[Junjin Load No.500, 2, " + uuid + ", 1])");
+    Assert.assertEquals(addressEntity.selectSql().toString(), "(select address,postcode,primary,ref_type,ref_id,id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id from testSchema.t_address where address=? and id=? and version=?,[Junjin Load No.500, " + uuid + ", 1])");
   }
 }
 

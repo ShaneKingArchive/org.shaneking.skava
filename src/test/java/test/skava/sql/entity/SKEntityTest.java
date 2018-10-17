@@ -21,7 +21,7 @@ public class SKEntityTest extends SKUnit {
 
   @Test
   public void updateByIdAndVersionSql() throws Exception {
-    Assert.assertEquals(userEntity.updateByUidAndVersionSql().toString(), "(update t_user_entity set version=? where uid=? and version=?,[2, null, 1])");
+    Assert.assertEquals(userEntity.updateByIdAndVersionSql().toString(), "(update t_user_entity set version=? where id=? and version=?,[2, null, 1])");
   }
 
   @Test
@@ -51,7 +51,7 @@ public class SKEntityTest extends SKUnit {
 
   @Test
   public void selectSql() throws Exception {
-    Assert.assertEquals(userEntity.selectSql().toString(), "(select uid,version,ext_json,create_datetime,create_user_uid,last_modify_datetime,last_modify_user_uid,invalid,invalid_datetime,invalid_user_uid,birthday from t_user_entity where version=?,[1])");
+    Assert.assertEquals(userEntity.selectSql().toString(), "(select birthday,id,version,ext_json,create_datetime,create_user_id,last_modify_datetime,last_modify_user_id,invalid,invalid_datetime,invalid_user_id from t_user_entity where version=?,[1])");
   }
 
   @Test
