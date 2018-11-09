@@ -35,9 +35,10 @@ public @interface SKColumn {
   String dataType() default "VARCHAR";
 
   /**
+   * InnoDB prefix index max 767 bytes(utf8:767/3=255char;gbk:767/2=383char) 767/4=191.75
    * (Optional) The column length. (Applies only if a string-valued column is used.)
    */
-  int length() default 255;
+  int length() default 180;
 
   /**
    * (Optional) The name of the column. Defaults to the property or field name.

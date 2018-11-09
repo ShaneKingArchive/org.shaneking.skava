@@ -86,7 +86,7 @@ public class SKEntity {
   @Getter
   @Setter
   @SKColumn(length = 1)
-  private String invalid;//0|1
+  private String invalid;//Y|N(default)
 
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME

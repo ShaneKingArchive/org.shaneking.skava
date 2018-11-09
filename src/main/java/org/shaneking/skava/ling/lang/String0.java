@@ -85,6 +85,11 @@ public final class String0 {
 
   public static final String EMPTY = "";
 
+  public static final String Y = "Y";//Yes
+  public static final String N = "N";//No
+  public static final String T = "T";//True
+  public static final String F = "F";//False
+
   //firstName -&gt; first_name
   public static String upper2lower(@NonNull String string) {
     return upper2lower(string, UNDERLINE);
@@ -94,7 +99,7 @@ public final class String0 {
     return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(EMPTY)).stream().map(alphabet -> (alphabet != null && alphabet.equals(alphabet.toUpperCase())) ? with + alphabet.toLowerCase() : alphabet).collect(Collectors.toList()));
   }
 
-  //null er empty to
+  //null or empty to
   public static String null2empty2(String s, @NonNull String d) {
     return Strings.isNullOrEmpty(s) ? d : s;
   }
