@@ -13,12 +13,12 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @ToString(includeFieldNames = true)
-public class SKModel<O, U> {
+public class Req<O, E> {
   @Getter
   @Setter
   private O obj;
 
   @Getter
   @Setter
-  private U ui; // The U maybe JSONObject, JsonNode ...
+  private E ext; // The E maybe JSONObject/JsonNode of request info contain pagination...
 }

@@ -1,8 +1,8 @@
-package test.skava.resp;
+package test.skava.model;
 
 import org.junit.Test;
-import org.shaneking.skava.resp.Resp;
-import org.shaneking.skava.resp.RespMesg;
+import org.shaneking.skava.model.Resp;
+import org.shaneking.skava.model.RespMesg;
 import test.skava.SKUnit;
 
 public class RespTest extends SKUnit {

@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.shaneking.skava.resp;
+package org.shaneking.skava.model;
 
 import lombok.Getter;
 import lombok.Setter;

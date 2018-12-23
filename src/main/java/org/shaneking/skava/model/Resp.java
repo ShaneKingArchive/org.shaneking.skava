@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.shaneking.skava.resp;
+package org.shaneking.skava.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +16,7 @@ import lombok.experimental.Accessors;
  */
 @Accessors(chain = true)
 @ToString(includeFieldNames = true)
-public class Resp<D> {
+public class Resp<D, M> {
   @Getter
   @Setter
   private D data;//Business Data
@@ -27,25 +27,25 @@ public class Resp<D> {
 
   @Getter
   @Setter
-  private RespMesg mesg;//Result Message Object, Required if done is false
+  private RespMesg<M> mesg;//Result Message Object, Required if done is false
 
-  public static <D> Resp<D> build(D data, boolean done, RespMesg mesg) {
-    return new Resp<D>().setData(data).setDone(done).setMesg(mesg);
+  public static <D, M> Resp<D, M> build(D data, boolean done, RespMesg<M> mesg) {
+    return new Resp<D, M>().setData(data).setDone(done).setMesg(mesg);
   }
 
-  public static <D> Resp<D> success(D data, RespMesg mesg) {
+  public static <D, M> Resp<D, M> success(D data, RespMesg<M> mesg) {
     return build(data, true, mesg);
   }
 
-  public static <D> Resp<D> success(D data) {
+  public static <D, M> Resp<D, M> success(D data) {
     return success(data, null);
   }
 
-  public static <D> Resp<D> failed(RespMesg mesg, D data) {
+  public static <D, M> Resp<D, M> failed(RespMesg<M> mesg, D data) {
     return build(data, false, mesg);
   }
 
-  public static <D> Resp<D> failed(RespMesg mesg) {
+  public static <D, M> Resp<D, M> failed(RespMesg<M> mesg) {
     return failed(mesg, null);
   }
 }
