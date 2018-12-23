@@ -55,7 +55,7 @@ public class SKEntity {
   @Getter
   @Setter
   @SKColumn(canWhere = false, dataType = "LONGTEXT")
-  private String extJson;
+  private String extJsonStr;
 
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
