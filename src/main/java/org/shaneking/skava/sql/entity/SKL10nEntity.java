@@ -14,13 +14,13 @@ import org.shaneking.skava.sql.annotation.SKColumn;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-public class SKL10nEntity extends SKEntity {
+public class SKL10nEntity<E> extends SKEntity<E> {
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
    */
   @Getter
   @Setter
-  @SKColumn(length = 6)
+  @SKColumn(length = 10)
   private String createTimezone;
 
   /**
@@ -28,7 +28,7 @@ public class SKL10nEntity extends SKEntity {
    */
   @Getter
   @Setter
-  @SKColumn(length = 6)
+  @SKColumn(length = 10)
   private String lastModifyTimezone;
 
   /**
@@ -36,6 +36,6 @@ public class SKL10nEntity extends SKEntity {
    */
   @Getter
   @Setter
-  @SKColumn(length = 6)
+  @SKColumn(length = 10)
   private String invalidTimezone;
 }

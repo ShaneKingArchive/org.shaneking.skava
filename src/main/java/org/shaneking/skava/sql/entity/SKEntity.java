@@ -31,23 +31,36 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 @Slf4j
 @ToString(includeFieldNames = true)
-public class SKEntity {
+public class SKEntity<E> {
+  @Getter
   private final Map<String, String> dbColumnMap = Maps.newHashMap();
+  @Getter
   private final List<String> fieldNameList = Lists.newArrayList();
+  @Getter
   private final Map<String, SKColumn> skColumnMap = Maps.newHashMap();
 
+  @Getter
+  @Setter
   private SKTable skTable;
+
+  @Getter
+  @Setter
   private String fullTableName;
 
   @Getter
   @Setter
-  @SKColumn(length = 36)
+  @SKColumn(length = 40)
   private String id;
 
   @Getter
   @Setter
-  @SKColumn(length = 11, dataType = "INT")
+  @SKColumn(length = 20, dataType = "INT")
   private Integer version = 1;
+
+  //maybe fastjson,gson,jackson...
+  @Getter
+  @Setter
+  private E extJson;//if extJson.createDatetime exist and it is Array, then t.create_datatime between (extJson.crateDatetime[0], extJson.crateDatetime[1])
 
   /**
    * !important, can't be criteria for query, no index
@@ -67,7 +80,7 @@ public class SKEntity {
 
   @Getter
   @Setter
-  @SKColumn(length = 36)
+  @SKColumn(length = 40)
   private String createUserId;
 
   /**
@@ -80,12 +93,12 @@ public class SKEntity {
 
   @Getter
   @Setter
-  @SKColumn(length = 36)
+  @SKColumn(length = 40)
   private String lastModifyUserId;
 
   @Getter
   @Setter
-  @SKColumn(length = 1)
+  @SKColumn(length = 10)
   private String invalid;//Y|N(default)
 
   /**
@@ -98,7 +111,7 @@ public class SKEntity {
 
   @Getter
   @Setter
-  @SKColumn(length = 36)
+  @SKColumn(length = 40)
   private String invalidUserId;
 
   public SKEntity() {

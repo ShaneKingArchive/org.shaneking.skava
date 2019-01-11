@@ -14,14 +14,14 @@ import org.shaneking.skava.sql.annotation.SKColumn;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-public class SKRefEntity extends SKEntity {
+public class SKRefEntity<E> extends SKEntity<E> {
   @Getter
   @Setter
-  @SKColumn(length = 36)
+  @SKColumn(length = 40)
   private String refType;
 
   @Getter
   @Setter
-  @SKColumn(length = 36)
+  @SKColumn(length = 40)
   private String refId;
 }

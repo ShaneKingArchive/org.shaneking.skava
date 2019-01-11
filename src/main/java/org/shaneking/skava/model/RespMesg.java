@@ -27,6 +27,7 @@ public class RespMesg<A> {
   @Setter
   private A args;
 
+  //message or expression
   @Getter
   @Setter
   private String code;

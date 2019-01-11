@@ -9,7 +9,7 @@ import test.skava.SKUnit;
 public class ReqTest extends SKUnit {
   @Test
   public void testToString() throws Exception {
-    skPrint(new Req<Resp, RespMesg>().setObj(Resp.success("data")).setExt(RespMesg.success("code")));
+    skPrint(Req.build().setObj(Resp.success("data")).setExt(RespMesg.success("code")));
   }
 
 }
