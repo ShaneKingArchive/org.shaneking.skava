@@ -14,7 +14,7 @@ import org.shaneking.skava.sql.annotation.SKColumn;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-public class SKRefEntity<E> extends SKEntity<E> {
+public class SKRefEntity<J> extends SKEntity<J> {
   @Getter
   @Setter
   @SKColumn(length = 40)

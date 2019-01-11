@@ -11,32 +11,36 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+//J maybe fastjson,gson,jackson...
 @Accessors(chain = true)
 @ToString(includeFieldNames = true)
-public class Req<E, O> {
-
-  //maybe fastjson,gson,jackson...
-  @Getter
-  @Setter
-  private E ext; // The E maybe JSONObject/JsonNode of request info contain pagination...
+public class Req<J, O> {
 
   @Getter
   @Setter
-  private O obj;
+  private String enc;//this is encode of pri
 
   @Getter
   @Setter
-  private E res;//just response, need exclude in request
+  private J pris;//other objects, if return more object
 
-  public static <E, O> Req<E, O> build() {
-    return new Req<E, O>();
+  @Getter
+  @Setter
+  private Pri<J, O> pri;//main object
+
+  @Getter
+  @Setter
+  private J pub;//system properties, appName,sysName,priEncode(if Y, parse enc to pri),priPath('res')
+
+  public static <J, O> Req<J, O> build() {
+    return new Req<J, O>();
   }
 
-  public static <E, O> Req<E, O> build(O obj) {
-    return new Req<E, O>().setObj(obj);
+  public static <J, O> Req<J, O> build(Pri<J, O> pri) {
+    return new Req<J, O>().setPri(pri);
   }
 
-  public static <E, O> Req<E, O> build(O obj, E ext) {
-    return new Req<E, O>().setObj(obj).setExt(ext);
+  public static <J, O> Req<J, O> build(J pub) {
+    return new Req<J, O>().setPub(pub);
   }
 }

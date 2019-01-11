@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 @Accessors(chain = true)
 @Slf4j
 @ToString(includeFieldNames = true)
-public class SKEntity<E> {
+public class SKEntity<J> {
   @Getter
   private final Map<String, String> dbColumnMap = Maps.newHashMap();
   @Getter
@@ -60,7 +60,7 @@ public class SKEntity<E> {
   //maybe fastjson,gson,jackson...
   @Getter
   @Setter
-  private E extJson;//if extJson.createDatetime exist and it is Array, then t.create_datatime between (extJson.crateDatetime[0], extJson.crateDatetime[1])
+  private J extJson;//if extJson.createDatetime exist and it is Array, then t.create_datatime between (extJson.crateDatetime[0], extJson.crateDatetime[1])
 
   /**
    * !important, can't be criteria for query, no index

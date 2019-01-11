@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 public class Resp<D, M> {
   @Getter
   @Setter
-  private D data;//Business Data
+  private D data;//Business Object
 
   @Getter
   @Setter
