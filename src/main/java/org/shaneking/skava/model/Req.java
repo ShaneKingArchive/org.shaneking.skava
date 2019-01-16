@@ -22,10 +22,6 @@ public class Req<J, O> {
 
   @Getter
   @Setter
-  private J pris;//other objects, if return more object
-
-  @Getter
-  @Setter
   private Pri<J, O> pri;//main object
 
   @Getter
