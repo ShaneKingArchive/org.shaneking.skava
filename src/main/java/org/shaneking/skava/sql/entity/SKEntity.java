@@ -6,6 +6,7 @@
  */
 package org.shaneking.skava.sql.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -32,30 +33,25 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString(includeFieldNames = true)
 public class SKEntity<J> {
+  @JsonIgnore
   @Getter
   private final Map<String, String> dbColumnMap = Maps.newHashMap();
+  @JsonIgnore
   @Getter
   private final List<String> fieldNameList = Lists.newArrayList();
+  @JsonIgnore
   @Getter
   private final Map<String, SKColumn> skColumnMap = Maps.newHashMap();
 
-  @Getter
-  @Setter
-  private SKTable skTable;
-
+  @JsonIgnore
   @Getter
   @Setter
   private String fullTableName;
 
+  @JsonIgnore
   @Getter
   @Setter
-  @SKColumn(length = 40)
-  private String id;
-
-  @Getter
-  @Setter
-  @SKColumn(length = 20, dataType = "INT")
-  private Integer version = 1;
+  private SKTable skTable;
 
   //maybe fastjson,gson,jackson...
   @Getter
@@ -83,18 +79,10 @@ public class SKEntity<J> {
   @SKColumn(length = 40)
   private String createUserId;
 
-  /**
-   * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
-   */
-  @Getter
-  @Setter
-  @SKColumn(length = 20, useLike = true)
-  private String lastModifyDatetime;
-
   @Getter
   @Setter
   @SKColumn(length = 40)
-  private String lastModifyUserId;
+  private String id;
 
   @Getter
   @Setter
@@ -113,6 +101,24 @@ public class SKEntity<J> {
   @Setter
   @SKColumn(length = 40)
   private String invalidUserId;
+
+  /**
+   * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
+   */
+  @Getter
+  @Setter
+  @SKColumn(length = 20, useLike = true)
+  private String lastModifyDatetime;
+
+  @Getter
+  @Setter
+  @SKColumn(length = 40)
+  private String lastModifyUserId;
+
+  @Getter
+  @Setter
+  @SKColumn(length = 20, dataType = "INT")
+  private Integer version = 1;
 
   public SKEntity() {
     initTableInfo();

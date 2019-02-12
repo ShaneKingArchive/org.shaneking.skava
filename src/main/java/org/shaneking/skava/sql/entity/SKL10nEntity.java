@@ -29,7 +29,7 @@ public class SKL10nEntity<J> extends SKEntity<J> {
   @Getter
   @Setter
   @SKColumn(length = 10)
-  private String lastModifyTimezone;
+  private String invalidTimezone;
 
   /**
    * @see org.shaneking.skava.ling.util.Date0#H_MI_S
@@ -37,5 +37,5 @@ public class SKL10nEntity<J> extends SKEntity<J> {
   @Getter
   @Setter
   @SKColumn(length = 10)
-  private String invalidTimezone;
+  private String lastModifyTimezone;
 }

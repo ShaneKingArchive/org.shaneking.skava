@@ -17,6 +17,7 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.*;
 import net.sf.jsqlparser.statement.alter.Alter;
+import net.sf.jsqlparser.statement.comment.Comment;
 import net.sf.jsqlparser.statement.create.index.CreateIndex;
 import net.sf.jsqlparser.statement.create.table.CreateTable;
 import net.sf.jsqlparser.statement.create.view.AlterView;
@@ -31,6 +32,7 @@ import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.statement.upsert.Upsert;
+import net.sf.jsqlparser.statement.values.ValuesStatement;
 import org.shaneking.skava.ling.collect.Tuple;
 
 import java.util.Set;
@@ -312,6 +314,13 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
   @Override
   public void visit(ExpressionList expressionList) {
     for (Expression expression : expressionList.getExpressions()) {
+      expression.accept(this);
+    }
+  }
+
+  @Override
+  public void visit(NamedExpressionList namedExpressionList) {
+    for (Expression expression : namedExpressionList.getExpressions()) {
       expression.accept(this);
     }
   }
@@ -638,6 +647,11 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
   }
 
   @Override
+  public void visit(ShowStatement set) {
+    throw new UnsupportedOperationException(NOT_SUPPORTED_STATEMENT_TYPE_YET);
+  }
+
+  @Override
   public void visit(RowConstructor rowConstructor) {
     for (Expression expr : rowConstructor.getExprList().getExpressions()) {
       expr.accept(this);
@@ -709,10 +723,31 @@ public class TableNamesFinder implements SelectVisitor, FromItemVisitor, Express
     parenthesis.getFromItem().accept(this);
   }
 
-//  @Override
-//  public void visit(Block block) {
-//    if (block.getStatements() != null) {
-//      visit(block.getStatements());
-//    }
-//  }
+  @Override
+  public void visit(Block block) {
+    if (block.getStatements() != null) {
+      visit(block.getStatements());
+    }
+  }
+
+
+  @Override
+  public void visit(Comment comment) {
+    if (comment.getTable() != null) {
+      visit(comment.getTable());
+    }
+    if (comment.getColumn() != null) {
+      Table table = comment.getColumn().getTable();
+      if (table != null) {
+        visit(table);
+      }
+    }
+  }
+
+  @Override
+  public void visit(ValuesStatement values) {
+    for (Expression expr : values.getExpressions()) {
+      expr.accept(this);
+    }
+  }
 }
