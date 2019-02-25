@@ -128,10 +128,10 @@ public class SKEntity<J> {
   public void initColumnInfo(Class<? extends Object> skEntityClass) {
     for (Field field : skEntityClass.getDeclaredFields()) {
       SKColumn skColumn = field.getAnnotation(SKColumn.class);
-      if (skColumn != null && fieldNameList.indexOf(field.getName()) == -1) {
-        dbColumnMap.put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.upper2lower(field.getName()) : skColumn.name());
-        fieldNameList.add(field.getName());
-        skColumnMap.put(field.getName(), skColumn);
+      if (skColumn != null && this.getFieldNameList().indexOf(field.getName()) == -1) {
+        this.getDbColumnMap().put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.upper2lower(field.getName()) : skColumn.name());
+        this.getFieldNameList().add(field.getName());
+        this.getSkColumnMap().put(field.getName(), skColumn);
       }
     }
     if (SKEntity.class.isAssignableFrom(skEntityClass.getSuperclass())) {
@@ -140,15 +140,15 @@ public class SKEntity<J> {
   }
 
   public void initTableInfo() {
-    if (skTable == null) {
-      skTable = this.getClass().getAnnotation(SKTable.class);
+    if (this.getSkTable() == null) {
+      this.setSkTable(this.getClass().getAnnotation(SKTable.class));
     }
-    fullTableName = Strings.isNullOrEmpty(skTable.schema()) ? String0.EMPTY : skTable.schema() + String0.DOT;
-    if (Strings.isNullOrEmpty(skTable.name())) {
+    this.setFullTableName(Strings.isNullOrEmpty(this.getSkTable().schema()) ? String0.EMPTY : this.getSkTable().schema() + String0.DOT);
+    if (Strings.isNullOrEmpty(this.getSkTable().name())) {
       String classTableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split(String20.BACKSLASH_DOT))).get(0));
-      fullTableName = fullTableName + "t" + (classTableName.startsWith(String0.UNDERLINE) ? classTableName : String0.UNDERLINE + classTableName);
+      this.setFullTableName(this.getFullTableName() + "t" + (classTableName.startsWith(String0.UNDERLINE) ? classTableName : String0.UNDERLINE + classTableName));
     } else {
-      fullTableName = fullTableName + skTable.name();
+      this.setFullTableName(this.getFullTableName() + this.getSkTable().name());
     }
   }
 
@@ -180,7 +180,7 @@ public class SKEntity<J> {
 
     List<String> sqlList = Lists.newArrayList();
     sqlList.add("insert into");
-    sqlList.add(fullTableName);
+    sqlList.add(this.getFullTableName());
     sqlList.add(String0.OPEN_PARENTHESIS + Joiner.on(String0.COMMA).join(insertList) + String0.CLOSE_PARENTHESIS);
     sqlList.add("values");
     sqlList.add(String0.OPEN_PARENTHESIS + Strings.repeat(String0.COMMA + String0.QUESTION, insertList.size()).substring(1) + String0.CLOSE_PARENTHESIS);
@@ -190,7 +190,7 @@ public class SKEntity<J> {
 
   public void insertStatement(@NonNull List<String> insertList, @NonNull List<Object> objectList) {
     Object o;
-    for (String fieldName : fieldNameList) {
+    for (String fieldName : this.getFieldNameList()) {
       try {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
@@ -198,7 +198,7 @@ public class SKEntity<J> {
         log.warn(e.toString());
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString())) {
-        insertList.add(dbColumnMap.get(fieldName));
+        insertList.add(this.getDbColumnMap().get(fieldName));
         objectList.add(o);
       }
     }
@@ -267,8 +267,8 @@ public class SKEntity<J> {
 
   public void selectStatement(@NonNull List<String> selectList, @NonNull List<Object> objectList) {
     //jdk8 can't infer it
-    Function<String, String> tmpFunc = (String fieldName) -> dbColumnMap.get(fieldName);
-    selectList.addAll(Lists.transform(fieldNameList, tmpFunc));
+    Function<String, String> tmpFunc = (String fieldName) -> this.getDbColumnMap().get(fieldName);
+    selectList.addAll(Lists.transform(this.getFieldNameList(), tmpFunc));
   }
 
   public void selectStatementExt(@NonNull List<String> selectList, @NonNull List<Object> objectList) {
@@ -290,20 +290,20 @@ public class SKEntity<J> {
 
     List<String> sqlList = Lists.newArrayList();
     sqlList.add("update");
-    sqlList.add(fullTableName);
+    sqlList.add(this.getFullTableName());
     sqlList.add("set");
     sqlList.add(Joiner.on(String0.COMMA).join(updateList));
     sqlList.add("where");
     sqlList.add("id=? and version=?");
-    rtnObjectList.add(id);
-    rtnObjectList.add(version);
+    rtnObjectList.add(this.getId());
+    rtnObjectList.add(this.getVersion());
 
     return Tuple.of(Joiner.on(String0.BLACK).join(sqlList), rtnObjectList);
   }
 
   public void updateStatement(@NonNull List<String> updateList, @NonNull List<Object> objectList) {
     Object o = null;
-    for (String fieldName : fieldNameList.stream().filter(fieldName -> !"id".equals(fieldName)).collect(Collectors.toList())) {
+    for (String fieldName : this.getFieldNameList().stream().filter(fieldName -> !"id".equals(fieldName)).collect(Collectors.toList())) {
       try {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
@@ -311,7 +311,7 @@ public class SKEntity<J> {
         log.warn(e.toString());
       }
       if (o != null && !Strings.isNullOrEmpty(o.toString())) {
-        updateList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
+        updateList.add(this.getDbColumnMap().get(fieldName) + String20.EQUAL_QUESTION);
         if ("version".equals(fieldName)) {
           objectList.add((Integer) o + 1);
         } else {
@@ -327,7 +327,7 @@ public class SKEntity<J> {
 
   //others
   public void fromStatement(@NonNull List<String> fromList, @NonNull List<Object> objectList) {
-    fromList.add(fullTableName);
+    fromList.add(this.getFullTableName());
   }
 
   public void fromStatementExt(@NonNull List<String> fromList, @NonNull List<Object> objectList) {
@@ -353,19 +353,19 @@ public class SKEntity<J> {
 
   public void whereStatement(@NonNull List<String> whereList, @NonNull List<Object> objectList) {
     Object o = null;
-    for (String fieldName : fieldNameList) {
+    for (String fieldName : this.getFieldNameList()) {
       try {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
         o = null;
         log.warn(e.toString());
       }
-      if (o != null && !Strings.isNullOrEmpty(o.toString()) && skColumnMap.get(fieldName) != null && skColumnMap.get(fieldName).canWhere()) {
-        if (skColumnMap.get(fieldName).useLike()) {
-          whereList.add(dbColumnMap.get(fieldName) + " like ");
+      if (o != null && !Strings.isNullOrEmpty(o.toString()) && this.getSkColumnMap().get(fieldName) != null && this.getSkColumnMap().get(fieldName).canWhere()) {
+        if (this.getSkColumnMap().get(fieldName).useLike()) {
+          whereList.add(this.getDbColumnMap().get(fieldName) + " like ");
           objectList.add(String0.PERCENT + o.toString() + String0.PERCENT);
         } else {
-          whereList.add(dbColumnMap.get(fieldName) + String20.EQUAL_QUESTION);
+          whereList.add(this.getDbColumnMap().get(fieldName) + String20.EQUAL_QUESTION);
           objectList.add(o);
         }
       }
