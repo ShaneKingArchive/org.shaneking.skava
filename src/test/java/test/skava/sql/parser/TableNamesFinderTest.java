@@ -28,6 +28,13 @@ public class TableNamesFinderTest {
 
   private static CCJSqlParserManager pm = new CCJSqlParserManager();
 
+  @Test(expected = JSQLParserException.class)
+  public void testAnyLike() throws Exception {
+    String sql = "SELECT * FROM MY_TABLE1 t where t.col like any (array['%foo%', '%bar%', '%baz%']) ";
+    net.sf.jsqlparser.statement.Statement statement = pm.parse(new StringReader(sql));
+    System.out.println(statement);
+  }
+
   @Test
   public void testGetTableList() throws Exception {
 
