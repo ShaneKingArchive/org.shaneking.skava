@@ -53,19 +53,6 @@ public class SKEntity<J> {
   @Setter
   private SKTable skTable;
 
-  //maybe fastjson,gson,jackson...
-  @Getter
-  @Setter
-  private J extJson;//if extJson.createDatetime exist and it is Array, then t.create_datatime between (extJson.crateDatetime[0], extJson.crateDatetime[1])
-
-  /**
-   * !important, can't be criteria for query, no index
-   */
-  @Getter
-  @Setter
-  @SKColumn(canWhere = false, dataType = "LONGTEXT")
-  private String extJsonStr;
-
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
@@ -78,6 +65,19 @@ public class SKEntity<J> {
   @Setter
   @SKColumn(length = 40)
   private String createUserId;
+
+  //maybe fastjson,gson,jackson...
+  @Getter
+  @Setter
+  private J extJson;//if extJson.createDatetime exist and it is Array, then t.create_datatime between (extJson.crateDatetime[0], extJson.crateDatetime[1])
+
+  /**
+   * !important, can't be criteria for query, no index
+   */
+  @Getter
+  @Setter
+  @SKColumn(canWhere = false, dataType = "LONGTEXT")
+  private String extJsonStr;
 
   @Getter
   @Setter
