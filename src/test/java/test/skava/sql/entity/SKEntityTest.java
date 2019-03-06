@@ -51,7 +51,7 @@ public class SKEntityTest extends SKUnit {
 
   @Test
   public void selectSql() throws Exception {
-    Assert.assertEquals(userEntity.selectSql().toString(), "(select birthday,ext_json_str,create_datetime,create_user_id,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_user_entity where version=?,[1])");
+    Assert.assertEquals(userEntity.selectSql().toString(), "(select birthday,create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_user_entity where version=?,[1])");
   }
 
   @Test
