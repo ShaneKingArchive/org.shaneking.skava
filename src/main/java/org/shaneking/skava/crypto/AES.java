@@ -11,7 +11,6 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.shaneking.skava.ling.crypto.Cipher0;
-import org.shaneking.skava.ling.nio.Charset0;
 import org.shaneking.skava.ling.security.Key0;
 import org.shaneking.skava.ling.security.spec.KeySpec0;
 
@@ -21,6 +20,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.KeySpec;
 
@@ -79,7 +79,7 @@ public class AES {
     SecretKey secretKey = new SecretKeySpec(secretKeyFactory.generateSecret(keySpec).getEncoded(), Key0.AES);
     Cipher cipher = Cipher.getInstance(Cipher0.AES_CBC_PKCS5Padding);
     cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(hex(iv)));
-    return new String(cipher.doFinal(base64(cipherText)), Charset0.UTF_8);
+    return new String(cipher.doFinal(base64(cipherText)), StandardCharsets.UTF_8);
   }
 
   public String encrypt(@NonNull String cipherText) throws Exception {
@@ -99,6 +99,6 @@ public class AES {
     SecretKey secretKey = new SecretKeySpec(secretKeyFactory.generateSecret(keySpec).getEncoded(), Key0.AES);
     Cipher cipher = Cipher.getInstance(Cipher0.AES_CBC_PKCS5Padding);
     cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(hex(iv)));
-    return base64(cipher.doFinal(cipherText.getBytes(Charset0.UTF_8)));
+    return base64(cipher.doFinal(cipherText.getBytes(StandardCharsets.UTF_8)));
   }
 }

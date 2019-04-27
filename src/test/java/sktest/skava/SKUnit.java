@@ -29,6 +29,6 @@ public class SKUnit {
   }
 
   public void skPrint(Object o) {
-    System.out.println(testName.getMethodName() + String0.EQUAL + String.valueOf(o));
+    System.out.println(testName.getMethodName() + String0.EQUAL + o);
   }
 }
