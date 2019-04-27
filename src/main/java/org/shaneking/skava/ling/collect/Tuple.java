@@ -348,7 +348,7 @@ public class Tuple<First, Rest> implements Iterable<Object> {
       return appender;
     }
 
-    public StringBuilder appendTo(StringBuilder builder, Tuple<?, ?> tuple) {
+    public StringBuffer appendTo(StringBuffer builder, Tuple<?, ?> tuple) {
       try {
         appendTo((Appendable) builder, tuple);
       } catch (IOException impossible) {
@@ -358,8 +358,8 @@ public class Tuple<First, Rest> implements Iterable<Object> {
       return builder;
     }
 
-    public StringBuilder appendTo(Tuple<?, ?> tuple) {
-      return appendTo(new StringBuilder(), tuple);
+    public StringBuffer appendTo(Tuple<?, ?> tuple) {
+      return appendTo(new StringBuffer(), tuple);
     }
 
     public String join(Tuple<?, ?> tuple) {
