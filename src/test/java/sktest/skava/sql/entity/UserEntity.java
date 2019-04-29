@@ -10,13 +10,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.shaneking.skava.sql.annotation.SKColumn;
-import org.shaneking.skava.sql.annotation.SKTable;
 import org.shaneking.skava.sql.entity.SKEntity;
+
+import javax.persistence.Column;
+import javax.persistence.Table;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-@SKTable
+@Table
 public class UserEntity extends SKEntity {
   @Getter
   @Setter
@@ -27,6 +28,6 @@ public class UserEntity extends SKEntity {
    */
   @Getter
   @Setter
-  @SKColumn(length = 10)
+  @Column(length = 10)
   private String birthday;
 }

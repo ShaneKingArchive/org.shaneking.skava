@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.shaneking.skava.model;
+package org.shaneking.skava.rr;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +26,7 @@ public class Req<J, O> {
 
   @Getter
   @Setter
-  private J pub;//system properties, appName,sysName,priEncode(if Y, parse enc to pri),priPath('res')
+  private J pub;//system properties;tenantId,appName,sysName,priEncode(if Y, parse enc to pri),priPath('res')
 
   public static <J, O> Req<J, O> build() {
     return new Req<J, O>();

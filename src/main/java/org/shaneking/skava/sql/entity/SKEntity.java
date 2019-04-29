@@ -7,7 +7,6 @@
 package org.shaneking.skava.sql.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -21,9 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.lang.String20;
-import org.shaneking.skava.sql.annotation.SKColumn;
-import org.shaneking.skava.sql.annotation.SKTable;
+import org.shaneking.skava.sql.OperationContent;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -35,58 +35,78 @@ import java.util.stream.Collectors;
 public class SKEntity<J> {
   @JsonIgnore
   @Getter
+  private final Map<String, Column> columnMap = Maps.newHashMap();
+  @JsonIgnore
+  @Getter
   private final Map<String, String> dbColumnMap = Maps.newHashMap();
   @JsonIgnore
   @Getter
   private final List<String> fieldNameList = Lists.newArrayList();
-  @JsonIgnore
-  @Getter
-  private final Map<String, SKColumn> skColumnMap = Maps.newHashMap();
 
   @JsonIgnore
   @Getter
   @Setter
   private String fullTableName;
-
   @JsonIgnore
   @Getter
   @Setter
-  private SKTable skTable;
+  private Table table;
 
   /**
    * @see org.shaneking.skava.ling.util.Date0#DATE_TIME
    */
   @Getter
   @Setter
-  @SKColumn(length = 20, useLike = true)
+  @Column(length = 20, updatable = false)
   private String createDatetime;
 
   @Getter
   @Setter
-  @SKColumn(length = 40)
+  @Column(length = 40, updatable = false)
   private String createUserId;
 
-  //maybe fastjson,gson,jackson...
+  /**
+   * J maybe fastjson,gson,jackson...
+   * <p> extJson:
+   * when result:The json object of extJsonStr
+   * when table operation(insert/delete/update/select):
+   * <blockquote><pre>
+   *     {
+   *         createDatetime:{
+   *             o:'between',
+   *             c:['2017-09-10','2019-04-27']
+   *         },
+   *         invalidDatetime:{
+   *             o:'>',
+   *             c:'2017-09-10'
+   *         },
+   *         lastModifyDatetime:{
+   *             o:'like',
+   *             c:'2019-04-27'
+   *         }
+   *     }
+   * </pre></blockquote>
+   */
   @Getter
   @Setter
-  private J extJson;//if extJson.createDatetime exist and it is Array, then t.create_datatime between (extJson.crateDatetime[0], extJson.crateDatetime[1])
+  private J extJson;
 
   /**
    * !important, can't be criteria for query, no index
    */
   @Getter
   @Setter
-  @SKColumn(canWhere = false, dataType = "LONGTEXT")
+  @Column
   private String extJsonStr;
 
   @Getter
   @Setter
-  @SKColumn(length = 40)
+  @Column(length = 40, updatable = false)
   private String id;
 
   @Getter
   @Setter
-  @SKColumn(length = 10)
+  @Column(length = 10)
   private String invalid;//Y|N(default)
 
   /**
@@ -94,12 +114,12 @@ public class SKEntity<J> {
    */
   @Getter
   @Setter
-  @SKColumn(length = 20, useLike = true)
+  @Column(length = 20)
   private String invalidDatetime;
 
   @Getter
   @Setter
-  @SKColumn(length = 40)
+  @Column(length = 40)
   private String invalidUserId;
 
   /**
@@ -107,17 +127,17 @@ public class SKEntity<J> {
    */
   @Getter
   @Setter
-  @SKColumn(length = 20, useLike = true)
+  @Column(length = 20)
   private String lastModifyDatetime;
 
   @Getter
   @Setter
-  @SKColumn(length = 40)
+  @Column(length = 40)
   private String lastModifyUserId;
 
   @Getter
   @Setter
-  @SKColumn(length = 20, dataType = "INT")
+  @Column(length = 20)
   private Integer version = 1;
 
   public SKEntity() {
@@ -125,13 +145,19 @@ public class SKEntity<J> {
     initColumnInfo(this.getClass());
   }
 
+  public List<OperationContent> findOperationContentList(String fieldName) {
+    List<OperationContent> rtnList = Lists.newArrayList();
+    //implements by sub entity
+    return rtnList;
+  }
+
   public void initColumnInfo(Class<? extends Object> skEntityClass) {
     for (Field field : skEntityClass.getDeclaredFields()) {
-      SKColumn skColumn = field.getAnnotation(SKColumn.class);
-      if (skColumn != null && this.getFieldNameList().indexOf(field.getName()) == -1) {
-        this.getDbColumnMap().put(field.getName(), Strings.isNullOrEmpty(skColumn.name()) ? String0.upper2lower(field.getName()) : skColumn.name());
+      Column column = field.getAnnotation(Column.class);
+      if (column != null && this.getFieldNameList().indexOf(field.getName()) == -1) {
+        this.getColumnMap().put(field.getName(), column);
+        this.getDbColumnMap().put(field.getName(), Strings.isNullOrEmpty(column.name()) ? String0.upper2lower(field.getName()) : column.name());
         this.getFieldNameList().add(field.getName());
-        this.getSkColumnMap().put(field.getName(), skColumn);
       }
     }
     if (SKEntity.class.isAssignableFrom(skEntityClass.getSuperclass())) {
@@ -140,34 +166,34 @@ public class SKEntity<J> {
   }
 
   public void initTableInfo() {
-    if (this.getSkTable() == null) {
-      this.setSkTable(this.getClass().getAnnotation(SKTable.class));
+    if (this.getTable() == null) {
+      this.setTable(this.getClass().getAnnotation(Table.class));
     }
-    this.setFullTableName(Strings.isNullOrEmpty(this.getSkTable().schema()) ? String0.EMPTY : this.getSkTable().schema() + String0.DOT);
-    if (Strings.isNullOrEmpty(this.getSkTable().name())) {
+    this.setFullTableName(Strings.isNullOrEmpty(this.getTable().schema()) ? String0.EMPTY : this.getTable().schema() + String0.DOT);
+    if (Strings.isNullOrEmpty(this.getTable().name())) {
       String classTableName = String0.upper2lower(Lists.reverse(Lists.newArrayList(this.getClass().getName().split(String20.BACKSLASH_DOT))).get(0));
       this.setFullTableName(this.getFullTableName() + "t" + (classTableName.startsWith(String0.UNDERLINE) ? classTableName : String0.UNDERLINE + classTableName));
     } else {
-      this.setFullTableName(this.getFullTableName() + this.getSkTable().name());
+      this.setFullTableName(this.getFullTableName() + this.getTable().name());
     }
   }
 
   //curd
   public int delete() {
     int rtnInt = 0;
-    //TODO
+    //implements by sub entity
     return rtnInt;
   }
 
   public int insert() {
     int rtnInt = 0;
-    //TODO
+    //implements by sub entity
     return rtnInt;
   }
 
   public int insertOrUpdateById() {
     int rtnInt = 0;
-    //TODO
+    //implements by sub entity
     return rtnInt;
   }
 
@@ -205,11 +231,12 @@ public class SKEntity<J> {
   }
 
   public void insertStatementExt(@NonNull List<String> insertList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public List<? extends SKEntity> select() {
     List<? extends SKEntity> rtnList = Lists.newArrayList();
-    //TODO
+    //implements by sub entity
     return rtnList;
   }
 
@@ -266,22 +293,20 @@ public class SKEntity<J> {
   }
 
   public void selectStatement(@NonNull List<String> selectList, @NonNull List<Object> objectList) {
-    //jdk8 can't infer it
-    Function<String, String> tmpFunc = (String fieldName) -> this.getDbColumnMap().get(fieldName);
-    selectList.addAll(Lists.transform(this.getFieldNameList(), tmpFunc));
+    selectList.addAll(this.getFieldNameList().stream().map((String fieldName) -> this.getDbColumnMap().get(fieldName)).collect(Collectors.toList()));
   }
 
   public void selectStatementExt(@NonNull List<String> selectList, @NonNull List<Object> objectList) {
-    //nothing
+    //implements by sub entity
   }
 
   public int update() {
     int rtnInt = 0;
-    //TODO
+    //implements by sub entity
     return rtnInt;
   }
 
-  public Tuple.Pair<String, List<Object>> updateByIdAndVersionSql() {
+  public Tuple.Pair<String, List<Object>> updateByIdSql() {
     List<Object> rtnObjectList = Lists.newArrayList();
 
     List<String> updateList = Lists.newArrayList();
@@ -294,16 +319,25 @@ public class SKEntity<J> {
     sqlList.add("set");
     sqlList.add(Joiner.on(String0.COMMA).join(updateList));
     sqlList.add("where");
-    sqlList.add("id=? and version=?");
+    sqlList.add("id=?");
     rtnObjectList.add(this.getId());
-    rtnObjectList.add(this.getVersion());
 
     return Tuple.of(Joiner.on(String0.BLACK).join(sqlList), rtnObjectList);
   }
 
+  public Tuple.Pair<String, List<Object>> updateByIdAndVersionSql() {
+    Tuple.Pair<String, List<Object>> rtn = this.updateByIdSql();
+    if (this.getVersion() != null) {
+      List<Object> rtnObjectList = Tuple.getSecond(rtn);
+      rtnObjectList.add(this.getVersion());
+      rtn = Tuple.of(Joiner.on(String0.BLACK).join(Tuple.getFirst(rtn), "and version=?"), rtnObjectList);
+    }
+    return rtn;
+  }
+
   public void updateStatement(@NonNull List<String> updateList, @NonNull List<Object> objectList) {
     Object o = null;
-    for (String fieldName : this.getFieldNameList().stream().filter(fieldName -> !"id".equals(fieldName)).collect(Collectors.toList())) {
+    for (String fieldName : this.getFieldNameList().stream().filter(fieldName -> !"id".equals(fieldName) && this.getColumnMap().get(fieldName).updatable()).collect(Collectors.toList())) {
       try {
         o = this.getClass().getMethod("get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1)).invoke(this);
       } catch (Exception e) {
@@ -322,7 +356,7 @@ public class SKEntity<J> {
   }
 
   public void updateStatementExt(@NonNull List<String> updateList, @NonNull List<Object> objectList) {
-
+    //implements by sub entity
   }
 
   //others
@@ -331,24 +365,30 @@ public class SKEntity<J> {
   }
 
   public void fromStatementExt(@NonNull List<String> fromList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public void groupByStatement(@NonNull List<String> groupByList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public void groupByStatementExt(@NonNull List<String> groupByList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public void havingStatement(@NonNull List<String> havingList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public void havingStatementExt(@NonNull List<String> havingList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public void orderByStatement(@NonNull List<String> orderByList, @NonNull List<Object> objectList) {
   }
 
   public void orderByStatementExt(@NonNull List<String> orderByList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 
   public void whereStatement(@NonNull List<String> whereList, @NonNull List<Object> objectList) {
@@ -360,18 +400,18 @@ public class SKEntity<J> {
         o = null;
         log.warn(e.toString());
       }
-      if (o != null && !Strings.isNullOrEmpty(o.toString()) && this.getSkColumnMap().get(fieldName) != null && this.getSkColumnMap().get(fieldName).canWhere()) {
-        if (this.getSkColumnMap().get(fieldName).useLike()) {
-          whereList.add(this.getDbColumnMap().get(fieldName) + " like ");
-          objectList.add(String0.PERCENT + o.toString() + String0.PERCENT);
-        } else {
-          whereList.add(this.getDbColumnMap().get(fieldName) + String20.EQUAL_QUESTION);
-          objectList.add(o);
+      if (o != null && !Strings.isNullOrEmpty(o.toString()) && this.getColumnMap().get(fieldName) != null) {
+        whereList.add(this.getDbColumnMap().get(fieldName) + String20.EQUAL_QUESTION);
+        objectList.add(o);
+        for (OperationContent oc : this.findOperationContentList(fieldName)) {
+          whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getO() + String0.BLACK);
+          objectList.add(Strings.nullToEmpty(oc.getBw()) + oc.getC() + oc.getEw());
         }
       }
     }
   }
 
   public void whereStatementExt(@NonNull List<String> whereList, @NonNull List<Object> objectList) {
+    //implements by sub entity
   }
 }

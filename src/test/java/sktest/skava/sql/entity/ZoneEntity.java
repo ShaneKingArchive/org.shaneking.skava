@@ -8,11 +8,12 @@ package sktest.skava.sql.entity;
 
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.shaneking.skava.sql.annotation.SKTable;
 import org.shaneking.skava.sql.entity.SKL10nEntity;
+
+import javax.persistence.Table;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
-@SKTable
+@Table
 public class ZoneEntity extends SKL10nEntity {
 }

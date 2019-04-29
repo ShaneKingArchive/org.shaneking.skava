@@ -1,10 +1,10 @@
 package sktest.skava.model;
 
 import org.junit.Test;
-import org.shaneking.skava.model.Pri;
-import org.shaneking.skava.model.Req;
-import org.shaneking.skava.model.Resp;
-import org.shaneking.skava.model.RespMesg;
+import org.shaneking.skava.rr.Pri;
+import org.shaneking.skava.rr.Req;
+import org.shaneking.skava.rr.Resp;
+import org.shaneking.skava.rr.RespMesg;
 import sktest.skava.SKUnit;
 
 public class ReqTest extends SKUnit {

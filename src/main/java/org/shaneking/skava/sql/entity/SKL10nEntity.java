@@ -10,7 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.shaneking.skava.sql.annotation.SKColumn;
+
+import javax.persistence.Column;
 
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
@@ -20,7 +21,7 @@ public class SKL10nEntity<J> extends SKEntity<J> {
    */
   @Getter
   @Setter
-  @SKColumn(length = 10)
+  @Column(length = 10)
   private String createTimezone;
 
   /**
@@ -28,7 +29,7 @@ public class SKL10nEntity<J> extends SKEntity<J> {
    */
   @Getter
   @Setter
-  @SKColumn(length = 10)
+  @Column(length = 10)
   private String invalidTimezone;
 
   /**
@@ -36,6 +37,6 @@ public class SKL10nEntity<J> extends SKEntity<J> {
    */
   @Getter
   @Setter
-  @SKColumn(length = 10)
+  @Column(length = 10)
   private String lastModifyTimezone;
 }

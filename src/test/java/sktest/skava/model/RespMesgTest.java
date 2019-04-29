@@ -2,7 +2,7 @@ package sktest.skava.model;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.shaneking.skava.model.RespMesg;
+import org.shaneking.skava.rr.RespMesg;
 import sktest.skava.SKUnit;
 
 public class RespMesgTest extends SKUnit {
