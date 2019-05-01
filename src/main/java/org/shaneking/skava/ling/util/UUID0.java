@@ -36,7 +36,7 @@ public class UUID0 {
     return to62String(hi | (val & (hi - 1)), MAX_RADIX).substring(1);
   }
 
-  private static String to62String(long i, int radix) {
+  protected static String to62String(long i, int radix) {
     if (radix < MIN_RADIX || radix > MAX_RADIX)
       radix = 10;
     if (radix == 10)

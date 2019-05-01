@@ -2,145 +2,361 @@ package sktest.skava.sql.entity;
 
 import com.google.common.collect.Lists;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.String0;
 import sktest.skava.SKUnit;
+import sktest.skava.sql.entity.prepare.PrepareSKEntityColumnNoGetMethod;
+import sktest.skava.sql.entity.prepare.PrepareSKEntityColumns;
+import sktest.skava.sql.entity.prepare.PrepareSKEntityOverride;
+import sktest.skava.sql.entity.prepare.prepareSKEntityTableName;
 
 public class SKEntityTest extends SKUnit {
-  private UserEntity userEntity = new UserEntity();
+  private PrepareSKEntityColumnNoGetMethod prepareSKEntityColumnNoGetMethod = new PrepareSKEntityColumnNoGetMethod();
+  private PrepareSKEntityColumns prepareSKEntityColumns = new PrepareSKEntityColumns();
+  private PrepareSKEntityOverride prepareSKEntityOverride = new PrepareSKEntityOverride();
+  private prepareSKEntityTableName prepareSKEntityTableName = new prepareSKEntityTableName();
 
-  @Test
-  public void insertOrUpdateById() throws Exception {
-    Assert.assertEquals(userEntity.insertOrUpdateById(), 0);
+  @Before
+  public void setUp() {
+    super.setUp();
+    prepareSKEntityColumnNoGetMethod = new PrepareSKEntityColumnNoGetMethod();
+    prepareSKEntityColumns = new PrepareSKEntityColumns();
+    prepareSKEntityOverride = new PrepareSKEntityOverride();
+    prepareSKEntityTableName = new prepareSKEntityTableName();
   }
 
   @Test
-  public void select() throws Exception {
-    Assert.assertEquals(userEntity.select().toString(), "[]");
+  public void setter() {
+    prepareSKEntityColumnNoGetMethod.setNoGetMethod("").setCreateDatetime("").setCreateUserId("").setExtJson("").setExtJsonStr("").setInvalid("").setInvalidDatetime("").setInvalidUserId("").setLastModifyDatetime("").setLastModifyUserId("");
+  }
+
+
+  @Test
+  public void initColumnInfo() {
+    prepareSKEntityColumns.initColumnInfo(prepareSKEntityColumns.getClass());
+    prepareSKEntityTableName.initColumnInfo(prepareSKEntityTableName.getClass());
   }
 
   @Test
-  public void updateByIdAndVersionSql() throws Exception {
-    Assert.assertEquals(userEntity.updateByIdAndVersionSql().toString(), "(update t_user_entity set version=? where id=? and version=?,[2, null, 1])");
+  public void initTableInfo() {
+    prepareSKEntityColumns.initTableInfo();
+    prepareSKEntityTableName.initTableInfo();
   }
 
   @Test
-  public void extUpdateStatement() throws Exception {
-    userEntity.updateStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void delete() {
+    Assert.assertEquals(prepareSKEntityColumns.delete(), 0);
   }
 
   @Test
-  public void genUpdateStatement() throws Exception {
-    userEntity.updateStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void insert() {
+    Assert.assertEquals(prepareSKEntityColumns.insert(), 0);
   }
 
   @Test
-  public void insertSql() throws Exception {
-    Assert.assertEquals(userEntity.insertSql().toString(), "(insert into t_user_entity (version) values (?),[1])");
+  public void insertOrUpdateById() {
+    Assert.assertEquals(prepareSKEntityColumns.insertOrUpdateById(), 0);
   }
 
   @Test
-  public void extInsertStatement() throws Exception {
-    userEntity.insertStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void insertSql() {
+    Assert.assertEquals(prepareSKEntityColumns.insertSql().toString(), "(insert into t_prepare_s_k_entity_columns (version) values (?),[1])");
   }
 
   @Test
-  public void genInsertStatement() throws Exception {
-    userEntity.insertStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void insertStatement() {
+    prepareSKEntityColumns.insertStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
-  public void selectSql() throws Exception {
-    Assert.assertEquals(userEntity.selectSql().toString(), "(select birthday,create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_user_entity where version=?,[1])");
+  public void insertStatementColumnNoGetMethod() {
+    prepareSKEntityColumnNoGetMethod.insertStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void insertStatementNull1() {
+    prepareSKEntityColumns.insertStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void insertStatementNull2() {
+    prepareSKEntityColumns.insertStatement(Lists.newArrayList(), null);
   }
 
   @Test
-  public void extOrderByStatement() throws Exception {
-    userEntity.orderByStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void insertStatementExt() {
+    prepareSKEntityColumns.insertStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void insertStatementExtNull1() {
+    prepareSKEntityColumns.insertStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void insertStatementExtNull2() {
+    prepareSKEntityColumns.insertStatementExt(Lists.newArrayList(), null);
   }
 
   @Test
-  public void genOrderByStatement() throws Exception {
-    userEntity.orderByStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void select() {
+    Assert.assertEquals(prepareSKEntityColumns.select().toString(), "[]");
   }
 
   @Test
-  public void extHavingStatement() throws Exception {
-    userEntity.havingStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void selectSql() {
+    Assert.assertEquals(prepareSKEntityColumns.selectSql().toString(), "(select has_length,re_name,create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_prepare_s_k_entity_columns where version=?,[1])");
   }
 
   @Test
-  public void genHavingStatement() throws Exception {
-    userEntity.havingStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void selectSqlColumnNull() {
+    prepareSKEntityColumns.setVersion(null);
+    Assert.assertEquals(prepareSKEntityColumns.selectSql().toString(), "(select has_length,re_name,create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_prepare_s_k_entity_columns,[])");
   }
 
   @Test
-  public void extGroupByStatement() throws Exception {
-    userEntity.groupByStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void selectSqlOverride() {
+    Assert.assertEquals(prepareSKEntityOverride.selectSql().toString(), "(select create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_prepare_s_k_entity_override where create_datetime like =? and version=? group by version having version > ? order by version,[%1949-10-01%, 1, 1])");
   }
 
   @Test
-  public void genGroupByStatement() throws Exception {
-    userEntity.groupByStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void selectStatement() {
+    prepareSKEntityColumns.selectStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void selectStatementNull1() {
+    prepareSKEntityColumns.selectStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void selectStatementNull2() {
+    prepareSKEntityColumns.selectStatement(Lists.newArrayList(), null);
   }
 
   @Test
-  public void extWhereStatement() throws Exception {
-    userEntity.whereStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void selectStatementExt() {
+    prepareSKEntityColumns.selectStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void selectStatementExtNull1() {
+    prepareSKEntityColumns.selectStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void selectStatementExtNull2() {
+    prepareSKEntityColumns.selectStatementExt(Lists.newArrayList(), null);
   }
 
   @Test
-  public void genWhereStatement() throws Exception {
-    userEntity.whereStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void update() {
+    Assert.assertEquals(prepareSKEntityColumns.update(), 0);
   }
 
   @Test
-  public void extFromStatement() throws Exception {
-    userEntity.fromStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void updateByIdAndVersionSql() {
+    Assert.assertEquals(prepareSKEntityColumns.updateByIdAndVersionSql().toString(), "(update t_prepare_s_k_entity_columns set version=? where id=? and version=?,[2, null, 1])");
+    prepareSKEntityColumns.setVersion(null);
+    Assert.assertEquals(prepareSKEntityColumns.updateByIdAndVersionSql().toString(), "(update t_prepare_s_k_entity_columns set  where id=?,[null])");
   }
 
   @Test
-  public void genFromStatement() throws Exception {
-    userEntity.fromStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void updateStatement() {
+    prepareSKEntityColumns.updateStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test
-  public void extSelectStatement() throws Exception {
-    userEntity.selectStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  public void updateStatementColumnNoGetMethod() {
+    prepareSKEntityColumnNoGetMethod.updateStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void updateStatementNull1() {
+    prepareSKEntityColumns.updateStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void updateStatementNull2() {
+    prepareSKEntityColumns.updateStatement(Lists.newArrayList(), null);
   }
 
   @Test
-  public void genSelectStatement() throws Exception {
-    userEntity.selectStatement(Lists.newArrayList(), Lists.newArrayList());
+  public void updateStatementExt() {
+    prepareSKEntityColumns.updateStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void updateStatementExtNull1() {
+    prepareSKEntityColumns.updateStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void updateStatementExtNull2() {
+    prepareSKEntityColumns.updateStatementExt(Lists.newArrayList(), null);
   }
 
   @Test
-  public void initColumnInfo() throws Exception {
-    userEntity.initColumnInfo(userEntity.getClass());
+  public void fromStatement() {
+    prepareSKEntityColumns.fromStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void fromStatementNull1() {
+    prepareSKEntityColumns.fromStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void fromStatementNull2() {
+    prepareSKEntityColumns.fromStatement(Lists.newArrayList(), null);
   }
 
   @Test
-  public void initTableInfo() throws Exception {
-    userEntity.initTableInfo();
+  public void fromStatementExt() {
+    prepareSKEntityColumns.fromStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void fromStatementExtNull1() {
+    prepareSKEntityColumns.fromStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void fromStatementExtNull2() {
+    prepareSKEntityColumns.fromStatementExt(Lists.newArrayList(), null);
   }
 
   @Test
-  public void upper2lower() throws Exception {
-    Assert.assertEquals(String0.upper2lower(this.getClass().getName()), "sktest_.skava_.sql_.entity_._s_k_entity_test");
+  public void groupByStatement() {
+    prepareSKEntityColumns.groupByStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void groupByStatementNull1() {
+    prepareSKEntityColumns.groupByStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void groupByStatementNull2() {
+    prepareSKEntityColumns.groupByStatement(Lists.newArrayList(), null);
   }
 
   @Test
-  public void delete() throws Exception {
-    Assert.assertEquals(userEntity.delete(), 0);
+  public void groupByStatementExt() {
+    prepareSKEntityColumns.groupByStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void groupByStatementExtNull1() {
+    prepareSKEntityColumns.groupByStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void groupByStatementExtNull2() {
+    prepareSKEntityColumns.groupByStatementExt(Lists.newArrayList(), null);
   }
 
   @Test
-  public void insert() throws Exception {
-    Assert.assertEquals(userEntity.insert(), 0);
+  public void havingStatement() {
+    prepareSKEntityColumns.havingStatement(String0.EMPTY, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void havingStatementNull1() {
+    prepareSKEntityColumns.havingStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void havingStatementNull2() {
+    prepareSKEntityColumns.havingStatement(String0.EMPTY, null);
   }
 
   @Test
-  public void update() throws Exception {
-    Assert.assertEquals(userEntity.update(), 0);
+  public void havingStatementExt() {
+    prepareSKEntityColumns.havingStatementExt(String0.EMPTY, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void havingStatementExtNull1() {
+    prepareSKEntityColumns.havingStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void havingStatementExtNull2() {
+    prepareSKEntityColumns.havingStatementExt(String0.EMPTY, null);
+  }
+
+  @Test
+  public void orderByStatement() {
+    prepareSKEntityColumns.orderByStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void orderByStatementNull1() {
+    prepareSKEntityColumns.orderByStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void orderByStatementNull2() {
+    prepareSKEntityColumns.orderByStatement(Lists.newArrayList(), null);
+  }
+
+  @Test
+  public void orderByStatementExt() {
+    prepareSKEntityColumns.orderByStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void orderByStatementExtNull1() {
+    prepareSKEntityColumns.orderByStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void orderByStatementExtNull2() {
+    prepareSKEntityColumns.orderByStatementExt(Lists.newArrayList(), null);
+  }
+
+  @Test
+  public void whereStatement() {
+    prepareSKEntityColumnNoGetMethod.whereStatement(Lists.newArrayList(), Lists.newArrayList());
+    prepareSKEntityColumns.whereStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test
+  public void whereStatementColumnMap() {
+    prepareSKEntityColumns.setHasLength("hasLength");
+    prepareSKEntityColumns.getColumnMap().remove("hasLength");
+    prepareSKEntityColumns.whereStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test
+  public void whereStatementOperationContent() {
+    prepareSKEntityOverride.whereStatement(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void whereStatementNull1() {
+    prepareSKEntityColumns.whereStatement(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void whereStatementNull2() {
+    prepareSKEntityColumns.whereStatement(Lists.newArrayList(), null);
+  }
+
+  @Test
+  public void whereStatementExt() {
+    prepareSKEntityColumns.whereStatementExt(Lists.newArrayList(), Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void whereStatementExtNull1() {
+    prepareSKEntityColumns.whereStatementExt(null, Lists.newArrayList());
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void whereStatementExtNull2() {
+    prepareSKEntityColumns.whereStatementExt(Lists.newArrayList(), null);
   }
 }

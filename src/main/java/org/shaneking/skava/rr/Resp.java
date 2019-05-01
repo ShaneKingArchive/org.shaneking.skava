@@ -33,19 +33,19 @@ public class Resp<D, M> {
     return new Resp<D, M>().setData(data).setDone(done).setMesg(mesg);
   }
 
-  public static <D, M> Resp<D, M> success(D data, RespMesg<M> mesg) {
-    return build(data, true, mesg);
-  }
-
-  public static <D, M> Resp<D, M> success(D data) {
-    return success(data, null);
-  }
-
   public static <D, M> Resp<D, M> failed(RespMesg<M> mesg, D data) {
     return build(data, false, mesg);
   }
 
   public static <D, M> Resp<D, M> failed(RespMesg<M> mesg) {
     return failed(mesg, null);
+  }
+
+  public static <D, M> Resp<D, M> success(D data, RespMesg<M> mesg) {
+    return build(data, true, mesg);
+  }
+
+  public static <D, M> Resp<D, M> success(D data) {
+    return success(data, null);
   }
 }

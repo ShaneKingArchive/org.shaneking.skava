@@ -259,9 +259,10 @@ public class SKEntity<J> {
     groupByStatement(groupByList, rtnObjectList);
     groupByStatementExt(groupByList, rtnObjectList);
 
-    List<String> havingList = Lists.newArrayList();
-    havingStatement(havingList, rtnObjectList);
-    havingStatementExt(havingList, rtnObjectList);
+//    List<String> havingList = Lists.newArrayList();
+    String havingExpression = String0.EMPTY;
+    havingExpression = havingStatement(havingExpression, rtnObjectList);
+    havingExpression = havingStatementExt(havingExpression, rtnObjectList);
 
     List<String> orderByList = Lists.newArrayList();
     orderByStatement(orderByList, rtnObjectList);
@@ -280,9 +281,9 @@ public class SKEntity<J> {
       sqlList.add("group by");
       sqlList.add(Joiner.on(String0.COMMA).join(groupByList));
     }
-    if (havingList.size() > 0) {
+    if (!Strings.isNullOrEmpty(havingExpression)) {
       sqlList.add("having");
-      sqlList.add(Joiner.on(" and ").join(havingList));
+      sqlList.add(havingExpression);
     }
     if (orderByList.size() > 0) {
       sqlList.add("order by");
@@ -376,12 +377,14 @@ public class SKEntity<J> {
     //implements by sub entity
   }
 
-  public void havingStatement(@NonNull List<String> havingList, @NonNull List<Object> objectList) {
+  public String havingStatement(@NonNull String havingExpression, @NonNull List<Object> objectList) {
     //implements by sub entity
+    return havingExpression;
   }
 
-  public void havingStatementExt(@NonNull List<String> havingList, @NonNull List<Object> objectList) {
+  public String havingStatementExt(@NonNull String havingExpression, @NonNull List<Object> objectList) {
     //implements by sub entity
+    return havingExpression;
   }
 
   public void orderByStatement(@NonNull List<String> orderByList, @NonNull List<Object> objectList) {
@@ -400,11 +403,13 @@ public class SKEntity<J> {
         o = null;
         log.warn(e.toString());
       }
-      if (o != null && !Strings.isNullOrEmpty(o.toString()) && this.getColumnMap().get(fieldName) != null) {
-        whereList.add(this.getDbColumnMap().get(fieldName) + String20.EQUAL_QUESTION);
-        objectList.add(o);
+      if (this.getColumnMap().get(fieldName) != null) {
+        if (o != null && !Strings.isNullOrEmpty(o.toString())) {
+          whereList.add(this.getDbColumnMap().get(fieldName) + String20.EQUAL_QUESTION);
+          objectList.add(o);
+        }
         for (OperationContent oc : this.findOperationContentList(fieldName)) {
-          whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getO() + String0.BLACK);
+          whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getO() + String0.BLACK + String20.EQUAL_QUESTION);
           objectList.add(Strings.nullToEmpty(oc.getBw()) + oc.getC() + oc.getEw());
         }
       }

@@ -1,10 +1,4 @@
-/*
- * @(#)UserEntity.java		Created at 2018/2/4
- *
- * Copyright (c) ShaneKing All rights reserved.
- * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package sktest.skava.sql.entity;
+package sktest.skava.sql.entity.prepare;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,16 +12,18 @@ import javax.persistence.Table;
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
 @Table
-public class UserEntity extends SKEntity {
+public class PrepareSKEntityColumns extends SKEntity {
   @Getter
   @Setter
-  private String name;
+  private String withoutAnnotation;
 
-  /**
-   * @see org.shaneking.skava.ling.util.Date0#Y_M_D
-   */
   @Getter
   @Setter
   @Column(length = 10)
-  private String birthday;
+  private String hasLength;
+
+  @Getter
+  @Setter
+  @Column(name = "re_name")
+  private String reName;
 }

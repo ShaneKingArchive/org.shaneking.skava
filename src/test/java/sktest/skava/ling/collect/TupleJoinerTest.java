@@ -13,34 +13,29 @@ public class TupleJoinerTest extends SKUnit {
   private Tuple.TupleJoiner tupleJoiner = null;
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     super.setUp();
     ip = Tuple.of(127, 0, 0, 1);
     tupleJoiner = new Tuple.TupleJoiner(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET);
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     super.tearDown();
   }
 
   @Test
-  public void appendTo0() throws Exception {
-    Assert.assertEquals(tupleJoiner.appendTo((Appendable) new StringBuilder(), ip).toString(), "[127.0.0.1]");
-  }
-
-  @Test
-  public void appendTo1() throws Exception {
-    Assert.assertEquals(tupleJoiner.appendTo(new StringBuilder(), ip).toString(), "[127.0.0.1]");
-  }
-
-  @Test
-  public void appendTo2() throws Exception {
+  public void appendTo1() {
     Assert.assertEquals(tupleJoiner.appendTo(ip).toString(), "[127.0.0.1]");
   }
 
   @Test
-  public void join() throws Exception {
+  public void appendTo2() {
+    Assert.assertEquals(tupleJoiner.appendTo(new StringBuffer(), ip).toString(), "[127.0.0.1]");
+  }
+
+  @Test
+  public void join() {
     Assert.assertEquals(tupleJoiner.join(ip), "[127.0.0.1]");
   }
 

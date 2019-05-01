@@ -40,20 +40,20 @@ public class RespMesg<A> {
     return new RespMesg<A>().setArgs(args).setCode(code).setType(type);
   }
 
-  public static <A> RespMesg<A> success(String code, A args) {
-    return build(SUCCESS, code, args);
-  }
-
-  public static <A> RespMesg<A> success(String code) {
-    return success(code, null);
-  }
-
   public static <A> RespMesg<A> failed(String code, A args) {
     return build(ERROR, code, args);
   }
 
   public static <A> RespMesg<A> failed(String code) {
     return failed(code, null);
+  }
+
+  public static <A> RespMesg<A> success(String code, A args) {
+    return build(SUCCESS, code, args);
+  }
+
+  public static <A> RespMesg<A> success(String code) {
+    return success(code, null);
   }
 
   public boolean successfully() {

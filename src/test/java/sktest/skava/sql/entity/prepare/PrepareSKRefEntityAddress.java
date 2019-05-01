@@ -1,10 +1,10 @@
 /*
- * @(#)AddressEntity.java		Created at 2018/2/4
+ * @(#)PrepareSKRefEntityAddress.java		Created at 2018/2/4
  *
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package sktest.skava.sql.entity;
+package sktest.skava.sql.entity.prepare;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +18,7 @@ import javax.persistence.Table;
 @Accessors(chain = true)
 @ToString(callSuper = true, includeFieldNames = true)
 @Table(name = "t_address", schema = "testSchema")
-public class AddressEntity extends SKRefEntity {
+public class PrepareSKRefEntityAddress extends SKRefEntity {
   /**
    * InnoDB prefix index max 767 bytes(utf8:767/3=255char;gbk:767/2=383char)
    */

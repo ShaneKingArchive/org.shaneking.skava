@@ -14,7 +14,6 @@ import lombok.NonNull;
 import org.shaneking.skava.ling.lang.String0;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -24,8 +23,12 @@ import java.util.Iterator;
  */
 public class Tuple<First, Rest> implements Iterable<Object> {
   private static final String BEGIN = String0.OPEN_PARENTHESIS;
-  private static final String SEP = String0.COMMA;
   private static final String END = String0.CLOSE_PARENTHESIS;
+  private static final String SEP = String0.COMMA;
+
+  public <T> Tuple<T, Tuple<First, Rest>> prepend(T t) {
+    return new Tuple<>(t, this);
+  }
 
   First first;
   Rest rest;
@@ -137,14 +140,24 @@ public class Tuple<First, Rest> implements Iterable<Object> {
   }
 
   @Override
+  public boolean equals(@Nullable Object obj) {
+    return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
+
+  }
+
+  @NonNull
+  @Override
+  public Iterator<Object> iterator() {
+    return Lists.newArrayList(first, rest).iterator();
+  }
+
+  @Override
   public int hashCode() {
     return Objects.hashCode(Iterators.toArray(iterator(), Object.class));
   }
 
-  @Override
-  public boolean equals(@Nullable Object obj) {
-    return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
-
+  private enum End {
+    SINGLETON
   }
 
   @Override
@@ -162,20 +175,6 @@ public class Tuple<First, Rest> implements Iterable<Object> {
 
   public String toString(TupleJoiner joiner) {
     return joiner.join(this);
-  }
-
-  @NonNull
-  @Override
-  public Iterator<Object> iterator() {
-    return Lists.newArrayList(first, rest).iterator();
-  }
-
-  public <T> Tuple<T, Tuple<First, Rest>> prepend(T t) {
-    return new Tuple<>(t, this);
-  }
-
-  private enum End {
-    SINGLETON
   }
 
   public static class DecuplePlus<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> extends Tuple<T1, Tuple<T2, Tuple<T3, Tuple<T4, Tuple<T5, Tuple<T6, Tuple<T7, Tuple<T8, Tuple<T9, Tuple<T10, Tuple<Object[], End>>>>>>>>>>> {
@@ -323,9 +322,9 @@ public class Tuple<First, Rest> implements Iterable<Object> {
   }
 
   public static class TupleJoiner {
+    private final String close;
     private final String open;
     private final String separator;
-    private final String close;
 
     public TupleJoiner(String open, String separator, String close) {
       this.open = open;
@@ -333,7 +332,11 @@ public class Tuple<First, Rest> implements Iterable<Object> {
       this.close = close;
     }
 
-    public <A extends Appendable> A appendTo(A appender, Tuple<?, ?> tuple) throws IOException {
+    public StringBuffer appendTo(Tuple<?, ?> tuple) {
+      return appendTo(new StringBuffer(), tuple);
+    }
+
+    public StringBuffer appendTo(StringBuffer appender, Tuple<?, ?> tuple) {
       appender.append(open);
       Iterator<Object> iterTerm = tuple.iterator();
       if (iterTerm.hasNext()) {
@@ -348,31 +351,17 @@ public class Tuple<First, Rest> implements Iterable<Object> {
       return appender;
     }
 
-    public StringBuffer appendTo(StringBuffer builder, Tuple<?, ?> tuple) {
-      try {
-        appendTo((Appendable) builder, tuple);
-      } catch (IOException impossible) {
-        throw new AssertionError(impossible);
-      }
-
-      return builder;
-    }
-
-    public StringBuffer appendTo(Tuple<?, ?> tuple) {
-      return appendTo(new StringBuffer(), tuple);
-    }
-
     public String join(Tuple<?, ?> tuple) {
       return appendTo(tuple).toString();
-    }
-
-    private CharSequence toString(Object term) {
-      return (term instanceof CharSequence) ? (CharSequence) term : String.valueOf(term);
     }
 
     @Override
     public String toString() {
       return "TupleJoiner{" + "open='" + open + '\'' + ", separator='" + separator + '\'' + ", close='" + close + '\'' + '}';
+    }
+
+    private CharSequence toString(Object term) {
+      return (term instanceof CharSequence) ? (CharSequence) term : String.valueOf(term);
     }
   }
 }

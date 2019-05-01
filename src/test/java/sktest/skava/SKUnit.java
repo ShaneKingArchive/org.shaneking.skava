@@ -19,12 +19,12 @@ public class SKUnit {
   private Stopwatch stopwatch = Stopwatch.createStarted();
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     stopwatch = Stopwatch.createStarted();
   }
 
   @After
-  public void tearDown() throws Exception {
+  public void tearDown() {
     System.out.println(testName.getMethodName() + String0.EQUAL + stopwatch.stop());
   }
 

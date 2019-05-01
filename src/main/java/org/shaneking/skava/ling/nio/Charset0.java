@@ -7,5 +7,6 @@
 package org.shaneking.skava.ling.nio;
 
 public class Charset0 {
+  public static final String GBK = "GBK";
   public static final String UTF_8 = "UTF-8";
 }

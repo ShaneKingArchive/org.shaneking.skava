@@ -12,8 +12,9 @@ import org.shaneking.skava.ling.crypto.Cipher0;
 import sktest.skava.SKUnit;
 
 public class Cipher0Test extends SKUnit {
+
   @Test
-  public void staticProperties() {
-    Assert.assertEquals(Cipher0.AES_CBC_PKCS5Padding, "AES/CBC/PKCS5Padding");
+  public void newInstance() {
+    Assert.assertNotNull(new Cipher0().toString());
   }
 }

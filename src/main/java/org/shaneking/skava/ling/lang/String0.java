@@ -90,17 +90,17 @@ public final class String0 {
   public static final String T = "T";//True
   public static final String F = "F";//False
 
+  //null or empty to
+  public static String null2empty2(String s, @NonNull String d) {
+    return Strings.isNullOrEmpty(s) ? d : s;
+  }
+
   //firstName -&gt; first_name
   public static String upper2lower(@NonNull String string) {
     return upper2lower(string, UNDERLINE);
   }
 
   public static String upper2lower(@NonNull String string, @NonNull String with) {
-    return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(EMPTY)).stream().map(alphabet -> (alphabet != null && alphabet.equals(alphabet.toUpperCase())) ? with + alphabet.toLowerCase() : alphabet).collect(Collectors.toList()));
-  }
-
-  //null or empty to
-  public static String null2empty2(String s, @NonNull String d) {
-    return Strings.isNullOrEmpty(s) ? d : s;
+    return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(EMPTY)).stream().map(alphabet -> alphabet.equals(alphabet.toUpperCase()) ? with + alphabet.toLowerCase() : alphabet).collect(Collectors.toList()));
   }
 }

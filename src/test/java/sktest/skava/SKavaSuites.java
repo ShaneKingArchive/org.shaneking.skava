@@ -10,10 +10,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import sktest.skava.crypto.CryptoSuites;
 import sktest.skava.ling.LingSuites;
-import sktest.skava.model.ModelSuites;
+import sktest.skava.rr.RRSuites;
 import sktest.skava.sql.SqlSuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({CryptoSuites.class, LingSuites.class, ModelSuites.class, SqlSuites.class})
+@Suite.SuiteClasses({CryptoSuites.class, LingSuites.class, RRSuites.class, SqlSuites.class})
 public class SKavaSuites {
 }
