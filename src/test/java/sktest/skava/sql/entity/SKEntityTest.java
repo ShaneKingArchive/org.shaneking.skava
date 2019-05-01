@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.shaneking.skava.ling.lang.String0;
 import sktest.skava.SKUnit;
 import sktest.skava.sql.entity.prepare.PrepareSKEntityColumnNoGetMethod;
 import sktest.skava.sql.entity.prepare.PrepareSKEntityColumns;
@@ -117,7 +116,7 @@ public class SKEntityTest extends SKUnit {
 
   @Test
   public void selectSqlOverride() {
-    Assert.assertEquals(prepareSKEntityOverride.selectSql().toString(), "(select create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_prepare_s_k_entity_override where create_datetime like =? and version=? group by version having version > ? order by version,[%1949-10-01%, 1, 1])");
+    Assert.assertEquals(prepareSKEntityOverride.selectSql().toString(), "(select create_datetime,create_user_id,ext_json_str,id,invalid,invalid_datetime,invalid_user_id,last_modify_datetime,last_modify_user_id,version from t_prepare_s_k_entity_override where create_user_id in (?,?,?) and invalid_datetime between ? and ? and last_modify_datetime like ? and version=? group by version having version > ? order by version,[1, a, ,, 1949-10-01, 1996-07, %1949-10-01%, 1, 1])");
   }
 
   @Test
@@ -259,7 +258,7 @@ public class SKEntityTest extends SKUnit {
 
   @Test
   public void havingStatement() {
-    prepareSKEntityColumns.havingStatement(String0.EMPTY, Lists.newArrayList());
+    prepareSKEntityColumns.havingStatement(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test(expected = NullPointerException.class)
@@ -269,12 +268,12 @@ public class SKEntityTest extends SKUnit {
 
   @Test(expected = NullPointerException.class)
   public void havingStatementNull2() {
-    prepareSKEntityColumns.havingStatement(String0.EMPTY, null);
+    prepareSKEntityColumns.havingStatement(Lists.newArrayList(), null);
   }
 
   @Test
   public void havingStatementExt() {
-    prepareSKEntityColumns.havingStatementExt(String0.EMPTY, Lists.newArrayList());
+    prepareSKEntityColumns.havingStatementExt(Lists.newArrayList(), Lists.newArrayList());
   }
 
   @Test(expected = NullPointerException.class)
@@ -284,7 +283,7 @@ public class SKEntityTest extends SKUnit {
 
   @Test(expected = NullPointerException.class)
   public void havingStatementExtNull2() {
-    prepareSKEntityColumns.havingStatementExt(String0.EMPTY, null);
+    prepareSKEntityColumns.havingStatementExt(Lists.newArrayList(), null);
   }
 
   @Test

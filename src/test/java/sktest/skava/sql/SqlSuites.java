@@ -10,6 +10,6 @@ import org.junit.runners.Suite;
 import sktest.skava.sql.entity.EntitySuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({EntitySuites.class})
+@Suite.SuiteClasses({EntitySuites.class, Keyword0Test.class, OperationContentTest.class})
 public class SqlSuites {
 }

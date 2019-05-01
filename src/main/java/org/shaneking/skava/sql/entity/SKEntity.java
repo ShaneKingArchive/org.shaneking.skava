@@ -20,11 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.shaneking.skava.ling.collect.Tuple;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.lang.String20;
+import org.shaneking.skava.sql.Keyword0;
 import org.shaneking.skava.sql.OperationContent;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -73,15 +75,15 @@ public class SKEntity<J> {
    * <blockquote><pre>
    *     {
    *         createDatetime:{
-   *             o:'between',
+   *             op:'between',
    *             c:['2017-09-10','2019-04-27']
    *         },
    *         invalidDatetime:{
-   *             o:'>',
+   *             op:'>',
    *             c:'2017-09-10'
    *         },
    *         lastModifyDatetime:{
-   *             o:'like',
+   *             op:'like',
    *             c:'2019-04-27'
    *         }
    *     }
@@ -259,10 +261,9 @@ public class SKEntity<J> {
     groupByStatement(groupByList, rtnObjectList);
     groupByStatementExt(groupByList, rtnObjectList);
 
-//    List<String> havingList = Lists.newArrayList();
-    String havingExpression = String0.EMPTY;
-    havingExpression = havingStatement(havingExpression, rtnObjectList);
-    havingExpression = havingStatementExt(havingExpression, rtnObjectList);
+    List<String> havingList = Lists.newArrayList();
+    havingStatement(havingList, rtnObjectList);
+    havingStatementExt(havingList, rtnObjectList);
 
     List<String> orderByList = Lists.newArrayList();
     orderByStatement(orderByList, rtnObjectList);
@@ -281,9 +282,9 @@ public class SKEntity<J> {
       sqlList.add("group by");
       sqlList.add(Joiner.on(String0.COMMA).join(groupByList));
     }
-    if (!Strings.isNullOrEmpty(havingExpression)) {
+    if (havingList.size() > 0) {
       sqlList.add("having");
-      sqlList.add(havingExpression);
+      sqlList.add(Joiner.on(" and ").join(havingList));
     }
     if (orderByList.size() > 0) {
       sqlList.add("order by");
@@ -377,14 +378,12 @@ public class SKEntity<J> {
     //implements by sub entity
   }
 
-  public String havingStatement(@NonNull String havingExpression, @NonNull List<Object> objectList) {
+  public void havingStatement(@NonNull List<String> havingByList, @NonNull List<Object> objectList) {
     //implements by sub entity
-    return havingExpression;
   }
 
-  public String havingStatementExt(@NonNull String havingExpression, @NonNull List<Object> objectList) {
+  public void havingStatementExt(@NonNull List<String> havingByList, @NonNull List<Object> objectList) {
     //implements by sub entity
-    return havingExpression;
   }
 
   public void orderByStatement(@NonNull List<String> orderByList, @NonNull List<Object> objectList) {
@@ -409,8 +408,18 @@ public class SKEntity<J> {
           objectList.add(o);
         }
         for (OperationContent oc : this.findOperationContentList(fieldName)) {
-          whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getO() + String0.BLACK + String20.EQUAL_QUESTION);
-          objectList.add(Strings.nullToEmpty(oc.getBw()) + oc.getC() + oc.getEw());
+          if (Keyword0.BETWEEN.equalsIgnoreCase(oc.getOp())) {
+            if (oc.getCl().size() == 2) {
+              whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getOp() + String0.BLACK + String0.QUESTION + String0.BLACK + Keyword0.AND + String0.BLACK + String0.QUESTION);
+              objectList.addAll(oc.getCl());
+            }
+          } else if (Keyword0.IN.equalsIgnoreCase(oc.getOp())) {
+            whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getOp() + String0.BLACK + String0.OPEN_PARENTHESIS + Joiner.on(String0.COMMA).join(Collections.nCopies(oc.getCl().size(), String0.QUESTION)) + String0.CLOSE_PARENTHESIS);
+            objectList.addAll(oc.getCl());
+          } else {
+            whereList.add(this.getDbColumnMap().get(fieldName) + String0.BLACK + oc.getOp() + String0.BLACK + String0.QUESTION);
+            objectList.add(Strings.nullToEmpty(oc.getBw()) + oc.getCs() + oc.getEw());
+          }
         }
       }
     }

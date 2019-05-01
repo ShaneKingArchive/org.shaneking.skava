@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.shaneking.skava.ling.lang.String0;
+import org.shaneking.skava.sql.Keyword0;
 import org.shaneking.skava.sql.OperationContent;
 import org.shaneking.skava.sql.entity.SKEntity;
 
@@ -21,9 +22,9 @@ public class PrepareSKEntityOverride extends SKEntity {
   }
 
   @Override
-  public String havingStatementExt(@NonNull String havingExpression, @NonNull List list) {
+  public void havingStatementExt(@NonNull List havingList, @NonNull List list) {
+    havingList.add("version > ?");
     list.add(this.getVersion());
-    return "version > ?";
   }
 
   @Override
@@ -33,8 +34,14 @@ public class PrepareSKEntityOverride extends SKEntity {
 
   @Override
   public List<OperationContent> findOperationContentList(String fieldName) {
-    if ("createDatetime".equals(fieldName)) {
-      return Lists.newArrayList(new OperationContent().setBw(String0.PERCENT).setC("1949-10-01").setEw(String0.PERCENT).setO("like"));
+    if ("createUserId".equals(fieldName)) {
+      return Lists.newArrayList(new OperationContent().setOp(Keyword0.IN).setCl(Lists.newArrayList("1", "a", ",")));
+    } else if ("createDatetime".equals(fieldName)) {
+      return Lists.newArrayList(new OperationContent().setOp(Keyword0.BETWEEN).setCl(Lists.newArrayList("1949-10-01")));
+    } else if ("invalidDatetime".equals(fieldName)) {
+      return Lists.newArrayList(new OperationContent().setOp(Keyword0.BETWEEN).setCl(Lists.newArrayList("1949-10-01", "1996-07")));
+    } else if ("lastModifyDatetime".equals(fieldName)) {
+      return Lists.newArrayList(new OperationContent().setBw(String0.PERCENT).setCs("1949-10-01").setEw(String0.PERCENT).setOp("like"));
     }
     return super.findOperationContentList(fieldName);
   }
