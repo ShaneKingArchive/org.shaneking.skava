@@ -2,6 +2,10 @@
 .DS_Store
 
 
+# === Maven ===
+pom.xml.versionsBackup
+
+
 # === IDE ===
 # eclipse
 .settings

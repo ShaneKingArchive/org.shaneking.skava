@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 
 //Pri is trans object wrapper
 @Accessors(chain = true)
-@ToString(includeFieldNames = true)
+@ToString
 public class Pri<J, O> {
   @Getter
   @Setter

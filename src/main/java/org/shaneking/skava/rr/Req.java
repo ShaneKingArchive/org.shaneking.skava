@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 
 //J maybe fastjson,gson,jackson...
 @Accessors(chain = true)
-@ToString(includeFieldNames = true)
+@ToString
 public class Req<J, O> {
 
   @Getter

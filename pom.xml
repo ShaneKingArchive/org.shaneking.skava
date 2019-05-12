@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.shaneking</groupId>
     <artifactId>org.shaneking.parent</artifactId>
-    <version>${revision.parent}</version>
+    <version>${revisionParent}</version>
     <relativePath>../org.shaneking.parent</relativePath>
   </parent>
 

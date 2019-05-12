@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * https://github.com/ShaneKing/sk-js/blob/mirror/src/RespMesg.js
  */
 @Accessors(chain = true)
-@ToString(includeFieldNames = true)
+@ToString
 public class RespMesg<A> {
   //
   public static final String SUCCESS = "Success";//Just prompt

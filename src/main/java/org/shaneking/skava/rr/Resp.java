@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  * https://github.com/ShaneKing/sk-js/blob/mirror/src/Resp.js
  */
 @Accessors(chain = true)
-@ToString(includeFieldNames = true)
+@ToString
 public class Resp<D, M> {
   @Getter
   @Setter
