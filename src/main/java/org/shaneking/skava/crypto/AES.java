@@ -50,6 +50,18 @@ public class AES {
     return Base64.decodeBase64(str);
   }
 
+  public static String hex(@NonNull byte[] bytes) {
+    return Hex.encodeHexString(bytes);
+  }
+
+  public static byte[] hex(@NonNull String str) {
+    try {
+      return Hex.decodeHex(str.toCharArray());
+    } catch (DecoderException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
   public String decrypt(@NonNull String cipherText) throws Exception {
     return decrypt(cipherText, DEFAULT_SALT);
   }
@@ -88,17 +100,5 @@ public class AES {
     Cipher cipher = Cipher.getInstance(Cipher0.AES_CBC_PKCS5Padding);
     cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(hex(iv)));
     return base64(cipher.doFinal(cipherText.getBytes(StandardCharsets.UTF_8)));
-  }
-
-  public static String hex(@NonNull byte[] bytes) {
-    return Hex.encodeHexString(bytes);
-  }
-
-  public static byte[] hex(@NonNull String str) {
-    try {
-      return Hex.decodeHex(str.toCharArray());
-    } catch (DecoderException e) {
-      throw new IllegalStateException(e);
-    }
   }
 }

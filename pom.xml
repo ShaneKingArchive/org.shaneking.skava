@@ -5,9 +5,9 @@
 
   <parent>
     <groupId>org.shaneking</groupId>
-    <artifactId>org.shaneking.parent</artifactId>
+    <artifactId>org.shaneking</artifactId>
     <version>0.2.1</version>
-    <relativePath>../org.shaneking.parent</relativePath>
+    <relativePath>../org.shaneking</relativePath>
   </parent>
 
   <artifactId>org.shaneking.skava</artifactId>

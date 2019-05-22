@@ -27,6 +27,18 @@ public class Date0 {
     this.date = date;
   }
 
+  public static Date now() {
+    return new Date();
+  }
+
+  public static Date0 on() {
+    return Date0.on(Date0.now());
+  }
+
+  public static Date0 on(Date date) {
+    return new Date0(date);
+  }
+
   public String date() {
     return format(Y_M_D);
   }
@@ -41,18 +53,6 @@ public class Date0 {
 
   public String format(@NonNull String pattern) {
     return new SimpleDateFormat(pattern).format(date);
-  }
-
-  public static Date now() {
-    return new Date();
-  }
-
-  public static Date0 on() {
-    return Date0.on(Date0.now());
-  }
-
-  public static Date0 on(Date date) {
-    return new Date0(date);
   }
 
   public String time() {

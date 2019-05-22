@@ -25,14 +25,8 @@ public class Tuple<First, Rest> implements Iterable<Object> {
   private static final String BEGIN = String0.OPEN_PARENTHESIS;
   private static final String END = String0.CLOSE_PARENTHESIS;
   private static final String SEP = String0.COMMA;
-
-  public <T> Tuple<T, Tuple<First, Rest>> prepend(T t) {
-    return new Tuple<>(t, this);
-  }
-
   First first;
   Rest rest;
-
   private Tuple(First first, Rest rest) {
     this.first = first;
     this.rest = rest;
@@ -139,6 +133,10 @@ public class Tuple<First, Rest> implements Iterable<Object> {
     return (T) Iterables.get(tuple, n);
   }
 
+  public <T> Tuple<T, Tuple<First, Rest>> prepend(T t) {
+    return new Tuple<>(t, this);
+  }
+
   @Override
   public boolean equals(@Nullable Object obj) {
     return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
@@ -156,10 +154,6 @@ public class Tuple<First, Rest> implements Iterable<Object> {
     return Objects.hashCode(Iterators.toArray(iterator(), Object.class));
   }
 
-  private enum End {
-    SINGLETON
-  }
-
   @Override
   public String toString() {
     return joinWith(BEGIN, SEP, END).join(this);
@@ -175,6 +169,10 @@ public class Tuple<First, Rest> implements Iterable<Object> {
 
   public String toString(TupleJoiner joiner) {
     return joiner.join(this);
+  }
+
+  private enum End {
+    SINGLETON
   }
 
   public static class DecuplePlus<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> extends Tuple<T1, Tuple<T2, Tuple<T3, Tuple<T4, Tuple<T5, Tuple<T6, Tuple<T7, Tuple<T8, Tuple<T9, Tuple<T10, Tuple<Object[], End>>>>>>>>>>> {
