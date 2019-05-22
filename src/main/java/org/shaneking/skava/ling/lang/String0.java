@@ -13,7 +13,7 @@ import lombok.NonNull;
 
 import java.util.stream.Collectors;
 
-public final class String0 {
+public class String0 {
   public static final String AMPERSAND = "&";
   public static final String ANGLE = "∠";
   public static final String APPROXIMATELY = "≈";
