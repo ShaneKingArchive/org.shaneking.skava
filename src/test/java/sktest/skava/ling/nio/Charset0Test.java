@@ -9,6 +9,6 @@ public class Charset0Test extends SKUnit {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new Charset0().toString());
+    Assert.assertNotNull(String.valueOf(new Charset0()));
   }
 }

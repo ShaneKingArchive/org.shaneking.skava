@@ -9,6 +9,6 @@ public class String20Test extends SKUnit {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new String20().toString());
+    Assert.assertNotNull(String.valueOf(new String20()));
   }
 }

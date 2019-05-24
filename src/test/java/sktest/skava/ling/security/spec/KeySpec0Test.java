@@ -9,6 +9,6 @@ public class KeySpec0Test extends SKUnit {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new KeySpec0().toString());
+    Assert.assertNotNull(String.valueOf(new KeySpec0()));
   }
 }

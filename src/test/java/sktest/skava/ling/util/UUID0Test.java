@@ -78,6 +78,6 @@ public class UUID0Test extends SKUnit {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new UUID0().toString());
+    Assert.assertNotNull(String.valueOf(new UUID0()));
   }
 }

@@ -11,6 +11,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.NonNull;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class String0 {
@@ -89,6 +91,14 @@ public class String0 {
   public static final String N = "N";//No
   public static final String T = "T";//True
   public static final String F = "F";//False
+
+  public static String format(String pattern, Object... args) {
+    Matcher m = Pattern.compile("\\{(\\d)\\}").matcher(pattern);
+    while (m.find()) {
+      pattern = pattern.replace(m.group(), String.valueOf(args[Integer.parseInt(m.group(1))]));
+    }
+    return pattern;
+  }
 
   //null or empty to
   public static String null2empty2(String s, @NonNull String d) {

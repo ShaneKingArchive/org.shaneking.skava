@@ -15,6 +15,6 @@ public class Cipher0Test extends SKUnit {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new Cipher0().toString());
+    Assert.assertNotNull(String.valueOf(new Cipher0()));
   }
 }

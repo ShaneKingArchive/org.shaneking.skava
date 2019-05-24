@@ -17,7 +17,7 @@ public class Random0Test {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new Random0().toString());
+    Assert.assertNotNull(String.valueOf(new Random0()));
   }
 
   @Test

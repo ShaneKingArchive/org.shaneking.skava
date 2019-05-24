@@ -22,11 +22,12 @@ import java.util.Iterator;
  * System.out.println(Tuple.joinWith(".").join(ip));	//127.0.0.1
  */
 public class Tuple<First, Rest> implements Iterable<Object> {
-  private static final String BEGIN = String0.OPEN_PARENTHESIS;
-  private static final String END = String0.CLOSE_PARENTHESIS;
-  private static final String SEP = String0.COMMA;
+  public static final String BEGIN = String0.OPEN_BRACKET;
+  public static final String END = String0.CLOSE_BRACKET;
+  public static final String SEP = String0.COMMA;
   First first;
   Rest rest;
+
   private Tuple(First first, Rest rest) {
     this.first = first;
     this.rest = rest;
@@ -350,13 +351,9 @@ public class Tuple<First, Rest> implements Iterable<Object> {
     }
 
     public String join(Tuple<?, ?> tuple) {
-      return appendTo(tuple).toString();
+      return String.valueOf(appendTo(tuple));
     }
 
-    @Override
-    public String toString() {
-      return "TupleJoiner{" + "open='" + open + '\'' + ", separator='" + separator + '\'' + ", close='" + close + '\'' + '}';
-    }
 
     private CharSequence toString(Object term) {
       return (term instanceof CharSequence) ? (CharSequence) term : String.valueOf(term);

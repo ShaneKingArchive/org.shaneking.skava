@@ -27,7 +27,7 @@ public class List0Test {
 
   @Test
   public void newInstance() {
-    Assert.assertNotNull(new List0().toString());
+    Assert.assertNotNull(String.valueOf(new List0()));
   }
 
   @Test
