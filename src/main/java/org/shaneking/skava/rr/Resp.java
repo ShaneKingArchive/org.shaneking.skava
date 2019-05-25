@@ -17,11 +17,14 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ToString
 public class Resp<D> {
-  //
-  public static final String SUCCESS = "Success";//Just prompt
-  public static final String INFO = "Info";//Just prompt
-  public static final String WARNING = "Warning";//Business continue, but must prompt
-  public static final String ERROR = "Error";//Unknown Exception(done == false), UI will prompt details; Business Stop(done == true), process by component
+
+  public static final Integer CODE_UNKNOWN_EXCEPTION = -1;
+  public static final Integer CODE_SUCCESSFULLY = 0;
+  public static final Integer CODE_KNOWN_EXCEPTION = 1;//1+
+
+  @Getter
+  @Setter
+  private Integer code;
 
   @Getter
   @Setter
@@ -29,29 +32,25 @@ public class Resp<D> {
 
   @Getter
   @Setter
-  private boolean done;//true: No Unknown Exception,false: has Unknown Exception
+  private String mesg;//Required if code is not 0
 
-  @Getter
-  @Setter
-  private String mesg;//Result Message Object, Required if done is false
-
-  @Getter
-  @Setter
-  private String type;
-
-  public static <D> Resp<D> build(D data, boolean done, String mesg, String type) {
-    return new Resp<D>().setData(data).setDone(done).setMesg(mesg).setType(type);
+  public static <D> Resp<D> build(Integer code, D data, String mesg) {
+    return new Resp<D>().setCode(code).setData(data).setMesg(mesg);
   }
 
-  public static <D> Resp<D> failed(String mesg, String type, D data) {
-    return build(data, false, mesg, type);
+  public static <D> Resp<D> failed(String mesg, Integer code, D data) {
+    return build(code, data, mesg);
   }
 
-  public static <D> Resp<D> failed(String mesg, String type) {
-    return failed(mesg, type, null);
+  public static <D> Resp<D> failed(String mesg, Integer code) {
+    return failed(mesg, code, null);
+  }
+
+  public static <D> Resp<D> failed(String mesg) {
+    return failed(mesg, Resp.CODE_KNOWN_EXCEPTION);
   }
 
   public static <D> Resp<D> success(D data) {
-    return build(data, true, null, null);
+    return build(Resp.CODE_SUCCESSFULLY, data, null);
   }
 }
