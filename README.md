@@ -1,10 +1,6 @@
 # [SKava][]
 Java Library for ShaneKing, More to see [shaneking.org][].
 
-## Features
-### sql
-- [ ] auto created table if not exist at application start
-
 ## Badge
 ### Dependencies
 [![][versioneye img]][versioneye]

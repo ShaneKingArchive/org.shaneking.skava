@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.shaneking</groupId>
     <artifactId>org.shaneking</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <relativePath>../org.shaneking</relativePath>
   </parent>
 
@@ -15,7 +15,7 @@
   <packaging>jar</packaging>
 
   <name>Java for ShaneKing</name>
-  <description>Java Core Library for ShaneKing</description>
+  <description>Java for ShaneKing</description>
   <url>https://github.com/ShaneKing/org.shaneking.skava</url>
   <inceptionYear>2011-2019</inceptionYear>
 
