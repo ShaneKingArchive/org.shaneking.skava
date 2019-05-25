@@ -18,13 +18,13 @@ import lombok.experimental.Accessors;
 @ToString
 public class Resp<D> {
 
-  public static final Integer CODE_UNKNOWN_EXCEPTION = -1;
-  public static final Integer CODE_SUCCESSFULLY = 0;
-  public static final Integer CODE_KNOWN_EXCEPTION = 1;//1+
+  public static final String CODE_UNKNOWN_EXCEPTION = "-1";
+  public static final String CODE_SUCCESSFULLY = "0";
+  public static final String CODE_KNOWN_EXCEPTION = "1";//1+
 
   @Getter
   @Setter
-  private Integer code;
+  private String code;
 
   @Getter
   @Setter
@@ -34,15 +34,15 @@ public class Resp<D> {
   @Setter
   private String mesg;//Required if code is not 0
 
-  public static <D> Resp<D> build(Integer code, D data, String mesg) {
+  public static <D> Resp<D> build(String code, D data, String mesg) {
     return new Resp<D>().setCode(code).setData(data).setMesg(mesg);
   }
 
-  public static <D> Resp<D> failed(String mesg, Integer code, D data) {
+  public static <D> Resp<D> failed(String mesg, String code, D data) {
     return build(code, data, mesg);
   }
 
-  public static <D> Resp<D> failed(String mesg, Integer code) {
+  public static <D> Resp<D> failed(String mesg, String code) {
     return failed(mesg, code, null);
   }
 
