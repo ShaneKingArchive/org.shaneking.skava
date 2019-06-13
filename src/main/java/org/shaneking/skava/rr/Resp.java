@@ -38,16 +38,20 @@ public class Resp<D> {
     return new Resp<D>().setCode(code).setData(data).setMesg(mesg);
   }
 
-  public static <D> Resp<D> failed(String mesg, String code, D data) {
+  public static <D> Resp<D> failed(String code, String mesg, D data) {
     return build(code, data, mesg);
   }
 
-  public static <D> Resp<D> failed(String mesg, String code) {
-    return failed(mesg, code, null);
+  public static <D> Resp<D> failed(String code, String mesg) {
+    return failed(code, mesg, null);
   }
 
-  public static <D> Resp<D> failed(String mesg) {
-    return failed(mesg, Resp.CODE_KNOWN_EXCEPTION);
+  public static <D> Resp<D> failed(String code) {
+    return failed(Resp.CODE_KNOWN_EXCEPTION, Resp.CODE_KNOWN_EXCEPTION);
+  }
+
+  public static <D> Resp<D> failed() {
+    return failed(Resp.CODE_UNKNOWN_EXCEPTION, Resp.CODE_UNKNOWN_EXCEPTION);
   }
 
   public static <D> Resp<D> success(D data) {

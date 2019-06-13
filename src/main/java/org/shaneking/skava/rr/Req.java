@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
 //J maybe fastjson,gson,jackson...
 @Accessors(chain = true)
 @ToString
-public class Req<J, O> {
+public class Req<E, O, R, P> {
 
   @Getter
   @Setter
@@ -22,21 +22,21 @@ public class Req<J, O> {
 
   @Getter
   @Setter
-  private Pri<J, O> pri;//main object
+  private Pri<E, O, R> pri;//main object
 
   @Getter
   @Setter
-  private J pub;//system properties;tenantId,appName,sysName,priEncode(if Y, parse enc to pri),priPath('res')
+  private P pub;//system properties;tenantId,appName,sysName,priEncode(if Y, parse enc to pri),priPath('res')
 
-  public static <J, O> Req<J, O> build() {
-    return new Req<J, O>();
+  public static <E, O, R, P> Req<E, O, R, P> build() {
+    return new Req<E, O, R, P>();
   }
 
-  public static <J, O> Req<J, O> build(Pri<J, O> pri) {
-    return new Req<J, O>().setPri(pri);
+  public static <E, O, R, P> Req<E, O, R, P> build(Pri<E, O, R> pri) {
+    return new Req<E, O, R, P>().setPri(pri);
   }
 
-  public static <J, O> Req<J, O> build(J pub) {
-    return new Req<J, O>().setPub(pub);
+  public static <E, O, R, P> Req<E, O, R, P> build(P pub) {
+    return new Req<E, O, R, P>().setPub(pub);
   }
 }

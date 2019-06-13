@@ -14,28 +14,29 @@ import lombok.experimental.Accessors;
 //Pri is trans object wrapper
 @Accessors(chain = true)
 @ToString
-public class Pri<J, O> {
-  @Getter
-  @Setter
-  private J rtn;//return, just response, don't request
+public class Pri<E, O, R> {
 
   @Getter
   @Setter
-  private J ext;//extend settings like table config
+  private E ext;//extend settings like table config
 
   @Getter
   @Setter
   private O obj;//main object content
 
-  public static <J, O> Pri<J, O> build() {
-    return new Pri<J, O>();
+  @Getter
+  @Setter
+  private R rtn;//return, just response, don't request
+
+  public static <E, O, R> Pri<E, O, R> build() {
+    return new Pri<E, O, R>();
   }
 
-  public static <J, O> Pri<J, O> build(J rtn) {
-    return new Pri<J, O>().setRtn(rtn);
+  public static <E, O, R> Pri<E, O, R> build(R rtn) {
+    return new Pri<E, O, R>().setRtn(rtn);
   }
 
-  public static <J, O> Pri<J, O> build(J ext, O obj) {
-    return new Pri<J, O>().setExt(ext).setObj(obj);
+  public static <E, O, R> Pri<E, O, R> build(E ext, O obj) {
+    return new Pri<E, O, R>().setExt(ext).setObj(obj);
   }
 }
