@@ -22,7 +22,9 @@ public class String0 {
   public static final String ARROW = "→";
   public static final String ASTERISK = "*";
   public static final String BACKSLASH = "\\";
+  public static final String BACKSPACE = "\b";
   public static final String BLACK = " ";
+  public static final String BR = "\n";
   public static final String CELSIUS = "℃";
   public static final String CIRCLE = "⊙";
   public static final String CIRCUMFERENCE = "○";
@@ -98,6 +100,11 @@ public class String0 {
       pattern = pattern.replace(m.group(), String.valueOf(args[Integer.parseInt(m.group(1))]));
     }
     return pattern;
+  }
+
+  //not null or empty to
+  public static String notNull2empty2(String s, @NonNull String d) {
+    return Strings.isNullOrEmpty(s) ? s : d;
   }
 
   //null or empty to
