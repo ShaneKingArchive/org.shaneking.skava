@@ -10,7 +10,12 @@ import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.crypto.AES;
+import org.shaneking.skava.ling.lang.String0;
+import org.shaneking.skava.ling.util.UUID0;
 import sktest.skava.SKUnit;
+
+import javax.crypto.BadPaddingException;
+import java.util.UUID;
 
 public class AESTest extends SKUnit {
 
@@ -27,6 +32,11 @@ public class AESTest extends SKUnit {
     Assert.assertEquals(plainText, AES.decrypt(cipherText, AES.DEFAULT_SALT));
   }
 
+  @Test(expected = BadPaddingException.class)
+  public void decrypt2Exception() throws Exception {
+    Assert.assertNotEquals(plainText, AES.decrypt(cipherText, AES.genKey()));
+  }
+
   @Test
   public void encrypt1() throws Exception {
     Assert.assertEquals(cipherText, AES.encrypt(plainText));
@@ -35,19 +45,38 @@ public class AESTest extends SKUnit {
   @Test
   public void encrypt2() throws Exception {
     Assert.assertEquals(cipherText, AES.encrypt(plainText, AES.DEFAULT_SALT));
+    Assert.assertNotEquals(cipherText, AES.encrypt(plainText, AES.genKey()));
   }
 
   @Test
   public void genKey() throws Exception {
     skPrint(AES.genKey());
-    skPrint(AES.genKey());
-    skPrint(AES.genKey());
+  }
+
+  @Test
+  public void genKey_eightLength() throws Exception {
+    skPrint(AES.genKey(UUID.randomUUID().toString().split(String0.MINUS)[0]));
+  }
+
+  @Test(expected = Exception.class)
+  public void genKey_empty() throws Exception {
+    skPrint(AES.genKey(String0.EMPTY));
+  }
+
+  @Test(expected = Exception.class)
+  public void genKey_notEightLength() throws Exception {
+    skPrint(AES.genKey(UUID0.l19()));
+  }
+
+  @Test(expected = Exception.class)
+  public void genKey_null() throws Exception {
+    skPrint(AES.genKey(null));
   }
 
   @Test
   public void salt() {
     String salt = "ILoveYou";
-    skPrint(Hex.encodeHexString(salt.getBytes()));
     Assert.assertEquals(16, Hex.encodeHexString(salt.getBytes()).length());
+    Assert.assertEquals(AES.DEFAULT_SALT, Hex.encodeHexString(salt.getBytes()));
   }
 }

@@ -4,13 +4,13 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package sktest.skava.ling.util;
+package sktest.skava.ling.util.concurrent;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import sktest.skava.ling.util.concurrent.ConcurrentSuites;
+import sktest.skava.ling.util.concurrent.atomic.AtomicLong0Test;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ConcurrentSuites.class, Date0Test.class, List0Test.class, Random0Test.class, UUID0Test.class})
-public class UtilSuites {
+@Suite.SuiteClasses({AtomicLong0Test.class})
+public class ConcurrentSuites {
 }

@@ -17,17 +17,22 @@ public class RespTest extends SKUnit {
   }
 
   @Test
-  public void failed1() {
+  public void failed_a0() {
+    skPrint(Resp.failed());
+  }
+
+  @Test
+  public void failed_a1() {
     skPrint(Resp.failed("mesg"));
   }
 
   @Test
-  public void failed2() {
+  public void failed_a2() {
     skPrint(Resp.failed("mesg", Resp.CODE_KNOWN_EXCEPTION));
   }
 
   @Test
-  public void failed3() {
+  public void failed_a3() {
     skPrint(Resp.failed("mesg", Resp.CODE_KNOWN_EXCEPTION, "data"));
   }
 

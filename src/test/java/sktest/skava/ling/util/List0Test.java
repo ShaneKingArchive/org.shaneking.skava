@@ -10,7 +10,7 @@ import org.shaneking.skava.ling.util.List0;
 import java.util.List;
 
 public class List0Test {
-  List<String> emptyList3 = List0.fillArrayList(String0.EMPTY, 3, null);
+  List<String> emptyList3 = List0.fillList(String0.EMPTY, 3, null);
 
   @Before
   public void setUp() {
@@ -22,7 +22,7 @@ public class List0Test {
 
   @Test
   public void fillArrayList() {
-    Assert.assertEquals(emptyList3, List0.fillArrayList(String0.EMPTY, 3, null));
+    Assert.assertEquals(emptyList3, List0.fillList(String0.EMPTY, 3, null));
   }
 
   @Test
@@ -32,21 +32,21 @@ public class List0Test {
 
   @Test
   public void operation() {
-    Assert.assertEquals(emptyList3, List0.operation(List0.fillArrayList(String0.EMPTY, 3, null), List0.fillArrayList(String0.EMPTY, 3, null), (m, n) -> {
+    Assert.assertEquals(emptyList3, List0.operation(List0.fillList(String0.EMPTY, 3, null), List0.fillList(String0.EMPTY, 3, null), (m, n) -> {
       return m + n;
     }));
   }
 
   @Test(expected = NullPointerException.class)
   public void operationNull1() {
-    Assert.assertEquals(emptyList3, List0.operation(null, List0.fillArrayList(String0.EMPTY, 3, null), (m, n) -> {
+    Assert.assertEquals(emptyList3, List0.operation(null, List0.fillList(String0.EMPTY, 3, null), (m, n) -> {
       return m + n;
     }));
   }
 
   @Test(expected = NullPointerException.class)
   public void operationNull2() {
-    Assert.assertEquals(emptyList3, List0.operation(List0.fillArrayList(String0.EMPTY, 3, null), null, (m, n) -> {
+    Assert.assertEquals(emptyList3, List0.operation(List0.fillList(String0.EMPTY, 3, null), null, (m, n) -> {
       return m + n;
     }));
   }

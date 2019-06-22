@@ -11,7 +11,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-//J maybe fastjson,gson,jackson...
+/**
+ * Just reference for request and response, overwrite it in most scenarios
+ * <p>
+ * //E, O, R, P maybe fastjson,gson,jackson...
+ */
 @Accessors(chain = true)
 @ToString
 public class Req<E, O, R, P> {

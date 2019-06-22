@@ -11,7 +11,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-//Pri is trans object wrapper
+/**
+ * Pri is trans object wrapper
+ * <p>
+ * Mapping for: https://github.com/ShaneKing/sk-user
+ */
 @Accessors(chain = true)
 @ToString
 public class Pri<E, O, R> {

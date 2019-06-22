@@ -16,7 +16,6 @@ import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.security.Key0;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -25,7 +24,6 @@ import java.util.UUID;
 public class AES {
   //ILoveYou
   public static final String DEFAULT_SALT = "494c6f7665596f75";
-  private static final Cache<Integer, KeyGenerator> KEY_CACHE = CacheBuilder.newBuilder().maximumSize(3).build();//just 128,192,256
   private static final Cache<String, Cipher> SALT_DECRYPT_CACHE = CacheBuilder.newBuilder().maximumSize(13).build();
   private static final Cache<String, Cipher> SALT_ENCRYPT_CACHE = CacheBuilder.newBuilder().maximumSize(13).build();
 
