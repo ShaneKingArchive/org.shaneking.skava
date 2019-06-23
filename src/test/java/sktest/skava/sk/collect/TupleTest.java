@@ -1,12 +1,12 @@
 package sktest.skava.sk.collect;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.sk.collect.Tuple;
+import org.shaneking.skava.t3.jackson.OM3;
 import sktest.skava.SKUnit;
 
 import java.text.MessageFormat;
@@ -17,7 +17,6 @@ public class TupleTest extends SKUnit {
   private String elevenString2 = "[1,2,3,4,5,[1,2,3,4,5,6,7,8,9,10,11],7,8,9,10,11]";
   private Tuple elevenTuple = Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
   private Tuple elevenTuple2 = Tuple.of(1, 2, 3, 4, 5, Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11), 7, 8, 9, 10, 11);
-  private ObjectMapper objectMapper = new ObjectMapper();
   private Tuple.TupleJoiner tupleJoiner = null;
 
   @Before
@@ -35,16 +34,16 @@ public class TupleTest extends SKUnit {
 
   @Test
   public void testJsonStringLevel1() throws Exception {
-    Assert.assertEquals(elevenString, objectMapper.writeValueAsString(elevenTuple));
+    Assert.assertEquals(elevenString, OM3.writeValueAsString(elevenTuple));
     Assert.assertEquals(elevenString, String.valueOf(elevenTuple));
-    Assert.assertEquals(elevenString, objectMapper.writeValueAsString(objectMapper.readValue(elevenString, List.class)));
+    Assert.assertEquals(elevenString, OM3.writeValueAsString(OM3.readValue(elevenString, List.class)));
   }
 
   @Test
   public void testJsonStringLevel2() throws Exception {
-    Assert.assertEquals(elevenString2, objectMapper.writeValueAsString(elevenTuple2));
+    Assert.assertEquals(elevenString2, OM3.writeValueAsString(elevenTuple2));
     Assert.assertEquals(elevenString2, String.valueOf(elevenTuple2));
-    Assert.assertEquals(elevenString2, objectMapper.writeValueAsString(objectMapper.readValue(elevenString2, List.class)));
+    Assert.assertEquals(elevenString2, OM3.writeValueAsString(OM3.readValue(elevenString2, List.class)));
   }
 
 //  @Test
