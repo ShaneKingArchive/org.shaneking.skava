@@ -2,9 +2,6 @@
 🆒Automatic generation of scripts and parameters for ShaneKing（测试覆盖率保持在80%以上）, More to see [shaneking.org][].
 
 ## Badge
-### Dependencies
-[![][versioneye img]][versioneye]
-
 ### Build
 [![][travis img]][travis]
 
@@ -24,26 +21,23 @@
 ShaneKing is released under [Apache-2.0][].
 
 
-[Sql]: https://github.com/ShaneKing/org.shaneking.sql
+[SKava]: https://github.com/ShaneKing/org.shaneking.skava
 [shaneking.org]: http://shaneking.org/
 
-[versioneye]:https://www.versioneye.com/user/projects/5a768e360fb24f02987fd91e
-[versioneye img]:https://www.versioneye.com/user/projects/5a768e360fb24f02987fd91e/badge.svg
+[travis]:https://travis-ci.org/ShaneKing/org.shaneking.skava
+[travis img]:https://secure.travis-ci.org/ShaneKing/org.shaneking.skava.png
 
-[travis]:https://travis-ci.org/ShaneKing/org.shaneking.sql
-[travis img]:https://secure.travis-ci.org/ShaneKing/org.shaneking.sql.png
-
-[codecov]:https://codecov.io/gh/ShaneKing/org.shaneking.sql/branch/mirror
-[codecov img]:https://codecov.io/github/ShaneKing/org.shaneking.sql/coverage.svg?branch=mirror
-[codacy]:https://app.codacy.com/project/ShaneKing/org.shaneking.sql/
-[codacy img]:https://api.codacy.com/project/badge/Grade/86c1da8a6e064f469e167d1bebacbebd
+[codecov]:https://codecov.io/gh/ShaneKing/org.shaneking.skava/branch/mirror
+[codecov img]:https://codecov.io/github/ShaneKing/org.shaneking.skava/coverage.svg?branch=mirror
+[codacy]:https://app.codacy.com/project/ShaneKing/org.shaneking.skava/
+[codacy img]:https://api.codacy.com/project/badge/Grade/c98f8115ed1946688911e6c5598b1bbe
 [saucelabs]:https://saucelabs.com/u/ShaneKing
 [saucelabs img]:https://saucelabs.com/browser-matrix/ShaneKing.svg
 
-[mavenbadge]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.shaneking%22%20AND%20a%3A%22org.shaneking.sql%22
-[mavenbadge img]:https://maven-badges.herokuapp.com/maven-central/org.shaneking/org.shaneking.sql/badge.svg
+[mavenbadge]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.shaneking%22%20AND%20a%3A%22org.shaneking.skava%22
+[mavenbadge img]:https://maven-badges.herokuapp.com/maven-central/org.shaneking/org.shaneking.skava/badge.svg
 
-[gitter]:https://gitter.im/ShaneKing/org.shaneking.sql?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
+[gitter]:https://gitter.im/ShaneKing/org.shaneking.skava?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge
 [gitter img]:https://badges.gitter.im/Join%20Chat.svg
 
 [Apache-2.0]: https://opensource.org/licenses/Apache-2.0
