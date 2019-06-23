@@ -1,8 +1,6 @@
 package sktest.skava.ling.util;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.util.List0;
@@ -10,15 +8,7 @@ import org.shaneking.skava.ling.util.List0;
 import java.util.List;
 
 public class List0Test {
-  List<String> emptyList3 = List0.fillList(String0.EMPTY, 3, null);
-
-  @Before
-  public void setUp() {
-  }
-
-  @After
-  public void tearDown() {
-  }
+  private List<String> emptyList3 = List0.fillList(String0.EMPTY, 3, null);
 
   @Test
   public void fillArrayList() {

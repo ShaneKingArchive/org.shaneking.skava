@@ -16,12 +16,12 @@ import java.util.ArrayList;
 public class OM3Test extends SKUnit {
 
   @Test
-  public void readValue1_List() {
+  public void readValueA1List() {
     Assert.assertEquals("[]", OM3.writeValueAsString(new ArrayList<>()));
   }
 
   @Test(expected = SKRuntimeException.class)
-  public void readValue1_Object() {
+  public void readValueA1Object() {
     Assert.assertEquals("{}", OM3.writeValueAsString(new Object()));
   }
 
@@ -36,12 +36,12 @@ public class OM3Test extends SKUnit {
   }
 
   @Test(expected = NullPointerException.class)
-  public void createObjectNode_a1() {
+  public void createObjectNodeA1() {
     Assert.assertEquals("{}", OM3.writeValueAsString(OM3.createObjectNode(null)));
   }
 
   @Test
-  public void readValue_a1_PrepareOM3() {
+  public void readValueA1PrepareOM3() {
     PrepareOM3 prepare = new PrepareOM3().setS1("s1");
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(prepare));
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue(prepare)));
@@ -49,7 +49,7 @@ public class OM3Test extends SKUnit {
   }
 
   @Test
-  public void readValue_a1_PrepareOM3_noValue() {
+  public void readValueA1PrepareOM3NoValue() {
     PrepareOM3 prepare = new PrepareOM3();
     Assert.assertEquals("{}", OM3.writeValueAsString(prepare));
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.readValue(prepare)));
@@ -57,7 +57,7 @@ public class OM3Test extends SKUnit {
   }
 
   @Test(expected = SKRuntimeException.class)
-  public void readValue_a1_PrepareOM3NoGetterSetter() {
+  public void readValueA1PrepareOM3NoGetterSetter() {
     PrepareOM3NoGetterSetter prepare = new PrepareOM3NoGetterSetter();
     Assert.assertEquals("{}", OM3.writeValueAsString(prepare));
 //    Assert.assertEquals("{}", OM3.writeValueAsString(OM3.readValue(prepare)));
@@ -65,19 +65,19 @@ public class OM3Test extends SKUnit {
   }
 
   @Test
-  public void readValue_a2_1() {
+  public void readValueA21() {
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue("{\"s1\":\"s1\"}", PrepareOM3.class)));
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue("{\"s1\":\"s1\"}", PrepareOM3T.class)));
   }
 
   @Test(expected = NullPointerException.class)
-  public void readValue_a3_1() {
+  public void readValueA31() {
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue(null, "{\"s1\":\"s1\"}", PrepareOM3.class)));
 //    Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue(null,"{\"s1\":\"s1\"}", PrepareOM3T.class)));
   }
 
   @Test
-  public void readValue_a2_2() {
+  public void readValueA22() {
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue("{\"s1\":\"s1\"}", new TypeReference<PrepareOM3>() {
     })));
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue("{\"s1\":\"s1\"}", new TypeReference<PrepareOM3T<String>>() {
@@ -87,35 +87,35 @@ public class OM3Test extends SKUnit {
   }
 
   @Test(expected = NullPointerException.class)
-  public void readValue_a3_2() {
+  public void readValueA32() {
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.readValue(null, "{\"s1\":\"s1\"}", new TypeReference<PrepareOM3>() {
     })));
   }
 
   @Test(expected = SKRuntimeException.class)
-  public void readValue_a4_false() {
+  public void readValueA4False() {
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.readValue(OM3.om(), "{\"s1\":\"s1\"}", PrepareOM3NoGetterSetter.class, false)));
   }
 
   @Test
-  public void readValue_a4_true() {
+  public void readValueA4True() {
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.readValue(OM3.om(), "{\"s1\":\"s1\"}", PrepareOM3NoGetterSetter.class, true)));
   }
 
   @Test(expected = SKRuntimeException.class)
-  public void readValue_a4typeRef_false() {
+  public void readValueA4TypeRefFalse() {
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.readValue(OM3.om(), "{\"s1\":\"s1\"}", new TypeReference<PrepareOM3NoGetterSetter>() {
     }, false)));
   }
 
   @Test
-  public void readValue_a4typeRef_true() {
+  public void readValueA4TypeRefTrue() {
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.readValue(OM3.om(), "{\"s1\":\"s1\"}", new TypeReference<PrepareOM3NoGetterSetter>() {
     }, true)));
   }
 
   @Test
-  public void treeToValue_a2() {
+  public void treeToValueA2() {
     ObjectNode objectNode = OM3.createObjectNode();
     objectNode.put("s1", "s1");
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.treeToValue(objectNode, PrepareOM3.class)));
@@ -123,7 +123,7 @@ public class OM3Test extends SKUnit {
   }
 
   @Test(expected = NullPointerException.class)
-  public void treeToValue_a3() {
+  public void treeToValueA3() {
     ObjectNode objectNode = OM3.createObjectNode();
     objectNode.put("s1", "s1");
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.treeToValue(null, objectNode, PrepareOM3.class)));
@@ -131,7 +131,7 @@ public class OM3Test extends SKUnit {
   }
 
   @Test(expected = SKRuntimeException.class)
-  public void treeToValue_a4_false() {
+  public void treeToValueA4False() {
     ObjectNode objectNode = OM3.createObjectNode();
     objectNode.put("i1", "i1");
     Assert.assertEquals("{\"s1\":\"s1\"}", OM3.writeValueAsString(OM3.treeToValue(OM3.om(), objectNode, PrepareOM3.class, false)));
@@ -139,7 +139,7 @@ public class OM3Test extends SKUnit {
   }
 
   @Test
-  public void treeToValue_a4_true() {
+  public void treeToValueA4Ture() {
     ObjectNode objectNode = OM3.createObjectNode();
     objectNode.put("i1", "i1");
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.treeToValue(OM3.om(), objectNode, PrepareOM3.class, true)));
@@ -147,26 +147,26 @@ public class OM3Test extends SKUnit {
   }
 
   @Test
-  public void valueToTree_a1() {
+  public void valueToTreeA1() {
     PrepareOM3 prepare = new PrepareOM3();
     Assert.assertEquals("{}", OM3.writeValueAsString(OM3.valueToTree(prepare)));
 
   }
 
   @Test(expected = NullPointerException.class)
-  public void valueToTree_a2() {
+  public void valueToTreeA2() {
     PrepareOM3 prepare = new PrepareOM3();
     Assert.assertEquals("{}", OM3.writeValueAsString(OM3.valueToTree(null, prepare)));
   }
 
   @Test(expected = NullPointerException.class)
-  public void writeValueAsString_a2() {
+  public void writeValueAsStringA2() {
     PrepareOM3 prepare = new PrepareOM3();
     Assert.assertEquals("{}", OM3.writeValueAsString(null, prepare));
   }
 
   @Test
-  public void writeValueAsString_a3() {
+  public void writeValueAsStringA3() {
     PrepareOM3NoGetterSetter prepare = new PrepareOM3NoGetterSetter();
     Assert.assertEquals("null", OM3.writeValueAsString(OM3.writeValueAsString(OM3.om(), prepare, true)));
   }

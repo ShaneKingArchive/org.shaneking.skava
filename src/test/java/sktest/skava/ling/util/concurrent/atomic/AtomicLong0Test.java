@@ -1,7 +1,6 @@
 package sktest.skava.ling.util.concurrent.atomic;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,15 +18,11 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class AtomicLong0Test {
 
-  final AtomicLong al = new AtomicLong(10);
+  private final AtomicLong al = new AtomicLong(10);
 
   @Before
   public void setUp() throws Exception {
     al.set(10);
-  }
-
-  @After
-  public void tearDown() throws Exception {
   }
 
   @Test

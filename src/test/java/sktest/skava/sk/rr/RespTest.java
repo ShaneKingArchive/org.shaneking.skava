@@ -1,44 +1,46 @@
 package sktest.skava.sk.rr;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.sk.rr.Resp;
+import org.shaneking.skava.t3.jackson.OM3;
 import sktest.skava.SKUnit;
 
 public class RespTest extends SKUnit {
 
   @Test
   public void build() {
-    skPrint(Resp.build(Resp.CODE_UNKNOWN_EXCEPTION, "data", "mesg"));
+    Assert.assertEquals("{\"code\":\"-1\",\"data\":\"data\",\"mesg\":\"mesg\"}", OM3.writeValueAsString(Resp.build(Resp.CODE_UNKNOWN_EXCEPTION, "data", "mesg")));
   }
 
   @Test
   public void buildSuccessfully() {
-    skPrint(Resp.build(Resp.CODE_SUCCESSFULLY, "data", "mesg"));
+    Assert.assertEquals("{\"code\":\"0\",\"data\":\"data\",\"mesg\":\"mesg\"}", OM3.writeValueAsString(Resp.build(Resp.CODE_SUCCESSFULLY, "data", "mesg")));
   }
 
   @Test
-  public void failed_a0() {
-    skPrint(Resp.failed());
+  public void failedA0() {
+    Assert.assertEquals("{\"code\":\"-1\",\"mesg\":\"-1\"}", OM3.writeValueAsString(Resp.failed()));
   }
 
   @Test
-  public void failed_a1() {
-    skPrint(Resp.failed("mesg"));
+  public void failedA1() {
+    Assert.assertEquals("{\"code\":\"1\",\"mesg\":\"1\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_KNOWN_EXCEPTION)));
   }
 
   @Test
-  public void failed_a2() {
-    skPrint(Resp.failed("mesg", Resp.CODE_KNOWN_EXCEPTION));
+  public void failedA2() {
+    Assert.assertEquals("{\"code\":\"1\",\"mesg\":\"mesg\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_KNOWN_EXCEPTION, "mesg")));
   }
 
   @Test
-  public void failed_a3() {
-    skPrint(Resp.failed("mesg", Resp.CODE_KNOWN_EXCEPTION, "data"));
+  public void failedA3() {
+    Assert.assertEquals("{\"code\":\"1\",\"data\":\"data\",\"mesg\":\"mesg\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_KNOWN_EXCEPTION, "mesg", "data")));
   }
 
   @Test
   public void success() {
-    skPrint(Resp.success("data"));
+    Assert.assertEquals("{\"code\":\"0\",\"data\":\"data\"}", OM3.writeValueAsString(Resp.success("data")));
   }
 
 }

@@ -50,27 +50,28 @@ public class AESTest extends SKUnit {
 
   @Test
   public void genKey() throws Exception {
-    skPrint(AES.genKey());
+    Assert.assertEquals(16, AES.genKey().length());
   }
 
   @Test
-  public void genKey_eightLength() throws Exception {
+  public void genKeyEightLength() throws Exception {
     skPrint(AES.genKey(UUID.randomUUID().toString().split(String0.MINUS)[0]));
+    Assert.assertEquals(8, UUID.randomUUID().toString().split(String0.MINUS)[0].length());
   }
 
   @Test(expected = Exception.class)
-  public void genKey_empty() throws Exception {
-    skPrint(AES.genKey(String0.EMPTY));
+  public void genKeyEmpty() throws Exception {
+    Assert.assertEquals(String0.EMPTY, AES.genKey(String0.EMPTY));
   }
 
   @Test(expected = Exception.class)
-  public void genKey_notEightLength() throws Exception {
-    skPrint(AES.genKey(UUID0.l19()));
+  public void genKeyNotEightLength() throws Exception {
+    Assert.assertEquals(String0.EMPTY, AES.genKey(UUID0.l19()));
   }
 
   @Test(expected = Exception.class)
-  public void genKey_null() throws Exception {
-    skPrint(AES.genKey(null));
+  public void genKeyNull() throws Exception {
+    Assert.assertEquals(String0.EMPTY, AES.genKey(null));
   }
 
   @Test

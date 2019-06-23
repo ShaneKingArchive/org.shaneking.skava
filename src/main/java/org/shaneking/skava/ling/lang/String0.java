@@ -95,11 +95,12 @@ public class String0 {
   public static final String F = "F";//False
 
   public static String format(String pattern, Object... args) {
-    Matcher m = Pattern.compile("\\{(\\d)\\}").matcher(pattern);
+    String rePattern = pattern;
+    Matcher m = Pattern.compile("\\{(\\d)\\}").matcher(rePattern);
     while (m.find()) {
-      pattern = pattern.replace(m.group(), String.valueOf(args[Integer.parseInt(m.group(1))]));
+      rePattern = rePattern.replace(m.group(), String.valueOf(args[Integer.parseInt(m.group(1))]));
     }
-    return pattern;
+    return rePattern;
   }
 
   //not null or empty to

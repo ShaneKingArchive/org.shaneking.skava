@@ -1,6 +1,8 @@
 package sktest.skava.ling.util;
 
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.shaneking.skava.ling.util.Date0;
@@ -31,14 +33,6 @@ public class Date0Test extends SKUnit {
   @Parameterized.Parameters
   public static List<Object[]> Date0TestParameters() {
     return Arrays.asList(new Object[][]{{new Date(), null}, {null, Date0.DATETIME}, {null, null}});
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() {
-  }
-
-  @AfterClass
-  public static void tearDownAfterClass() {
   }
 
   @Before

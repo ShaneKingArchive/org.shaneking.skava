@@ -59,7 +59,7 @@ public class AES {
 
   public static String genKey(String eightLengthString) throws Exception {
     if (Strings.isNullOrEmpty(eightLengthString) || eightLengthString.length() != 8) {
-      throw new Exception(MessageFormat.format("Must 8 length string : {0}", eightLengthString));
+      throw new Exception(MessageFormat.format("Must 8 length string : {0}", String.valueOf(eightLengthString)));
     }
     return Hex.encodeHexString(eightLengthString.getBytes());
   }

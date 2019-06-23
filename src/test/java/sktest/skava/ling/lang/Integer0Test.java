@@ -1,20 +1,10 @@
 package sktest.skava.ling.lang;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.Integer0;
 
 public class Integer0Test {
-
-  @Before
-  public void setUp() throws Exception {
-  }
-
-  @After
-  public void tearDown() throws Exception {
-  }
 
   @Test
   public void gt2d() {

@@ -16,11 +16,11 @@ import java.util.List;
 
 public class List0 {
   private static <E> Tuple.Pair<List<E>, Integer> fillList(List<E> fillList, int fillSize) {
+    List<E> reFillList = fillList == null ? Lists.newArrayList() : fillList;
     List<E> rtn = Lists.newArrayList();
-    fillList = fillList == null ? Lists.newArrayList() : fillList;
-    int minSize = Math.min(fillSize, fillList.size());
+    int minSize = Math.min(fillSize, reFillList.size());
     for (int i = 0; i < minSize; i++) {
-      rtn.add(fillList.get(i));
+      rtn.add(reFillList.get(i));
     }
     return Tuple.of(rtn, minSize);
   }

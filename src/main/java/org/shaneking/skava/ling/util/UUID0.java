@@ -37,9 +37,10 @@ public class UUID0 {
   }
 
   protected static String to62String(long i, int radix) {
-    if (radix < MIN_RADIX || radix > MAX_RADIX)
-      radix = 10;
-    if (radix == 10)
+    int reRadix = radix;
+    if (reRadix < MIN_RADIX || reRadix > MAX_RADIX)
+      reRadix = 10;
+    if (reRadix == 10)
       return Long.toString(i);
 
     final int size = 65;
@@ -52,9 +53,9 @@ public class UUID0 {
       i = -i;
     }
 
-    while (i <= -radix) {
-      buf[charPos--] = digits[(int) (-(i % radix))];
-      i = i / radix;
+    while (i <= -reRadix) {
+      buf[charPos--] = digits[(int) (-(i % reRadix))];
+      i = i / reRadix;
     }
     buf[charPos] = digits[(int) (-i)];
 
