@@ -14,6 +14,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.shaneking.skava.ling.crypto.Cipher0;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.security.Key0;
+import org.shaneking.skava.sk.lang.SKRuntimeException;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -53,13 +54,13 @@ public class AES {
     }).doFinal(content.getBytes(StandardCharsets.UTF_8)));
   }
 
-  public static String genKey() throws Exception {
+  public static String genKey() {
     return genKey(UUID.randomUUID().toString().split(String0.MINUS)[0]);
   }
 
-  public static String genKey(String eightLengthString) throws Exception {
+  public static String genKey(String eightLengthString) {
     if (Strings.isNullOrEmpty(eightLengthString) || eightLengthString.length() != 8) {
-      throw new Exception(MessageFormat.format("Must 8 length string : {0}", String.valueOf(eightLengthString)));
+      throw new SKRuntimeException(MessageFormat.format("Must 8 length string : {0}", String.valueOf(eightLengthString)));
     }
     return Hex.encodeHexString(eightLengthString.getBytes());
   }
