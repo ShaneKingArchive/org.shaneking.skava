@@ -16,7 +16,7 @@ public class OM3 {
   public static final String OBJECT_ERROR_STRING = "{}";
   private static ObjectMapper OM = null;
 
-  private static ObjectMapper om() {
+  public static ObjectMapper om() {
     if (OM == null) {
       OM = new ObjectMapper();
       OM.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
