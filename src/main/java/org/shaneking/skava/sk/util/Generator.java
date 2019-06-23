@@ -1,4 +1,4 @@
-package org.shaneking.skava.ling.util;
+package org.shaneking.skava.sk.util;
 
 public interface Generator<G> {
   G generate();

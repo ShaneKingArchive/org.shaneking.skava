@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.shaneking.skava.ling.collect;
+package org.shaneking.skava.sk.collect;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;

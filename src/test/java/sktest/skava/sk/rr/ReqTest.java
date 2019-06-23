@@ -1,8 +1,8 @@
-package sktest.skava.rr;
+package sktest.skava.sk.rr;
 
 import org.junit.Test;
-import org.shaneking.skava.rr.Pri;
-import org.shaneking.skava.rr.Req;
+import org.shaneking.skava.sk.rr.Pri;
+import org.shaneking.skava.sk.rr.Req;
 import sktest.skava.SKUnit;
 
 public class ReqTest extends SKUnit {

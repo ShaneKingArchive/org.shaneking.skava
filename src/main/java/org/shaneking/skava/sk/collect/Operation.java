@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package org.shaneking.skava.ling.collect;
+package org.shaneking.skava.sk.collect;
 
 public interface Operation<M, N, E> {
   E calculate(M m, N n);

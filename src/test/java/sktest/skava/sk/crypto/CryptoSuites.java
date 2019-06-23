@@ -1,4 +1,4 @@
-package sktest.skava.crypto;
+package sktest.skava.sk.crypto;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

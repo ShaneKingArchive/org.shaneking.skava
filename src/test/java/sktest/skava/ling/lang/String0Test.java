@@ -3,9 +3,9 @@ package sktest.skava.ling.lang;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
-import org.shaneking.skava.ling.collect.Tuple;
-import org.shaneking.skava.ling.collect.Tuple.Triple;
 import org.shaneking.skava.ling.lang.String0;
+import org.shaneking.skava.sk.collect.Tuple;
+import org.shaneking.skava.sk.collect.Tuple.Triple;
 import sktest.skava.SKUnit;
 
 import java.text.MessageFormat;

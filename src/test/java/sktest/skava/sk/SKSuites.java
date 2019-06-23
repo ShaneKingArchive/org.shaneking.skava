@@ -4,14 +4,15 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package sktest.skava;
+package sktest.skava.sk;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import sktest.skava.ling.LingSuites;
-import sktest.skava.sk.SKSuites;
+import sktest.skava.sk.collect.CollectSuites;
+import sktest.skava.sk.crypto.CryptoSuites;
+import sktest.skava.sk.rr.RRSuites;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({LingSuites.class, SKSuites.class})
-public class SKavaSuites {
+@Suite.SuiteClasses({CollectSuites.class, CryptoSuites.class, RRSuites.class})
+public class SKSuites {
 }

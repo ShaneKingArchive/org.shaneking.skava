@@ -4,7 +4,7 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package sktest.skava.ling.collect;
+package sktest.skava.sk.collect;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

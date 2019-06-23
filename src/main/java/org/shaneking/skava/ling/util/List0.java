@@ -8,8 +8,9 @@ package org.shaneking.skava.ling.util;
 
 import com.google.common.collect.Lists;
 import lombok.NonNull;
-import org.shaneking.skava.ling.collect.Operation;
-import org.shaneking.skava.ling.collect.Tuple;
+import org.shaneking.skava.sk.collect.Operation;
+import org.shaneking.skava.sk.collect.Tuple;
+import org.shaneking.skava.sk.util.Generator;
 
 import java.util.List;
 

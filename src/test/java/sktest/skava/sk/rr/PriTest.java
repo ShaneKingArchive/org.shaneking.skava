@@ -1,7 +1,7 @@
-package sktest.skava.rr;
+package sktest.skava.sk.rr;
 
 import org.junit.Test;
-import org.shaneking.skava.rr.Pri;
+import org.shaneking.skava.sk.rr.Pri;
 import sktest.skava.SKUnit;
 
 public class PriTest extends SKUnit {

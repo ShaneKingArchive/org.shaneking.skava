@@ -4,14 +4,14 @@
  * Copyright (c) ShaneKing All rights reserved.
  * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package sktest.skava.crypto;
+package sktest.skava.sk.crypto;
 
 import org.apache.commons.codec.binary.Hex;
 import org.junit.Assert;
 import org.junit.Test;
-import org.shaneking.skava.crypto.AES;
 import org.shaneking.skava.ling.lang.String0;
 import org.shaneking.skava.ling.util.UUID0;
+import org.shaneking.skava.sk.crypto.AES;
 import sktest.skava.SKUnit;
 
 import javax.crypto.BadPaddingException;

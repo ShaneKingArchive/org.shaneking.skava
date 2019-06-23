@@ -2,4 +2,4 @@
  * RequestBody And ResponseBody
  */
 
-package org.shaneking.skava.rr;
+package org.shaneking.skava.sk.rr;
