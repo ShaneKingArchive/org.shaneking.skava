@@ -59,112 +59,112 @@ public class TupleTest extends SKUnit {
 
   @Test
   public void of() {
-    Assert.assertEquals(String.valueOf(Tuple.of()), MessageFormat.format("{0}{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of()));
   }
 
   @Test
   public void of1() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1)), MessageFormat.format("{0}1{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1)));
   }
 
   @Test
   public void of2() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2)), MessageFormat.format("{0}1,2{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2)));
   }
 
   @Test
   public void of3() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3)), MessageFormat.format("{0}1,2,3{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3)));
   }
 
   @Test
   public void of4() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4)), MessageFormat.format("{0}1,2,3,4{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4)));
   }
 
   @Test
   public void of5() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5)), MessageFormat.format("{0}1,2,3,4,5{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5)));
   }
 
   @Test
   public void of6() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6)), MessageFormat.format("{0}1,2,3,4,5,6{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5,6{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6)));
   }
 
   @Test
   public void of7() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7)), MessageFormat.format("{0}1,2,3,4,5,6,7{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5,6,7{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7)));
   }
 
   @Test
   public void of8() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8)), MessageFormat.format("{0}1,2,3,4,5,6,7,8{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5,6,7,8{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8)));
   }
 
   @Test
   public void of9() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9)), MessageFormat.format("{0}1,2,3,4,5,6,7,8,9{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5,6,7,8,9{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9)));
   }
 
   @Test
   public void of10() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)), MessageFormat.format("{0}1,2,3,4,5,6,7,8,9,10{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5,6,7,8,9,10{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)));
   }
 
   @Test
   public void of11() {
-    Assert.assertEquals(String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)), MessageFormat.format("{0}1,2,3,4,5,6,7,8,9,10,11{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1,2,3,4,5,6,7,8,9,10,11{1}", Tuple.BEGIN, Tuple.END), String.valueOf(Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)));
   }
 
   @Test
   public void getFirst() {
-    Assert.assertEquals(String.valueOf(Tuple.getFirst(elevenTuple)), "1");
+    Assert.assertEquals("1", String.valueOf(Tuple.getFirst(elevenTuple)));
   }
 
   @Test
   public void getSecond() {
-    Assert.assertEquals(String.valueOf(Tuple.getSecond(elevenTuple)), "2");
+    Assert.assertEquals("2", String.valueOf(Tuple.getSecond(elevenTuple)));
   }
 
   @Test
   public void getThird() {
-    Assert.assertEquals(String.valueOf(Tuple.getThird(elevenTuple)), "3");
+    Assert.assertEquals("3", String.valueOf(Tuple.getThird(elevenTuple)));
   }
 
   @Test
   public void getFourth() {
-    Assert.assertEquals(String.valueOf(Tuple.getFourth(elevenTuple)), "4");
+    Assert.assertEquals("4", String.valueOf(Tuple.getFourth(elevenTuple)));
   }
 
   @Test
   public void getFifth() {
-    Assert.assertEquals(String.valueOf(Tuple.getFifth(elevenTuple)), "5");
+    Assert.assertEquals("5", String.valueOf(Tuple.getFifth(elevenTuple)));
   }
 
   @Test
   public void getSixth() {
-    Assert.assertEquals(String.valueOf(Tuple.getSixth(elevenTuple)), "6");
+    Assert.assertEquals("6", String.valueOf(Tuple.getSixth(elevenTuple)));
   }
 
   @Test
   public void getSeventh() {
-    Assert.assertEquals(String.valueOf(Tuple.getSeventh(elevenTuple)), "7");
+    Assert.assertEquals("7", String.valueOf(Tuple.getSeventh(elevenTuple)));
   }
 
   @Test
   public void getEighth() {
-    Assert.assertEquals(String.valueOf(Tuple.getEighth(elevenTuple)), "8");
+    Assert.assertEquals("8", String.valueOf(Tuple.getEighth(elevenTuple)));
   }
 
   @Test
   public void getNinth() {
-    Assert.assertEquals(String.valueOf(Tuple.getNinth(elevenTuple)), "9");
+    Assert.assertEquals("9", String.valueOf(Tuple.getNinth(elevenTuple)));
   }
 
   @Test
   public void getTenth() {
-    Assert.assertEquals(String.valueOf(Tuple.getTenth(elevenTuple)), "10");
+    Assert.assertEquals("10", String.valueOf(Tuple.getTenth(elevenTuple)));
   }
 
   @Test
@@ -174,7 +174,7 @@ public class TupleTest extends SKUnit {
 
   @Test
   public void prepend() {
-    Assert.assertEquals(String.valueOf(elevenTuple.prepend(0)), MessageFormat.format("{0}0,{1}1,2,3,4,5,6,7,8,9,10,11{2}{3}", Tuple.BEGIN, Tuple.BEGIN, Tuple.END, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}0,{1}1,2,3,4,5,6,7,8,9,10,11{2}{3}", Tuple.BEGIN, Tuple.BEGIN, Tuple.END, Tuple.END), String.valueOf(elevenTuple.prepend(0)));
   }
 
   @Test
@@ -183,13 +183,8 @@ public class TupleTest extends SKUnit {
   }
 
   @Test
-  public void testEquals12() {
-    Assert.assertEquals(Tuple.of(127, 0, 0, 1), Tuple.of(127, 0, 0, 1));
-  }
-
-  @Test
   public void testEquals21() {
-    Assert.assertNotEquals(Tuple.of(127, 0, 0, 1), null);
+    Assert.assertNotNull(Tuple.of(127, 0, 0, 1));
   }
 
   @Test
@@ -199,32 +194,32 @@ public class TupleTest extends SKUnit {
 
   @Test
   public void testEquals31() {
-    Assert.assertNotEquals(elevenTuple, new Object());
+    Assert.assertNotEquals(new Object(), elevenTuple);
   }
 
   @Test
   public void testEquals41() {
-    Assert.assertNotEquals(elevenTuple, Tuple.of(127, 0, 0, 1));
+    Assert.assertNotEquals(Tuple.of(127, 0, 0, 1), elevenTuple);
   }
 
   @Test
   public void testHashCode() {
-    Assert.assertEquals(Tuple.of(127, 0, 0, 1).hashCode(), 4706979);
+    Assert.assertEquals(4706979, Tuple.of(127, 0, 0, 1).hashCode());
   }
 
   @Test
   public void toString0() {
-    Assert.assertEquals(elevenTuple.toString(String0.DOT), MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END), elevenTuple.toString(String0.DOT));
   }
 
   @Test
   public void toString1() {
-    Assert.assertEquals(elevenTuple.toString(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET), MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END), elevenTuple.toString(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET));
   }
 
   @Test
   public void toString2() {
-    Assert.assertEquals(elevenTuple.toString(tupleJoiner), MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END));
+    Assert.assertEquals(MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END), elevenTuple.toString(tupleJoiner));
   }
 
 }

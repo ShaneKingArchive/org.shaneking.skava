@@ -26,17 +26,17 @@ public class TupleJoinerTest extends SKUnit {
 
   @Test
   public void appendTo1() {
-    Assert.assertEquals(String.valueOf(tupleJoiner.appendTo(ip)), "[127.0.0.1]");
+    Assert.assertEquals("[127.0.0.1]", String.valueOf(tupleJoiner.appendTo(ip)));
   }
 
   @Test
   public void appendTo2() {
-    Assert.assertEquals(String.valueOf(tupleJoiner.appendTo(new StringBuffer(), ip)), "[127.0.0.1]");
+    Assert.assertEquals("[127.0.0.1]", String.valueOf(tupleJoiner.appendTo(new StringBuffer(), ip)));
   }
 
   @Test
   public void join() {
-    Assert.assertEquals(tupleJoiner.join(ip), "[127.0.0.1]");
+    Assert.assertEquals("[127.0.0.1]", tupleJoiner.join(ip));
   }
 
   @Test

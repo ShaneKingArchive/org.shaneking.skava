@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.util.List0;
+import org.shaneking.skava.ling.util.Random0;
 import sktest.skava.ling.util.concurrent.atomic.prepare.PrepareDecrease;
 import sktest.skava.ling.util.concurrent.atomic.prepare.PrepareIncrease;
 
@@ -59,5 +60,23 @@ public class AtomicLong0Test {
     }).filter(b -> !b).count();
     System.out.println(l);
     Assert.assertEquals(13, l);
+  }
+
+  /**
+   * Coverage[l = al.longValue();]
+   */
+  @Test
+  public void tryDecreaseIncreaseFailed() throws Exception {
+    ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 32, () -> Random0.nextMaxInt(10) % 2 == 0 ? new PrepareDecrease(al) : new PrepareIncrease(al)));
+    long l = futureList.parallelStream().map(future -> {
+      try {
+        return future.get();
+      } catch (Exception e) {
+        e.printStackTrace();
+        return false;
+      }
+    }).filter(b -> !b).count();
+    System.out.println(l);
   }
 }

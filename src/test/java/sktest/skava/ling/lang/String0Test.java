@@ -54,39 +54,45 @@ public class String0Test extends SKUnit {
   }
 
   @Test
+  public void notNull2empty2() {
+    Assert.assertEquals("", String0.notNull2empty2("firstName", ""));
+    Assert.assertEquals("", String0.notNull2empty2("", "firstName"));
+  }
+
+  @Test
   public void null2empty2() {
-    Assert.assertEquals(String0.null2empty2("firstName", ""), "firstName");
-    Assert.assertEquals(String0.null2empty2("", "firstName"), "firstName");
+    Assert.assertEquals("firstName", String0.null2empty2("firstName", ""));
+    Assert.assertEquals("firstName", String0.null2empty2("", "firstName"));
   }
 
   @Test(expected = NullPointerException.class)
   public void null2empty2Null() {
-    Assert.assertEquals(String0.null2empty2("firstName", null), "firstName");
+    Assert.assertEquals("firstName", String0.null2empty2("firstName", null));
   }
 
   @Test
   public void upper2lower() {
-    Assert.assertEquals(String0.upper2lower("firstName"), "first_name");
+    Assert.assertEquals("first_name", String0.upper2lower("firstName"));
   }
 
   @Test(expected = NullPointerException.class)
   public void upper2lowerNull() {
-    Assert.assertEquals(String0.upper2lower(null), "first_name");
+    Assert.assertEquals("first_name", String0.upper2lower(null));
   }
 
   @Test
   public void upper2lower2() {
-    Assert.assertEquals(String0.upper2lower("firstName", String0.UNDERLINE), "first_name");
+    Assert.assertEquals("first_name", String0.upper2lower("firstName", String0.UNDERLINE));
   }
 
   @Test(expected = NullPointerException.class)
   public void upper2lower2Null1() {
-    Assert.assertEquals(String0.upper2lower(null, String0.UNDERLINE), "first_name");
+    Assert.assertEquals("first_name", String0.upper2lower(null, String0.UNDERLINE));
   }
 
   @Test(expected = NullPointerException.class)
   public void upper2lower2Null2() {
-    Assert.assertEquals(String0.upper2lower("firstName", null), "first_name");
+    Assert.assertEquals("first_name", String0.upper2lower("firstName", null));
   }
 
 }
