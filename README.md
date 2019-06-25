@@ -1,5 +1,10 @@
 # [SKava][]
-👖Java Core Library for ShaneKing, More to see [shaneking.org][].
+👖Java core library for ShaneKing, More to see [shaneking.org][].
+
+## Features
+- **[AES][]**: Working with [sk-js][] in the front and rear separation system
+- **[UUID0][]**: 19-bit unique identifier for distributed systems
+- **[Tuple][]**: Return <Boolean, String, Object> in method
 
 ## Badge
 ### Build
@@ -20,6 +25,11 @@
 
 ShaneKing is released under [Apache-2.0][].
 
+
+[AES]: https://github.com/ShaneKing/org.shaneking.skava/blob/mirror/src/main/java/org/shaneking/skava/sk/crypto/AES.java
+[sk-js]: https://github.com/ShaneKing/sk-js/blob/mirror/src/Crypto0.js
+[UUID0]: https://github.com/ShaneKing/org.shaneking.skava/blob/mirror/src/main/java/org/shaneking/skava/ling/util/UUID0.java
+[Tuple]: https://github.com/ShaneKing/org.shaneking.skava/blob/mirror/src/main/java/org/shaneking/skava/sk/collect/Tuple.java
 
 [SKava]: https://github.com/ShaneKing/org.shaneking.skava
 [shaneking.org]: http://shaneking.org/
