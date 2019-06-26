@@ -41,8 +41,6 @@ ShaneKing is released under [Apache-2.0][].
 [codecov img]:https://codecov.io/github/ShaneKing/org.shaneking.skava/coverage.svg?branch=mirror
 [codacy]:https://app.codacy.com/project/ShaneKing/org.shaneking.skava/
 [codacy img]:https://api.codacy.com/project/badge/Grade/c98f8115ed1946688911e6c5598b1bbe
-[saucelabs]:https://saucelabs.com/u/ShaneKing
-[saucelabs img]:https://saucelabs.com/browser-matrix/ShaneKing.svg
 
 [mavenbadge]:http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.shaneking%22%20AND%20a%3A%22org.shaneking.skava%22
 [mavenbadge img]:https://maven-badges.herokuapp.com/maven-central/org.shaneking/org.shaneking.skava/badge.svg
