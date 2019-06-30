@@ -19,17 +19,17 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 public class AtomicLong0Test extends SKUnit {
 
-  private final AtomicLong al = new AtomicLong(10);
+  private final AtomicLong al = new AtomicLong(Runtime.getRuntime().availableProcessors() + 1);
 
   @Before
   public void setUp() {
-    al.set(10);
+    al.set(Runtime.getRuntime().availableProcessors() + 1);
   }
 
   @Test
   public void tryDecreaseFailed() throws Exception {
-    ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 23, () -> new PrepareDecrease(al)));
+    ExecutorService executorService = Executors.newFixedThreadPool(6 * Runtime.getRuntime().availableProcessors() + 1);
+    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 8 * Runtime.getRuntime().availableProcessors() + 1, () -> new PrepareDecrease(al)));
     long l = futureList.parallelStream().map(future -> {
       try {
         return future.get();
@@ -38,14 +38,15 @@ public class AtomicLong0Test extends SKUnit {
         return false;
       }
     }).filter(b -> !b).count();
+    System.out.println(Runtime.getRuntime().availableProcessors());
     System.out.println(l);
-    Assert.assertEquals(13, l);
+    Assert.assertEquals(7 * Runtime.getRuntime().availableProcessors(), l);
   }
 
   @Test
   public void tryIncreaseFailed() throws Exception {
-    ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 23, () -> new PrepareIncrease(al)));
+    ExecutorService executorService = Executors.newFixedThreadPool(6 * Runtime.getRuntime().availableProcessors() + 1);
+    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 8 * Runtime.getRuntime().availableProcessors() + 1, () -> new PrepareIncrease(al)));
     long l = futureList.parallelStream().map(future -> {
       try {
         return future.get();
@@ -54,8 +55,9 @@ public class AtomicLong0Test extends SKUnit {
         return false;
       }
     }).filter(b -> !b).count();
+    System.out.println(Runtime.getRuntime().availableProcessors());
     System.out.println(l);
-    Assert.assertEquals(13, l);
+    Assert.assertEquals(7 * Runtime.getRuntime().availableProcessors() + 1, l);
   }
 
   /**
@@ -63,8 +65,8 @@ public class AtomicLong0Test extends SKUnit {
    */
   @Test
   public void tryDecreaseIncreaseFailed() throws Exception {
-    ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 32, () -> Random0.nextMaxInt(10) % 2 == 0 ? new PrepareDecrease(al) : new PrepareIncrease(al)));
+    ExecutorService executorService = Executors.newFixedThreadPool(6 * Runtime.getRuntime().availableProcessors() + 1);
+    List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 8 * Runtime.getRuntime().availableProcessors() + 1, () -> Random0.nextMaxInt(10) % 2 == 0 ? new PrepareDecrease(al) : new PrepareIncrease(al)));
     long l = futureList.parallelStream().map(future -> {
       try {
         return future.get();
@@ -73,6 +75,8 @@ public class AtomicLong0Test extends SKUnit {
         return false;
       }
     }).filter(b -> !b).count();
+    System.out.println(Runtime.getRuntime().availableProcessors());
+    System.out.println(l);
     Assert.assertTrue(l != 99);
   }
 }

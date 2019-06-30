@@ -16,6 +16,6 @@ public class PrepareIncrease implements Callable<Boolean> {
 
   @Override
   public Boolean call() throws Exception {
-    return AtomicLong0.tryIncreaseFailed(al, 20, 1);
+    return AtomicLong0.tryIncreaseFailed(al, 2 * Runtime.getRuntime().availableProcessors() + 1, 1);
   }
 }
