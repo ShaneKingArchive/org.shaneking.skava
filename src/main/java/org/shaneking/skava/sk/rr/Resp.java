@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.shaneking.skava.ling.lang.String0;
 
 /**
  * https://github.com/ShaneKing/sk-js/blob/mirror/src/Resp.js
@@ -47,11 +48,11 @@ public class Resp<D> {
   }
 
   public static <D> Resp<D> failed(String code) {
-    return failed(Resp.CODE_KNOWN_EXCEPTION, Resp.CODE_KNOWN_EXCEPTION);
+    return failed(code, String0.NULL);
   }
 
   public static <D> Resp<D> failed() {
-    return failed(Resp.CODE_UNKNOWN_EXCEPTION, Resp.CODE_UNKNOWN_EXCEPTION);
+    return failed(Resp.CODE_UNKNOWN_EXCEPTION, String0.NULL);
   }
 
   public static <D> Resp<D> success(D data) {

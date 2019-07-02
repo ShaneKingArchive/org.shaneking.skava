@@ -20,12 +20,13 @@ public class RespTest extends SKUnit {
 
   @Test
   public void failedA0() {
-    Assert.assertEquals("{\"code\":\"-1\",\"mesg\":\"-1\"}", OM3.writeValueAsString(Resp.failed()));
+    Assert.assertEquals("{\"code\":\"-1\",\"mesg\":\"NULL\"}", OM3.writeValueAsString(Resp.failed()));
   }
 
   @Test
   public void failedA1() {
-    Assert.assertEquals("{\"code\":\"1\",\"mesg\":\"1\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_KNOWN_EXCEPTION)));
+    Assert.assertEquals("{\"code\":\"1\",\"mesg\":\"NULL\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_KNOWN_EXCEPTION)));
+    Assert.assertEquals("{\"code\":\"-1\",\"mesg\":\"NULL\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_UNKNOWN_EXCEPTION)));
   }
 
   @Test

@@ -88,6 +88,7 @@ public class String0 {
   public static final String FEMALE = "♀";
 
   public static final String EMPTY = "";
+  public static final String NULL = "NULL";
 
   public static final String Y = "Y";//Yes
   public static final String N = "N";//No
