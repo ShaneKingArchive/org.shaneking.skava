@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,6 +36,27 @@ public class OM3 {
 
   public static <T> T readValue(T t) {
     return OBJECT_ERROR_STRING.equals(writeValueAsString(t)) ? null : t;
+  }
+
+  public static <T> T readValue(String content, JavaType javaType) {
+    return readValue(om(), content, javaType);
+  }
+
+  public static <T> T readValue(@NonNull ObjectMapper objectMapper, String content, JavaType javaType) {
+    return readValue(objectMapper, content, javaType, false);
+  }
+
+  public static <T> T readValue(@NonNull ObjectMapper objectMapper, String content, JavaType javaType, boolean rtnNullIfException) {
+    try {
+      return readValue(objectMapper.readValue(content, javaType));
+    } catch (Exception e) {
+      log.error(e.getMessage(), e);
+      if (rtnNullIfException) {
+        return null;
+      } else {
+        throw new SKRuntimeException(e);
+      }
+    }
   }
 
   public static <T> T readValue(String content, Class<T> valueType) {
