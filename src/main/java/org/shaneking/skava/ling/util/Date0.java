@@ -18,6 +18,7 @@ public class Date0 {
   public static final String XXX = "XXX";
   public static final String Y_M_D = "yyyy-MM-dd";
   public static final String YMD = "yyyyMMdd";
+  public static final String YsMsD = "yyyy/MM/dd";
   public static final String DATE_TIME = Y_M_D + String0.BLACK + H_MI_S;
   public static final String DATETIME = YMD + HMIS;
 
@@ -57,6 +58,14 @@ public class Date0 {
 
   public String time() {
     return format(H_MI_S);
+  }
+
+  public String ymd() {
+    return format(YMD);
+  }
+
+  public String ySmSd() {
+    return format(YsMsD);
   }
 
   public String zone() {
