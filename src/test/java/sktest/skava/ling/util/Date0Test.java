@@ -70,11 +70,6 @@ public class Date0Test extends SKUnit {
   }
 
   @Test
-  public void now() {
-    Assert.assertEquals(Date0.now(), new Date());
-  }
-
-  @Test
   public void time() {
     Assert.assertEquals(Date0.on().time(), Date0.on(now).format(Date0.H_MI_S));
     Assert.assertNotEquals(Date0.on().time(), Date0.on(now).format(Date0.HMIS));
