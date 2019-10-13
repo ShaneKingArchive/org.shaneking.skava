@@ -16,4 +16,12 @@ public class AC0 {
     }
     return rtn;
   }
+
+  public static boolean close(AutoCloseable autoCloseable, int times) {
+    boolean rtn = close(autoCloseable);
+    if (!rtn && times > 0) {
+      rtn = close(autoCloseable, --times);
+    }
+    return rtn;
+  }
 }

@@ -81,6 +81,16 @@ public class Date0Test extends SKUnit {
   }
 
   @Test
+  public void ymd() {
+    Assert.assertEquals(Date0.on().ymd(), Date0.on(now).format(Date0.YMD));
+  }
+
+  @Test
+  public void ySmSd() {
+    Assert.assertEquals(Date0.on().ySmSd(), Date0.on(now).format(Date0.YsMsD));
+  }
+
+  @Test
   public void zone() {
     Assert.assertEquals(Date0.on().zone(), Date0.on(now).format(Date0.XXX));
   }

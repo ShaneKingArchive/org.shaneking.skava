@@ -129,4 +129,8 @@ public class String0 {
   public static String upper2lower(@NonNull String string, @NonNull String with) {
     return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(EMPTY)).stream().map(alphabet -> alphabet.equals(alphabet.toUpperCase()) ? with + alphabet.toLowerCase() : alphabet).collect(Collectors.toList()));
   }
+
+  public static String valueOf(Object o) {
+    return o == null ? String0.EMPTY : o.toString();
+  }
 }
