@@ -22,6 +22,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.UUID;
 
+/**
+ * https://github.com/ShaneKing/sk-js/blob/mirror/src/Crypto0.js
+ */
 public class AES {
   //ILoveYou
   public static final String DEFAULT_SALT = "494c6f7665596f75";

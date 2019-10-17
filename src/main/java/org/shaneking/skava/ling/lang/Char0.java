@@ -87,7 +87,8 @@ public class Char0 {
   public static final char Y = 'Y';//Yes
   public static final char N = 'N';//No
   public static final char T = 'T';//True
-  public static final char F = 'F';//False
+  public static final char F = 'F';//False/Failed
+  public static final char S = 'S';//Successfully
 
   public static final char C10 = 0x0A;//LF=\n
   public static final char C13 = 0x0D;//CR=\r

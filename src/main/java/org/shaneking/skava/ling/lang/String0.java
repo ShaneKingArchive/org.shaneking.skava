@@ -90,14 +90,17 @@ public class String0 {
   public static final String Y = String.valueOf(Char0.Y);//Yes
   public static final String N = String.valueOf(Char0.N);//No
   public static final String T = String.valueOf(Char0.T);//True
-  public static final String F = String.valueOf(Char0.F);//False
+  public static final String F = String.valueOf(Char0.F);//False/Failed
+  public static final String S = String.valueOf(Char0.S);//Successfully
 
   public static final String BR_LINUX = "\n";
   public static final String BR_MACOS = "\r";
-  public static final String BR_WIN0S = "\r\n";
+  public static final String BR_WINOS = "\r\n";
 
   public static final String EMPTY = "";
   public static final String NULL = "NULL";
+
+  public static final String SQL_SPLIT = SEMICOLON + BR_LINUX;
 
   public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   public static final String DIGITAL = "0123456789";
