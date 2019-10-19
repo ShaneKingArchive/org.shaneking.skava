@@ -221,4 +221,11 @@ public class TupleTest extends SKUnit {
     Assert.assertEquals(MessageFormat.format("{0}1.2.3.4.5.6.7.8.9.10.11{1}", Tuple.BEGIN, Tuple.END), elevenTuple.toString(tupleJoiner));
   }
 
+  @Test
+  public void json() {
+    Assert.assertEquals("[127,0,0,1]", OM3.writeValueAsString(Tuple.of(127, 0, 0, 1)));
+    //org.shaneking.skava.sk.lang.SKRuntimeException: com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot deserialize instance of `org.shaneking.skava.sk.collect.Tuple$Quadruple` out of START_ARRAY token
+    // at [Source: (String)"[127,0,0,1]"; line: 1, column: 1]
+//    Assert.assertNotEquals(Tuple.of(127, 0, 0, 1), OM3.readValue("[127,0,0,1]", Tuple.Quadruple.class));
+  }
 }
