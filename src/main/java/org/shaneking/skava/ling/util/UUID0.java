@@ -6,6 +6,8 @@
  */
 package org.shaneking.skava.ling.util;
 
+import org.shaneking.skava.ling.lang.String0;
+
 import java.util.UUID;
 
 public class UUID0 {
@@ -18,6 +20,14 @@ public class UUID0 {
     'Z'};
   private static final int MAX_RADIX = digits.length;
   private static final int MIN_RADIX = 2;
+
+  public static String dl19() {
+    return dl19(UUID.randomUUID());
+  }
+
+  public static String dl19(UUID uuid) {
+    return Date0.on().datetime() + String0.UNDERLINE + l19(uuid);
+  }
 
   public static String l19() {
     return l19(UUID.randomUUID());

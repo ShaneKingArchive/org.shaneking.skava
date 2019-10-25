@@ -87,6 +87,7 @@ public class Date0Test extends SKUnit {
 
   @Test
   public void zone() {
+    System.out.println(Date0.on().zone());
     Assert.assertEquals(Date0.on().zone(), Date0.on(now).format(Date0.XXX));
   }
 
