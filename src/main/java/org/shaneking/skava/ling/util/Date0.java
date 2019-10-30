@@ -15,11 +15,13 @@ import java.util.Date;
 public class Date0 {
   public static final String H_MI_S = "HH:mm:ss";
   public static final String HMIS = "HHmmss";
+  public static final String SSS = "SSS";
   public static final String XXX = "XXX";
   public static final String Y_M_D = "yyyy-MM-dd";
   public static final String YMD = "yyyyMMdd";
   public static final String YsMsD = "yyyy/MM/dd";
   public static final String DATE_TIME = Y_M_D + String0.BLACK + H_MI_S;
+  public static final String DATE_TIME_SSS = Y_M_D + String0.BLACK + H_MI_S + String0.DOT + SSS;
   public static final String DATETIME = YMD + HMIS;
 
   private Date date = new Date();
@@ -46,6 +48,10 @@ public class Date0 {
 
   public String dateTime() {
     return format(DATE_TIME);
+  }
+
+  public String dateTimes() {
+    return format(DATE_TIME_SSS);
   }
 
   public String datetime() {
