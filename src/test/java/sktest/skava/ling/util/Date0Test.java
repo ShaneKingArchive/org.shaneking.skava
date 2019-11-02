@@ -56,8 +56,9 @@ public class Date0Test extends SKUnit {
 
   @Test
   public void dateTimes() {
-    System.out.println(Date0.on().dateTimes());
-    Assert.assertNotEquals(Date0.on().dateTimes(), Date0.on(now).format(Date0.DATE_TIME_SSS));
+    String s = Date0.on().dateTimes();
+    System.out.println(s);
+    Assert.assertNotEquals(s, Date0.on(now).format(Date0.DATE_TIME_SSS));
   }
 
   @Test
