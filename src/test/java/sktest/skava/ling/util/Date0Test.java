@@ -58,12 +58,29 @@ public class Date0Test extends SKUnit {
   public void dateTimes() {
     String s = Date0.on().dateTimes();
     System.out.println(s);
-    Assert.assertNotEquals(s, Date0.on(now).format(Date0.DATE_TIME_SSS));
+    try {
+      Thread.sleep(1);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    Assert.assertNotEquals(s, Date0.on().format(Date0.DATE_TIME_SSS));
   }
 
   @Test
   public void datetime() {
     Assert.assertEquals(Date0.on().datetime(), Date0.on(now).format(Date0.DATETIME));
+  }
+
+  @Test
+  public void datetimes() {
+    String s = Date0.on().datetimes();
+    System.out.println(s);
+    try {
+      Thread.sleep(1);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    Assert.assertNotEquals(s, Date0.on().format(Date0.DATETIMESSS));
   }
 
   @Test

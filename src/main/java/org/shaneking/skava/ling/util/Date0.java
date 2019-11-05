@@ -23,6 +23,7 @@ public class Date0 {
   public static final String DATE_TIME = Y_M_D + String0.BLACK + H_MI_S;
   public static final String DATE_TIME_SSS = Y_M_D + String0.BLACK + H_MI_S + String0.DOT + SSS;
   public static final String DATETIME = YMD + HMIS;
+  public static final String DATETIMESSS = DATETIME + SSS;
 
   private Date date = new Date();
 
@@ -56,6 +57,10 @@ public class Date0 {
 
   public String datetime() {
     return format(DATETIME);
+  }
+
+  public String datetimes() {
+    return format(DATETIMESSS);
   }
 
   public String format(@NonNull String pattern) {

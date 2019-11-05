@@ -21,12 +21,36 @@ public class UUID0 {
   private static final int MAX_RADIX = digits.length;
   private static final int MIN_RADIX = 2;
 
-  public static String dl19() {
-    return dl19(UUID.randomUUID());
+  public static String cMl33() {
+    return cMl33(UUID.randomUUID());
   }
 
-  public static String dl19(UUID uuid) {
-    return Date0.on().datetime() + String0.UNDERLINE + l19(uuid);
+  public static String cMl33(UUID uuid) {
+    return System.currentTimeMillis() + String0.MINUS + l19(uuid);
+  }
+
+  public static String cUl33() {
+    return cUl33(UUID.randomUUID());
+  }
+
+  public static String cUl33(UUID uuid) {
+    return System.currentTimeMillis() + String0.UNDERLINE + l19(uuid);
+  }
+
+  public static String dMl37() {
+    return dMl37(UUID.randomUUID());
+  }
+
+  public static String dMl37(UUID uuid) {
+    return Date0.on().datetimes() + String0.MINUS + l19(uuid);
+  }
+
+  public static String dUl37() {
+    return dUl37(UUID.randomUUID());
+  }
+
+  public static String dUl37(UUID uuid) {
+    return Date0.on().datetimes() + String0.UNDERLINE + l19(uuid);
   }
 
   public static String l19() {

@@ -48,6 +48,26 @@ public class UUID0Test extends SKUnit {
   }
 
   @Test
+  public void cMl33() {
+    Assert.assertEquals(33, UUID0.cMl33().length());
+  }
+
+  @Test
+  public void cUl33() {
+    Assert.assertEquals(33, UUID0.cUl33().length());
+  }
+
+  @Test
+  public void dMl37() {
+    Assert.assertEquals(37, UUID0.dMl37().length());
+  }
+
+  @Test
+  public void dUl37() {
+    Assert.assertEquals(37, UUID0.dUl37().length());
+  }
+
+  @Test
   public void l191() {
     int r = 2;
     Set<String> set = Sets.newHashSet();
