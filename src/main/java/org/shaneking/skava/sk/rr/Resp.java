@@ -53,8 +53,18 @@ public class Resp<D> {
   }
 
   public static <D> Resp<D> failed(@NonNull Exception exception, D data) {
-
-    return failed(exception.getClass().getName(), String0.null2empty2(exception.getMessage(), exception.toString()), data);
+    String code = exception.getClass().getName();
+    String mesg = String0.null2empty2(exception.getMessage(), exception.toString());
+    if (exception instanceof RespException) {
+      Resp resp = ((RespException) exception).getResp();
+      if (resp != null) {
+        if (!CODE_UNKNOWN_EXCEPTION.equals(resp.getCode()) && !CODE_SUCCESSFULLY.equals(resp.getCode())) {
+          code = resp.getCode();
+        }
+        mesg = String0.null2empty2(resp.getMesg(), mesg);
+      }
+    }
+    return failed(code, mesg, data);
   }
 
   public static <D> Resp<D> failed(@NonNull Exception exception) {
