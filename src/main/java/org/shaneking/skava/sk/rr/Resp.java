@@ -7,6 +7,7 @@
 package org.shaneking.skava.sk.rr;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -49,6 +50,15 @@ public class Resp<D> {
 
   public static <D> Resp<D> failed(String code) {
     return failed(code, String0.NULL);
+  }
+
+  public static <D> Resp<D> failed(@NonNull Exception exception, D data) {
+
+    return failed(exception.getClass().getName(), String0.null2empty2(exception.getMessage(), exception.toString()), data);
+  }
+
+  public static <D> Resp<D> failed(@NonNull Exception exception) {
+    return failed(exception, null);
   }
 
   public static <D> Resp<D> failed() {
