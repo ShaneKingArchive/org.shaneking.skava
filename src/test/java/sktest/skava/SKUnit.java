@@ -5,7 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-import org.shaneking.skava.ling.lang.String0;
+import org.shaneking.skava.lang.String0;
 
 public class SKUnit {
   @Rule
