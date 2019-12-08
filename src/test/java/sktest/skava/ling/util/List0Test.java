@@ -22,21 +22,21 @@ public class List0Test {
 
   @Test
   public void operation() {
-    Assert.assertEquals(emptyList3, List0.operation(List0.fillList(String0.EMPTY, 3, null), List0.fillList(String0.EMPTY, 3, null), (m, n) -> {
+    Assert.assertEquals(emptyList3, List0.calc(List0.fillList(String0.EMPTY, 3, null), List0.fillList(String0.EMPTY, 3, null), (m, n) -> {
       return m + n;
     }));
   }
 
   @Test(expected = NullPointerException.class)
   public void operationNull1() {
-    Assert.assertEquals(emptyList3, List0.operation(null, List0.fillList(String0.EMPTY, 3, null), (m, n) -> {
+    Assert.assertEquals(emptyList3, List0.calc(null, List0.fillList(String0.EMPTY, 3, null), (m, n) -> {
       return m + n;
     }));
   }
 
   @Test(expected = NullPointerException.class)
   public void operationNull2() {
-    Assert.assertEquals(emptyList3, List0.operation(List0.fillList(String0.EMPTY, 3, null), null, (m, n) -> {
+    Assert.assertEquals(emptyList3, List0.calc(List0.fillList(String0.EMPTY, 3, null), null, (m, n) -> {
       return m + n;
     }));
   }

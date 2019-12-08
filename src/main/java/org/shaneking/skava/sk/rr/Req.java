@@ -1,9 +1,3 @@
-/*
- * @(#)SKModel.java		Created at 2018/9/7
- *
- * Copyright (c) ShaneKing All rights reserved.
- * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.shaneking.skava.sk.rr;
 
 import lombok.Getter;

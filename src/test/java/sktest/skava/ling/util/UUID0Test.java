@@ -1,9 +1,3 @@
-/*
- * @(#)UUID0Test.java		Created at 2019/3/3
- *
- * Copyright (c) ShaneKing All rights reserved.
- * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package sktest.skava.ling.util;
 
 import com.google.common.base.Joiner;

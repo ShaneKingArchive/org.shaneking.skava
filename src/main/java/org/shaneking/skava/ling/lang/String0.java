@@ -1,9 +1,3 @@
-/*
- * @(#)String0.java		Created at 16/3/26
- *
- * Copyright (c) ShaneKing All rights reserved.
- * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.shaneking.skava.ling.lang;
 
 import com.google.common.base.Joiner;
@@ -23,7 +17,7 @@ public class String0 {
   public static final String ASTERISK = String.valueOf(Char0.ASTERISK);
   public static final String BACKSLASH = String.valueOf(Char0.BACKSLASH);
   public static final String BACKSPACE = String.valueOf(Char0.BACKSPACE);
-  public static final String BLACK = String.valueOf(Char0.BLACK);
+  public static final String BLANK = String.valueOf(Char0.BLANK);
   public static final String BR = String.valueOf(Char0.BR);
   public static final String CELSIUS = String.valueOf(Char0.CELSIUS);
   public static final String CIRCLE = String.valueOf(Char0.CIRCLE);
@@ -41,6 +35,10 @@ public class String0 {
   public static final String EQUAL = String.valueOf(Char0.EQUAL);
   public static final String EQUAL_APPROXIMATELY = String.valueOf(Char0.EQUAL_APPROXIMATELY);
   public static final String EQUIVALENT = String.valueOf(Char0.EQUIVALENT);
+  public static final String ESCAPE_B = String.valueOf(Char0.ESCAPE_B);
+  public static final String ESCAPE_N = String.valueOf(Char0.ESCAPE_N);
+  public static final String ESCAPE_R = String.valueOf(Char0.ESCAPE_R);
+  public static final String ESCAPE_T = String.valueOf(Char0.ESCAPE_T);
   public static final String EXCLAMATION = String.valueOf(Char0.EXCLAMATION);
   public static final String HENCE = String.valueOf(Char0.HENCE);
   public static final String INFINITY = String.valueOf(Char0.INFINITY);
@@ -100,10 +98,15 @@ public class String0 {
   public static final String EMPTY = "";
   public static final String NULL = "NULL";
 
-  public static final String SQL_SPLIT = SEMICOLON + BR_LINUX;
-
+  public static final String ARY_BIN = "01";
+  public static final String ARY_OCT = "01234567";
+  public static final String ARY_DEC = "0123456789";
+  public static final String DIGITAL = ARY_DEC;
+  public static final String ARY_HEX = "0123456789abcdef";
   public static final String ALPHABET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  public static final String DIGITAL = "0123456789";
+  public static final String ARY_L62 = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+  public static final String SQL_SPLIT = SEMICOLON + BR_LINUX;
 
   public static String format(String pattern, Object... args) {
     String rePattern = pattern;
@@ -112,6 +115,15 @@ public class String0 {
       rePattern = rePattern.replace(m.group(), String.valueOf(args[Integer.parseInt(m.group(1))]));
     }
     return rePattern;
+  }
+
+  //firstName -&gt; first_name
+  public static String lower2upper(@NonNull String string) {
+    return lower2upper(string, UNDERLINE);
+  }
+
+  public static String lower2upper(@NonNull String string, @NonNull String with) {
+    return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(with)).stream().map(word -> word.substring(0, 1).toUpperCase() + word.substring(1)).collect(Collectors.toList()));
   }
 
   //not null or empty to

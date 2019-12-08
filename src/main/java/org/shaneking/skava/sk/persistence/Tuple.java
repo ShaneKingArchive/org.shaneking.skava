@@ -1,10 +1,4 @@
-/*
- * @(#)Tuple.java		Created at 2017/9/10
- *
- * Copyright (c) ShaneKing All rights reserved.
- * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
-package org.shaneking.skava.sk.collect;
+package org.shaneking.skava.sk.persistence;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
@@ -13,7 +7,6 @@ import com.google.common.collect.Lists;
 import lombok.NonNull;
 import org.shaneking.skava.ling.lang.String0;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -139,7 +132,7 @@ public class Tuple<First, Rest> implements Iterable<Object> {
   }
 
   @Override
-  public boolean equals(@Nullable Object obj) {
+  public boolean equals(Object obj) {
     return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
 
   }

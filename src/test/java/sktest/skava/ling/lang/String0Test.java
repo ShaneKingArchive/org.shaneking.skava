@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.String0;
-import org.shaneking.skava.sk.collect.Tuple;
-import org.shaneking.skava.sk.collect.Tuple.Triple;
+import org.shaneking.skava.sk.persistence.Tuple;
+import org.shaneking.skava.sk.persistence.Tuple.Triple;
 import sktest.skava.SKUnit;
 
 import java.text.MessageFormat;

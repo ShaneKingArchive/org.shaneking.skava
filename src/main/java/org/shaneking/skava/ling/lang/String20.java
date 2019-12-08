@@ -1,9 +1,3 @@
-/*
- * @(#)String20.java		Created at 2018/10/10
- *
- * Copyright (c) ShaneKing All rights reserved.
- * ShaneKing PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.shaneking.skava.ling.lang;
 
 public class String20 {

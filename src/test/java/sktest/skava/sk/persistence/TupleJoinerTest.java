@@ -1,11 +1,11 @@
-package sktest.skava.sk.collect;
+package sktest.skava.sk.persistence;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.ling.lang.String0;
-import org.shaneking.skava.sk.collect.Tuple;
+import org.shaneking.skava.sk.persistence.Tuple;
 import sktest.skava.SKUnit;
 
 public class TupleJoinerTest extends SKUnit {

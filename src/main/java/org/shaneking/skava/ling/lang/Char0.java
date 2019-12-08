@@ -1,17 +1,5 @@
-/*
- * @(#)Char0.java		Created at 15/4/13
- *
- * Copyright (c) azolla.org All rights reserved.
- * Azolla PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- */
 package org.shaneking.skava.ling.lang;
 
-/**
- * The coder is very lazy, nothing to write for this class
- *
- * @author sk@azolla.org
- * @since ADK1.0
- */
 public class Char0 {
   public static final char AMPERSAND = '&';
   public static final char ANGLE = '∠';
@@ -20,7 +8,7 @@ public class Char0 {
   public static final char ASTERISK = '*';
   public static final char BACKSLASH = '\\';
   public static final char BACKSPACE = '\b';
-  public static final char BLACK = ' ';
+  public static final char BLANK = ' ';
   public static final char BR = '\n';
   public static final char CELSIUS = '℃';
   public static final char CIRCLE = '⊙';
@@ -38,6 +26,10 @@ public class Char0 {
   public static final char EQUAL = '=';
   public static final char EQUAL_APPROXIMATELY = '≌';
   public static final char EQUIVALENT = '≡';
+  public static final char ESCAPE_B = '\b';
+  public static final char ESCAPE_N = '\n';
+  public static final char ESCAPE_R = '\r';
+  public static final char ESCAPE_T = '\t';
   public static final char EXCLAMATION = '!';
   public static final char HENCE = '∴';
   public static final char INFINITY = '∞';
