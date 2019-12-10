@@ -36,13 +36,38 @@ public class String0Test extends SKUnit {
   }
 
   @Test
+  public void dbColumn2Field() {
+    Assert.assertEquals("firstName", String0.dbColumn2Field("first_name"));
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void dbColumn2FieldNull() {
+    skPrint(String0.dbColumn2Field(null));
+  }
+
+  @Test
+  public void dbColumn2Field2() {
+    Assert.assertEquals("firstName", String0.dbColumn2Field("first_name", String0.UNDERLINE));
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void dbColumn2Field2Null1() {
+    Assert.assertEquals("firstName", String0.dbColumn2Field(null, String0.UNDERLINE));
+  }
+
+  @Test(expected = NullPointerException.class)
+  public void dbColumn2Field2Null2() {
+    Assert.assertEquals("firstName", String0.dbColumn2Field("first_name", null));
+  }
+
+  @Test
   public void dbColumn2SetField() {
     Assert.assertEquals("FirstName", String0.dbColumn2SetField("first_name"));
   }
 
   @Test(expected = NullPointerException.class)
   public void dbColumn2SetFieldNull() {
-    Assert.assertEquals("firstName", String0.dbColumn2SetField(null));
+    Assert.assertEquals("FirstName", String0.dbColumn2SetField(null));
   }
 
   @Test
@@ -52,12 +77,12 @@ public class String0Test extends SKUnit {
 
   @Test(expected = NullPointerException.class)
   public void dbColumn2SetField2Null1() {
-    Assert.assertEquals("firstName", String0.dbColumn2SetField(null, String0.UNDERLINE));
+    Assert.assertEquals("FirstName", String0.dbColumn2SetField(null, String0.UNDERLINE));
   }
 
   @Test(expected = NullPointerException.class)
   public void dbColumn2SetField2Null2() {
-    Assert.assertEquals("firstName", String0.dbColumn2SetField("first_name", null));
+    Assert.assertEquals("FirstName", String0.dbColumn2SetField("first_name", null));
   }
 
   @Test
