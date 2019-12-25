@@ -26,10 +26,10 @@
 ShaneKing is released under [Apache-2.0][].
 
 
-[AES]: https://github.com/ShaneKing/org.shaneking.skava/blob/mirror/src/main/java/org/shaneking/skava/sk/crypto/AES.java
-[sk-js]: https://github.com/ShaneKing/sk-js/blob/mirror/src/Crypto0.js
-[UUID0]: https://github.com/ShaneKing/org.shaneking.skava/blob/mirror/src/main/java/org/shaneking/skava/ling/util/UUID0.java
-[Tuple]: https://github.com/ShaneKing/org.shaneking.skava/blob/mirror/src/main/java/org/shaneking/skava/sk/collect/Tuple.java
+[AES]: https://github.com/ShaneKing/org.shaneking.skava/blob/master/src/main/java/org/shaneking/skava/sk/crypto/AES.java
+[sk-js]: https://github.com/ShaneKing/sk-js/blob/master/src/Crypto0.js
+[UUID0]: https://github.com/ShaneKing/org.shaneking.skava/blob/master/src/main/java/org/shaneking/skava/ling/util/UUID0.java
+[Tuple]: https://github.com/ShaneKing/org.shaneking.skava/blob/master/src/main/java/org/shaneking/skava/sk/collect/Tuple.java
 
 [SKava]: https://github.com/ShaneKing/org.shaneking.skava
 [shaneking.org]: http://shaneking.org/
@@ -37,8 +37,8 @@ ShaneKing is released under [Apache-2.0][].
 [travis]:https://travis-ci.org/ShaneKing/org.shaneking.skava
 [travis img]:https://secure.travis-ci.org/ShaneKing/org.shaneking.skava.png
 
-[codecov]:https://codecov.io/gh/ShaneKing/org.shaneking.skava/branch/mirror
-[codecov img]:https://codecov.io/github/ShaneKing/org.shaneking.skava/coverage.svg?branch=mirror
+[codecov]:https://codecov.io/gh/ShaneKing/org.shaneking.skava/branch/master
+[codecov img]:https://codecov.io/github/ShaneKing/org.shaneking.skava/coverage.svg?branch=master
 [codacy]:https://app.codacy.com/project/ShaneKing/org.shaneking.skava/
 [codacy img]:https://api.codacy.com/project/badge/Grade/c98f8115ed1946688911e6c5598b1bbe
 
