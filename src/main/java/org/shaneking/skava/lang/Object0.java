@@ -9,12 +9,12 @@ import java.util.Arrays;
 @Slf4j
 public class Object0 {
   //if return null, maybe real null or exception
-  public static Object gs(@NonNull Object o, @NonNull String fields) {
+  public static Object gs(Object o, @NonNull String fields) {
     return Object0.gs(o, fields.split(Regex0.DOT));
   }
 
   //if return null, maybe some field unInstance or exception
-  public static <T> Object gs(@NonNull Object o, @NonNull String fields, T t) {
+  public static <T> Object gs(Object o, @NonNull String fields, @NonNull T t) {
     Object rtn = o;
     Object penultimate = o;
     String[] fieldArray = fields.split(Regex0.DOT);
@@ -34,7 +34,7 @@ public class Object0 {
     return rtn;
   }
 
-  private static Object gs(@NonNull Object o, @NonNull String[] fields) {
+  private static Object gs(Object o, String[] fields) {
     return Object0.gs(o, fields, 0);
   }
 

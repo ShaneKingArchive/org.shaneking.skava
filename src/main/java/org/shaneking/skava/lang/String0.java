@@ -109,29 +109,29 @@ public class String0 {
   public static final String SQL_SPLIT = SEMICOLON + BR_LINUX;
 
   //first_name -&gt; FirstName
-  public static String dbColumn2Field(@NonNull String string) {
+  public static String dbColumn2Field(String string) {
     return dbColumn2Field(string, UNDERLINE);
   }
 
-  public static String dbColumn2Field(@NonNull String string, @NonNull String with) {
+  public static String dbColumn2Field(String string, String with) {
     return lowerFirst(dbColumn2SetField(string, with));
   }
 
   //first_name -&gt; FirstName
-  public static String dbColumn2SetField(@NonNull String string) {
+  public static String dbColumn2SetField(String string) {
     return dbColumn2SetField(string, UNDERLINE);
   }
 
-  public static String dbColumn2SetField(@NonNull String string, @NonNull String with) {
+  public static String dbColumn2SetField(@NonNull String string, String with) {
     return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(with)).stream().map(word -> word.substring(0, 1).toUpperCase() + word.substring(1)).collect(Collectors.toList()));
   }
 
   //firstName -&gt; first_name
-  public static String field2DbColumn(@NonNull String string) {
+  public static String field2DbColumn(String string) {
     return field2DbColumn(string, UNDERLINE);
   }
 
-  public static String field2DbColumn(@NonNull String string, @NonNull String with) {
+  public static String field2DbColumn(@NonNull String string, String with) {
     return Joiner.on(EMPTY).join(Lists.newArrayList(string.split(EMPTY)).stream().map(alphabet -> alphabet.equals(alphabet.toUpperCase()) ? with + alphabet.toLowerCase() : alphabet).collect(Collectors.toList()));
   }
 

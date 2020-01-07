@@ -1,5 +1,6 @@
 package org.shaneking.skava.util;
 
+import lombok.NonNull;
 import org.shaneking.skava.lang.String0;
 
 import java.util.UUID;
@@ -51,7 +52,7 @@ public class UUID0 {
     return l19(UUID.randomUUID());
   }
 
-  public static String l19(UUID uuid) {
+  public static String l19(@NonNull UUID uuid) {
     return digits(uuid.getMostSignificantBits() >> 32, 8) +
       digits(uuid.getMostSignificantBits() >> 16, 4) +
       digits(uuid.getMostSignificantBits(), 4) +

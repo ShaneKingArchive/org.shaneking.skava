@@ -105,9 +105,8 @@ public class String0Test extends SKUnit {
     Assert.assertEquals("first_name", String0.field2DbColumn(null, String0.UNDERLINE));
   }
 
-  @Test(expected = NullPointerException.class)
   public void field2DbColumn2Null2() {
-    Assert.assertEquals("first_name", String0.field2DbColumn("firstName", null));
+    Assert.assertEquals("firstnullname", String0.field2DbColumn("firstName", null));
   }
 
 

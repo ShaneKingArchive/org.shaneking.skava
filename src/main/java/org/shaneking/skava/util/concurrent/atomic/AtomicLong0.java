@@ -1,10 +1,12 @@
 package org.shaneking.skava.util.concurrent.atomic;
 
+import lombok.NonNull;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AtomicLong0 {
 
-  public static boolean tryDecreaseFailed(AtomicLong al, long min, long step) {
+  public static boolean tryDecreaseFailed(@NonNull AtomicLong al, long min, long step) {
     long l = al.longValue();
     while (l > min) {
       if (al.compareAndSet(l, l - step)) {
@@ -15,7 +17,7 @@ public class AtomicLong0 {
     return false;
   }
 
-  public static boolean tryIncreaseFailed(AtomicLong al, long max, long step) {
+  public static boolean tryIncreaseFailed(@NonNull AtomicLong al, long max, long step) {
     long l = al.longValue();
     while (l < max) {
       if (al.compareAndSet(l, l + step)) {

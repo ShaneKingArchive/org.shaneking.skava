@@ -1,11 +1,15 @@
 package org.shaneking.skava.util;
 
-import lombok.NonNull;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.shaneking.skava.lang.SkavaException;
 import org.shaneking.skava.lang.String0;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Slf4j
 public class Date0 {
   public static final String H_MI_S = "HH:mm:ss";
   public static final String HMIS = "HHmmss";
@@ -19,6 +23,7 @@ public class Date0 {
   public static final String DATETIME = YMD + HMIS;
   public static final String DATETIMESSS = DATETIME + SSS;
 
+  @Getter
   private Date date = new Date();
 
   private Date0(Date date) {
@@ -57,8 +62,18 @@ public class Date0 {
     return format(DATETIMESSS);
   }
 
-  public String format(@NonNull String pattern) {
+  public String format(String pattern) {
     return new SimpleDateFormat(pattern).format(date);
+  }
+
+  public Date0 parse(String pattern, String s) {
+    try {
+      this.date = new SimpleDateFormat(pattern).parse(s);
+      return this;
+    } catch (ParseException e) {
+      log.error(e.getMessage(), e);
+      throw new SkavaException(e);
+    }
   }
 
   public String time() {

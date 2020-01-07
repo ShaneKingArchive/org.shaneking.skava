@@ -328,7 +328,7 @@ public class Tuple<First, Rest> implements Iterable<Object> {
       return appendTo(new StringBuffer(), tuple);
     }
 
-    public StringBuffer appendTo(StringBuffer appender, Tuple<?, ?> tuple) {
+    public StringBuffer appendTo(@NonNull StringBuffer appender, @NonNull Tuple<?, ?> tuple) {
       appender.append(open);
       Iterator<Object> iterTerm = tuple.iterator();
       if (iterTerm.hasNext()) {
