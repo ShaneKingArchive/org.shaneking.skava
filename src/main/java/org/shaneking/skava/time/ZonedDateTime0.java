@@ -1,16 +1,20 @@
 package org.shaneking.skava.time;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.shaneking.skava.util.Date0;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Slf4j
+@Accessors(chain = true)
+@ToString
 public class ZonedDateTime0 {
 
   @Getter
+  @Setter
   private ZonedDateTime zonedDateTime = ZonedDateTime.now();
 
   private ZonedDateTime0(ZonedDateTime zonedDateTime) {
@@ -50,12 +54,11 @@ public class ZonedDateTime0 {
   }
 
   public String format(String pattern) {
-    return zonedDateTime.format(DateTimeFormatter.ofPattern(pattern));
+    return this.getZonedDateTime().format(DateTimeFormatter.ofPattern(pattern));
   }
 
   public ZonedDateTime0 parse(String pattern, String s) {
-    this.zonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ofPattern(pattern));
-    return this;
+    return this.setZonedDateTime(ZonedDateTime.parse(s, DateTimeFormatter.ofPattern(pattern)));
   }
 
   public String time() {

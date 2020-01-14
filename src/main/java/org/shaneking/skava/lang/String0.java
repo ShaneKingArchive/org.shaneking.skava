@@ -148,13 +148,35 @@ public class String0 {
     return s.substring(0, 1).toLowerCase() + s.substring(1);
   }
 
-  //not null or empty to
+  public static boolean isNull2Empty(String s) {
+    return isNullOrEmpty(s) || NULL.equals(s);
+  }
+
+  public static boolean isNullOrEmpty(String s) {
+    return Strings.isNullOrEmpty(s) || Object0.NULL.equals(s);
+  }
+
   public static String notNull2empty2(String s, @NonNull String d) {
+    return isNull2Empty(s) ? s : d;
+  }
+
+  public static String notNullOrEmpty2(String s, @NonNull String d) {
+    return isNullOrEmpty(s) ? s : d;
+  }
+
+  public static String notNullOrEmptyTo(String s, @NonNull String d) {
     return Strings.isNullOrEmpty(s) ? s : d;
   }
 
-  //null or empty to
   public static String null2empty2(String s, @NonNull String d) {
+    return isNull2Empty(s) ? d : s;
+  }
+
+  public static String nullOrEmpty2(String s, @NonNull String d) {
+    return isNullOrEmpty(s) ? d : s;
+  }
+
+  public static String nullOrEmptyTo(String s, @NonNull String d) {
     return Strings.isNullOrEmpty(s) ? d : s;
   }
 

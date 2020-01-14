@@ -1,16 +1,20 @@
 package org.shaneking.skava.time;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.shaneking.skava.util.Date0;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-@Slf4j
+@Accessors(chain = true)
+@ToString
 public class LocalTime0 {
 
   @Getter
+  @Setter
   private LocalTime localTime = LocalTime.now();
 
   private LocalTime0(LocalTime localTime) {
@@ -30,12 +34,11 @@ public class LocalTime0 {
   }
 
   public String format(String pattern) {
-    return localTime.format(DateTimeFormatter.ofPattern(pattern));
+    return this.getLocalTime().format(DateTimeFormatter.ofPattern(pattern));
   }
 
   public LocalTime0 parse(String pattern, String s) {
-    this.localTime = LocalTime.parse(s, DateTimeFormatter.ofPattern(pattern));
-    return this;
+    return this.setLocalTime(LocalTime.parse(s, DateTimeFormatter.ofPattern(pattern)));
   }
 
   public String time() {

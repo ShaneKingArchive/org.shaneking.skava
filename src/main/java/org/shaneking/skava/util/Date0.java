@@ -1,6 +1,9 @@
 package org.shaneking.skava.util;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.shaneking.skava.lang.SkavaException;
 import org.shaneking.skava.lang.String0;
@@ -9,7 +12,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@Accessors(chain = true)
 @Slf4j
+@ToString
 public class Date0 {
   public static final String H_MI_S = "HH:mm:ss";
   public static final String HMIS = "HHmmss";
@@ -24,6 +29,7 @@ public class Date0 {
   public static final String DATETIMESSS = DATETIME + SSS;
 
   @Getter
+  @Setter
   private Date date = new Date();
 
   private Date0(Date date) {
@@ -63,13 +69,12 @@ public class Date0 {
   }
 
   public String format(String pattern) {
-    return new SimpleDateFormat(pattern).format(date);
+    return new SimpleDateFormat(pattern).format(this.getDate());
   }
 
   public Date0 parse(String pattern, String s) {
     try {
-      this.date = new SimpleDateFormat(pattern).parse(s);
-      return this;
+      return this.setDate(new SimpleDateFormat(pattern).parse(s));
     } catch (ParseException e) {
       log.error(e.getMessage(), e);
       throw new SkavaException(e);

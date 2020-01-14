@@ -8,6 +8,8 @@ import java.util.Arrays;
 
 @Slf4j
 public class Object0 {
+  public static final String NULL = "null";
+
   //if return null, maybe real null or exception
   public static Object gs(Object o, @NonNull String fields) {
     return Object0.gs(o, fields.split(Regex0.DOT));

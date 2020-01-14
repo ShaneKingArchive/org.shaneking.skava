@@ -1,6 +1,7 @@
 package org.shaneking.skava.util.concurrent;
 
 import com.google.common.base.Strings;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.shaneking.skava.io.AC0;
 
@@ -12,9 +13,13 @@ import java.util.concurrent.Callable;
 
 @Slf4j
 public class Runtime0Callable implements Callable<Boolean> {
+  @Getter
   private InputStream inputStream;
+  @Getter
   private boolean errorStream;
+  @Getter
   private boolean value4pause;//if meet pause, return true or false?
+  @Getter
   private String pauseFlag;
 
   public Runtime0Callable(InputStream inputStream, boolean errorStream, boolean value4pause, String pauseFlag) {
@@ -34,12 +39,12 @@ public class Runtime0Callable implements Callable<Boolean> {
     String line = null;
 
     try {
-      inputStreamReader = new InputStreamReader(inputStream);
+      inputStreamReader = new InputStreamReader(this.getInputStream());
       lineNumberReader = new LineNumberReader(inputStreamReader);
 
-      if (Strings.isNullOrEmpty(pauseFlag)) {
+      if (Strings.isNullOrEmpty(this.getPauseFlag())) {
         while ((line = lineNumberReader.readLine()) != null) {
-          if (errorStream) {
+          if (this.isErrorStream()) {
             log.error(line);
           } else {
             log.info(line);
@@ -47,13 +52,13 @@ public class Runtime0Callable implements Callable<Boolean> {
         }
       } else {
         while ((line = lineNumberReader.readLine()) != null) {
-          if (errorStream) {
+          if (this.isErrorStream()) {
             log.error(line);
           } else {
             log.info(line);
           }
-          if (line.toLowerCase(Locale.ENGLISH).contains(pauseFlag)) {
-            rtnBoolean = value4pause;
+          if (line.toLowerCase(Locale.ENGLISH).contains(this.getPauseFlag())) {
+            rtnBoolean = this.isValue4pause();
             break;
           }
         }
