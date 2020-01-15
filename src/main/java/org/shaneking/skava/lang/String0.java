@@ -108,7 +108,7 @@ public class String0 {
 
   public static final String SQL_SPLIT = SEMICOLON + BR_LINUX;
 
-  //first_name -&gt; FirstName
+  //first_name -&gt; firstName
   public static String dbColumn2Field(String string) {
     return dbColumn2Field(string, UNDERLINE);
   }
@@ -178,6 +178,17 @@ public class String0 {
 
   public static String nullOrEmptyTo(String s, @NonNull String d) {
     return Strings.isNullOrEmpty(s) ? d : s;
+  }
+
+  public static int sameTotal(@NonNull String s1, @NonNull String s2) {
+    int rtn = 0;
+    int min = Math.min(s1.length(), s2.length());
+    for (int i = 0; i < min; i++) {
+      if (s1.charAt(i) == s2.charAt(i)) {
+        rtn++;
+      }
+    }
+    return rtn;
   }
 
   public static String valueOf(Object o) {

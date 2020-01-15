@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.shaneking.skava.lang.SkavaException;
 import org.shaneking.skava.lang.String0;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -24,9 +23,15 @@ public class Date0 {
   public static final String YMD = "yyyyMMdd";
   public static final String YsMsD = "yyyy/MM/dd";
   public static final String DATE_TIME = Y_M_D + String0.BLANK + H_MI_S;
+  public static final String DATE_TIME_ZONE = DATE_TIME + XXX;
   public static final String DATE_TIME_SSS = DATE_TIME + String0.DOT + SSS;
+  public static final String DATE_TIME_SSS_ZONE = DATE_TIME_SSS + XXX;
+  public static final String TIME_ZONE = H_MI_S + XXX;
+  public static final String TIME_SSS = H_MI_S + String0.DOT + SSS;
+  public static final String TIME_SSS_ZONE = TIME_SSS + XXX;
   public static final String DATETIME = YMD + HMIS;
   public static final String DATETIMESSS = DATETIME + SSS;
+  public static final String TIMESSS = HMIS + SSS;
 
   @Getter
   @Setter
@@ -56,8 +61,16 @@ public class Date0 {
     return format(DATE_TIME);
   }
 
+  public String dateTimeZone() {
+    return format(DATE_TIME_ZONE);
+  }
+
   public String dateTimes() {
     return format(DATE_TIME_SSS);
+  }
+
+  public String dateTimesZone() {
+    return format(DATE_TIME_SSS_ZONE);
   }
 
   public String datetime() {
@@ -72,10 +85,14 @@ public class Date0 {
     return new SimpleDateFormat(pattern).format(this.getDate());
   }
 
+  public Date0 parse(String s) {
+    return parse(Y_M_D, s);
+  }
+
   public Date0 parse(String pattern, String s) {
     try {
       return this.setDate(new SimpleDateFormat(pattern).parse(s));
-    } catch (ParseException e) {
+    } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new SkavaException(e);
     }
@@ -83,6 +100,22 @@ public class Date0 {
 
   public String time() {
     return format(H_MI_S);
+  }
+
+  public String timeZone() {
+    return format(TIME_ZONE);
+  }
+
+  public String timeS() {
+    return format(TIME_SSS);
+  }
+
+  public String timeSZone() {
+    return format(TIME_SSS_ZONE);
+  }
+
+  public String times() {
+    return format(TIMESSS);
   }
 
   public String ymd() {
@@ -96,5 +129,4 @@ public class Date0 {
   public String zone() {
     return format(XXX);
   }
-
 }

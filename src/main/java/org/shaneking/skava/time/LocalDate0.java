@@ -41,6 +41,10 @@ public class LocalDate0 {
     return this.getLocalDate().format(DateTimeFormatter.ofPattern(pattern));
   }
 
+  public LocalDate0 parse(String s) {
+    return parse(Date0.Y_M_D, s);
+  }
+
   public LocalDate0 parse(String pattern, String s) {
     return this.setLocalDate(LocalDate.parse(s, DateTimeFormatter.ofPattern(pattern)));
   }

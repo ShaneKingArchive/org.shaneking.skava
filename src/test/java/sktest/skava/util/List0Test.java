@@ -1,5 +1,6 @@
 package sktest.skava.util;
 
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.lang.String0;
@@ -41,4 +42,27 @@ public class List0Test {
     }));
   }
 
+  @Test
+  public void splitByListSize() {
+    Assert.assertEquals(Lists.newArrayList(Lists.newArrayList("1", "2"), Lists.newArrayList("3", "4"), Lists.newArrayList("5")), List0.splitByListSize(Lists.newArrayList("1", "2", "3", "4", "5"), 2));
+  }
+
+  @Test
+  public void splitByListSizeLessThanTwo() {
+    List<List<String>> expected = Lists.newArrayList();
+    expected.add(Lists.newArrayList("1", "2", "3", "4", "5"));
+    Assert.assertEquals(expected, List0.splitByListSize(Lists.newArrayList("1", "2", "3", "4", "5"), 1));
+  }
+
+  @Test
+  public void splitByListTotal() {
+    Assert.assertEquals(Lists.newArrayList(Lists.newArrayList("1", "3", "5"), Lists.newArrayList("2", "4")), List0.splitByListTotal(Lists.newArrayList("1", "2", "3", "4", "5"), 2));
+  }
+
+  @Test
+  public void splitByListTotalLessThanTwo() {
+    List<List<String>> expected = Lists.newArrayList();
+    expected.add(Lists.newArrayList("1", "2", "3", "4", "5"));
+    Assert.assertEquals(expected, List0.splitByListTotal(Lists.newArrayList("1", "2", "3", "4", "5"), 1));
+  }
 }

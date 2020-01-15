@@ -25,7 +25,7 @@ public class CtxTest {
   }
 
   @Test
-  public void test() throws Exception {
+  public void testLanguage() throws Exception {
     List<Callable<String>> callableList = Lists.newArrayList();
     callableList.addAll(List0.fillList(null, 4 * Runtime.getRuntime().availableProcessors() + 1, () -> new AlwaysZhCn()));
     callableList.addAll(List0.fillList(null, 4 * Runtime.getRuntime().availableProcessors() + 1, () -> new AlwaysEnUs()));
@@ -41,6 +41,11 @@ public class CtxTest {
     System.out.println(Runtime.getRuntime().availableProcessors());
     System.out.println(l);
     Assert.assertEquals(2 * (4 * Runtime.getRuntime().availableProcessors() + 1), l);
+  }
+
+  @Test
+  public void testUserId() {
+    Assert.assertNull(Ctx.USER_ID.get());
   }
 }
 

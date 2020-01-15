@@ -41,8 +41,16 @@ public class ZonedDateTime0 {
     return format(Date0.DATE_TIME);
   }
 
+  public String dateTimeZone() {
+    return format(Date0.DATE_TIME_ZONE);
+  }
+
   public String dateTimes() {
     return format(Date0.DATE_TIME_SSS);
+  }
+
+  public String dateTimesZone() {
+    return format(Date0.DATE_TIME_SSS_ZONE);
   }
 
   public String datetime() {
@@ -57,12 +65,32 @@ public class ZonedDateTime0 {
     return this.getZonedDateTime().format(DateTimeFormatter.ofPattern(pattern));
   }
 
-  public ZonedDateTime0 parse(String pattern, String s) {
-    return this.setZonedDateTime(ZonedDateTime.parse(s, DateTimeFormatter.ofPattern(pattern)));
-  }
+//  public ZonedDateTime0 parse(String s) {
+//    return parse(Date0.DATE_TIME_SSS, s);
+//  }
+//
+//  public ZonedDateTime0 parse(String pattern, String s) {
+//    return this.setZonedDateTime(ZonedDateTime.parse(s, DateTimeFormatter.ofPattern(pattern)));
+//  }
 
   public String time() {
     return format(Date0.H_MI_S);
+  }
+
+  public String timeZone() {
+    return format(Date0.TIME_ZONE);
+  }
+
+  public String timeS() {
+    return format(Date0.TIME_SSS);
+  }
+
+  public String timeSZone() {
+    return format(Date0.TIME_SSS_ZONE);
+  }
+
+  public String times() {
+    return format(Date0.TIMESSS);
   }
 
   public String ymd() {

@@ -37,11 +37,23 @@ public class LocalTime0 {
     return this.getLocalTime().format(DateTimeFormatter.ofPattern(pattern));
   }
 
+  public LocalTime0 parse(String s) {
+    return parse(Date0.H_MI_S, s);
+  }
+
   public LocalTime0 parse(String pattern, String s) {
     return this.setLocalTime(LocalTime.parse(s, DateTimeFormatter.ofPattern(pattern)));
   }
 
   public String time() {
     return format(Date0.H_MI_S);
+  }
+
+  public String timeS() {
+    return format(Date0.TIME_SSS);
+  }
+
+  public String times() {
+    return format(Date0.TIMESSS);
   }
 }

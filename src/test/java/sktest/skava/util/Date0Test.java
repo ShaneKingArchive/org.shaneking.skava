@@ -5,6 +5,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.shaneking.skava.lang.SkavaException;
+import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.util.Date0;
 import sktest.skava.SKUnit;
 
@@ -93,9 +95,18 @@ public class Date0Test extends SKUnit {
     Date0.on(date).format(pattern);
   }
 
+  public void parse() {
+    Assert.assertEquals(Date0.on().parse(Date0.on().date()).date(), Date0.on().date());
+  }
+
+  @Test(expected = SkavaException.class)
+  public void parseException() {
+    Date0.on().parse(null);
+  }
+
   @Test
   public void time() {
-    Assert.assertEquals(Date0.on().time(), Date0.on(now).format(Date0.H_MI_S));
+    Assert.assertTrue(String0.sameTotal(Date0.on().time(), Date0.on(now).format(Date0.H_MI_S)) > Date0.on().time().length() - 3);
     Assert.assertNotEquals(Date0.on().time(), Date0.on(now).format(Date0.HMIS));
   }
 
@@ -115,4 +126,13 @@ public class Date0Test extends SKUnit {
     Assert.assertEquals(Date0.on().zone(), Date0.on(now).format(Date0.XXX));
   }
 
+  @Test
+  public void setDate() {
+    Assert.assertTrue(Date0.on().setDate(now).getDate() == now);
+  }
+
+  @Test
+  public void testToString() {
+    Assert.assertTrue(Date0.on().toString().contains("Date0("));
+  }
 }

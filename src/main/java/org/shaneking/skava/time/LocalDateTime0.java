@@ -41,12 +41,24 @@ public class LocalDateTime0 {
     return format(Date0.DATE_TIME);
   }
 
+  public String dateTimes() {
+    return format(Date0.DATE_TIME_SSS);
+  }
+
   public String datetime() {
     return format(Date0.DATETIME);
   }
 
+  public String datetimes() {
+    return format(Date0.DATETIMESSS);
+  }
+
   public String format(String pattern) {
     return this.getLocalDateTime().format(DateTimeFormatter.ofPattern(pattern));
+  }
+
+  public LocalDateTime0 parse(String s) {
+    return parse(Date0.DATE_TIME, s);
   }
 
   public LocalDateTime0 parse(String pattern, String s) {
@@ -55,6 +67,14 @@ public class LocalDateTime0 {
 
   public String time() {
     return format(Date0.H_MI_S);
+  }
+
+  public String timeS() {
+    return format(Date0.TIME_SSS);
+  }
+
+  public String times() {
+    return format(Date0.TIMESSS);
   }
 
   public String ymd() {
