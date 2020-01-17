@@ -11,7 +11,6 @@ import org.shaneking.skava.util.Date0;
 import java.time.LocalDateTime;
 
 public class LocalDateTime0Test {
-
   @Before
   public void setUp() throws Exception {
   }

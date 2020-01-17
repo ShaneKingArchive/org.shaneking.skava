@@ -5,7 +5,6 @@ import lombok.NonNull;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class AtomicLong0 {
-
   public static boolean tryDecreaseFailed(@NonNull AtomicLong al, long min, long step) {
     long l = al.longValue();
     while (l > min) {

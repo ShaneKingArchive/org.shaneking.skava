@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
 public class AtomicLong0Test extends SKUnit {
-
   private final AtomicLong al = new AtomicLong(Runtime.getRuntime().availableProcessors() + 1);
 
   @Before

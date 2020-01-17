@@ -12,7 +12,6 @@ import java.text.MessageFormat;
 import java.util.List;
 
 public class String0Test extends SKUnit {
-
   //https://book.douban.com/review/5082337/
   //http://www.hxen.com/englisharticle/yingyumeiwen/2018-06-04/498157.html
   private List<Triple<String, Object[], String>> tripleList = Lists.newArrayList(
@@ -108,7 +107,6 @@ public class String0Test extends SKUnit {
   public void field2DbColumn2Null2() {
     Assert.assertEquals("firstnullname", String0.field2DbColumn("firstName", null));
   }
-
 
   @Test
   public void formatCompareTestMessageFormat() {

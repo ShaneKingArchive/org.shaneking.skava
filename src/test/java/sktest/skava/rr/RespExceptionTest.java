@@ -6,7 +6,6 @@ import org.shaneking.skava.rr.Resp;
 import org.shaneking.skava.rr.RespException;
 
 public class RespExceptionTest {
-
   @Test(expected = RespException.class)
   public void constructor() {
     throw new RespException(Resp.failed());

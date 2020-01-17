@@ -134,7 +134,6 @@ public class Tuple<First, Rest> implements Iterable<Object> {
   @Override
   public boolean equals(Object obj) {
     return this == obj || (null != obj) && (Tuple.class.isAssignableFrom(obj.getClass())) && Iterables.elementsEqual(this, (Tuple<?, ?>) obj);
-
   }
 
   @NonNull
@@ -346,7 +345,6 @@ public class Tuple<First, Rest> implements Iterable<Object> {
     public String join(Tuple<?, ?> tuple) {
       return String.valueOf(appendTo(tuple));
     }
-
 
     private CharSequence toString(Object term) {
       return (term instanceof CharSequence) ? (CharSequence) term : String.valueOf(term);

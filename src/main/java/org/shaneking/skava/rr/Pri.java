@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ToString
 public class Pri<E, O, R> {
-
   @Getter
   @Setter
   private E ext;//extend settings like table config

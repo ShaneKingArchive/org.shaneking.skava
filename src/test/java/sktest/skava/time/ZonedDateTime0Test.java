@@ -11,7 +11,6 @@ import org.shaneking.skava.util.Date0;
 import java.time.ZonedDateTime;
 
 public class ZonedDateTime0Test {
-
   @Before
   public void setUp() throws Exception {
   }
@@ -74,7 +73,6 @@ public class ZonedDateTime0Test {
   public void format() {
     Assert.assertEquals(Date0.on().format(Date0.DATE_TIME_ZONE), ZonedDateTime0.on().format(Date0.DATE_TIME_ZONE));
   }
-
 //  @Test
 //  public void parse() {
 //    Assert.assertNotNull(ZonedDateTime0.on().parse("2020-01-15 21:34:00.123"));

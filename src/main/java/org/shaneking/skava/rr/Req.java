@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @ToString
 public class Req<E, O, R, P> {
-
   @Getter
   @Setter
   private String enc;//this is encode of pri

@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.shaneking.skava.lang.SkavaException;
 
 public class SkavaExceptionTest {
-
   @Test(expected = SkavaException.class)
   public void constructor() {
     throw new SkavaException();

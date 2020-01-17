@@ -6,7 +6,6 @@ import org.shaneking.skava.lang.String0;
 import java.util.UUID;
 
 public class UUID0 {
-
   private static final char[] digits = {'0', '1', '2', '3', '4', '5', '6', '7', '8',
     '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l',
     'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
@@ -81,7 +80,6 @@ public class UUID0 {
     if (!negative) {
       i = -i;
     }
-
     while (i <= -reRadix) {
       buf[charPos--] = digits[(int) (-(i % reRadix))];
       i = i / reRadix;
@@ -91,7 +89,6 @@ public class UUID0 {
     if (negative) {
       buf[--charPos] = '-';
     }
-
     return new String(buf, charPos, (size - charPos));
   }
 }

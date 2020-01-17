@@ -7,7 +7,6 @@ import org.shaneking.skava.rr.RespException;
 import sktest.skava.SKUnit;
 
 public class RespTest extends SKUnit {
-
   @Test
   public void build1() {
     Assert.assertEquals("Resp(code=-1, data=data, mesg=mesg)", Resp.build(Resp.CODE_UNKNOWN_EXCEPTION, "data", "mesg").toString());
@@ -49,5 +48,4 @@ public class RespTest extends SKUnit {
   public void success() {
     Assert.assertEquals("Resp(code=0, data=data, mesg=null)", Resp.success("data").toString());
   }
-
 }

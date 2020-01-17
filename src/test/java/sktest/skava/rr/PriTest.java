@@ -15,5 +15,4 @@ public class PriTest extends SKUnit {
   public void buildRtn() {
     Assert.assertEquals("Pri(ext=null, obj=null, rtn=rtn)", Pri.build("rtn").toString());
   }
-
 }

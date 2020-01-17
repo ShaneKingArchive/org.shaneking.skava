@@ -56,7 +56,6 @@ public class Runtime0 {
         }
       }
     }
-
     return rtnBoolean;
   }
 }

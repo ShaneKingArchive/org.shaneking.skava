@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class CtxTest {
-
   @Before
   public void setUp() throws Exception {
   }

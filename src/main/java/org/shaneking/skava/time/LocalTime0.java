@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 @Accessors(chain = true)
 @ToString
 public class LocalTime0 {
-
   @Getter
   @Setter
   private LocalTime localTime = LocalTime.now();

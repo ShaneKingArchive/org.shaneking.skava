@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.shaneking.skava.lang.Char0;
 
 public class Char0Test {
-
   @Test
   public void isAlphabet() {
     Assert.assertTrue(Char0.isAlphabet(Char0.F));

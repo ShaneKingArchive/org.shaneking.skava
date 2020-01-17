@@ -43,5 +43,4 @@ public class TupleJoinerTest extends SKUnit {
   public void testToString() {
     Assert.assertEquals("[127.[127,0,0,1].0.1]", tupleJoiner.join(Tuple.of(127, Tuple.of(127, 0, 0, 1), 0, 1)));
   }
-
 }

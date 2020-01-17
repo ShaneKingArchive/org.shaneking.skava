@@ -21,5 +21,4 @@ public class ReqTest extends SKUnit {
   public void buildPub() {
     Assert.assertEquals("Req(enc=null, pri=null, pub=pub)", Req.build("pub").toString());
   }
-
 }

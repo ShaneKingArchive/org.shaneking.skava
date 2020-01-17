@@ -15,7 +15,6 @@ import org.shaneking.skava.lang.String0;
 @Slf4j
 @ToString
 public class Resp<D> {
-
   public static final String CODE_UNKNOWN_EXCEPTION = "-1";
   public static final String CODE_SUCCESSFULLY = "0";
 

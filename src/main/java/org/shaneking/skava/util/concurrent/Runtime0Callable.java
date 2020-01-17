@@ -70,8 +70,6 @@ public class Runtime0Callable implements Callable<Boolean> {
       AC0.close(lineNumberReader);
       AC0.close(inputStreamReader);
     }
-
     return rtnBoolean;
   }
 }
-

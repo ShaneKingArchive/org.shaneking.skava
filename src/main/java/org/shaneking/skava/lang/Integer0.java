@@ -1,7 +1,6 @@
 package org.shaneking.skava.lang;
 
 public class Integer0 {
-
   //greater than then default
   public static int gt2d(int v, int gt) {
     return gt2d(v, gt, gt);

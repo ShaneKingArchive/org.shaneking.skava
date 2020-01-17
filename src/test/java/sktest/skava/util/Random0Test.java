@@ -19,5 +19,4 @@ public class Random0Test {
   public void nextMaxIntForever() {
     Assert.assertTrue(Random0.nextMaxInt(10) < 10);
   }
-
 }

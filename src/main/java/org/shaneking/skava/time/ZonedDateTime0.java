@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 @Accessors(chain = true)
 @ToString
 public class ZonedDateTime0 {
-
   @Getter
   @Setter
   private ZonedDateTime zonedDateTime = ZonedDateTime.now();
@@ -64,7 +63,6 @@ public class ZonedDateTime0 {
   public String format(String pattern) {
     return this.getZonedDateTime().format(DateTimeFormatter.ofPattern(pattern));
   }
-
 //  public ZonedDateTime0 parse(String s) {
 //    return parse(Date0.DATE_TIME_SSS, s);
 //  }

@@ -29,7 +29,6 @@ public class TupleTest extends SKUnit {
   public void tearDown() {
     super.tearDown();
   }
-
 //  @Test
 //  public void joinWith1() {
 //    Assert.assertEquals(String.valueOf(Tuple.joinWith(String0.DOT)), "TupleJoiner{open='(', separator='.', close=')'}");
