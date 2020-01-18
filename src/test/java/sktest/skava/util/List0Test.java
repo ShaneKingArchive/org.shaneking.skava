@@ -65,4 +65,14 @@ public class List0Test {
     expected.add(Lists.newArrayList("1", "2", "3", "4", "5"));
     Assert.assertEquals(expected, List0.splitByListTotal(Lists.newArrayList("1", "2", "3", "4", "5"), 1));
   }
+
+  @Test
+  public void toIntMap() {
+    Assert.assertEquals("{0=a, 1=1, 2=b}", List0.toIntMap(Lists.newArrayList("a", 1, "b")).toString());
+  }
+
+  @Test
+  public void toStringMap() {
+    Assert.assertEquals("{0=a, 1=1, 2=b}", List0.toStringMap(Lists.newArrayList("a", 1, "b")).toString());
+  }
 }

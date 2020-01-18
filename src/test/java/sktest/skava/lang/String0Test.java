@@ -128,38 +128,38 @@ public class String0Test extends SKUnit {
 
   @Test
   public void notNull2empty2() {
-    Assert.assertEquals("", String0.notNull2empty2("firstName", ""));
+    Assert.assertEquals(String0.EMPTY, String0.notNull2empty2("firstName", String0.EMPTY));
     Assert.assertEquals("NULL", String0.notNull2empty2("NULL", "firstName"));
   }
 
   @Test
   public void notNullOrEmpty2() {
-    Assert.assertEquals("", String0.notNullOrEmpty2("firstName", ""));
+    Assert.assertEquals(String0.EMPTY, String0.notNullOrEmpty2("firstName", String0.EMPTY));
     Assert.assertEquals("null", String0.notNullOrEmpty2("null", "firstName"));
   }
 
   @Test
   public void notNullOrEmptyTo() {
-    Assert.assertEquals("", String0.notNullOrEmptyTo("firstName", ""));
-    Assert.assertEquals("", String0.notNullOrEmptyTo("", "firstName"));
+    Assert.assertEquals(String0.EMPTY, String0.notNullOrEmptyTo("firstName", String0.EMPTY));
+    Assert.assertEquals(String0.EMPTY, String0.notNullOrEmptyTo(String0.EMPTY, "firstName"));
   }
 
   @Test
   public void null2empty2() {
-    Assert.assertEquals("firstName", String0.null2empty2("firstName", ""));
+    Assert.assertEquals("firstName", String0.null2empty2("firstName", String0.EMPTY));
     Assert.assertEquals("firstName", String0.null2empty2("NULL", "firstName"));
   }
 
   @Test
   public void nullOrEmpty2() {
-    Assert.assertEquals("firstName", String0.nullOrEmpty2("firstName", ""));
+    Assert.assertEquals("firstName", String0.nullOrEmpty2("firstName", String0.EMPTY));
     Assert.assertEquals("firstName", String0.nullOrEmpty2("null", "firstName"));
   }
 
   @Test
   public void nullOrEmptyTo() {
-    Assert.assertEquals("firstName", String0.nullOrEmptyTo("firstName", ""));
-    Assert.assertEquals("firstName", String0.nullOrEmptyTo("", "firstName"));
+    Assert.assertEquals("firstName", String0.nullOrEmptyTo("firstName", String0.EMPTY));
+    Assert.assertEquals("firstName", String0.nullOrEmptyTo(String0.EMPTY, "firstName"));
   }
 
   @Test(expected = NullPointerException.class)

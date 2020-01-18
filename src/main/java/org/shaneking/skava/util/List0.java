@@ -1,11 +1,14 @@
 package org.shaneking.skava.util;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import lombok.NonNull;
+import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.math.Calculable;
 import org.shaneking.skava.persistence.Tuple;
 
 import java.util.List;
+import java.util.Map;
 
 public class List0 {
   public static <M, N, E> List<E> calc(@NonNull List<M> firstList, @NonNull List<N> restList, @NonNull Calculable<? super M, ? super N, ? extends E> calculable) {
@@ -68,6 +71,30 @@ public class List0 {
       }
     }
     return rtnList;
+  }
+
+  public static <E> Map<Integer, E> toIntMap(@NonNull List<E> list) {
+    return toIntMap(list, 0);
+  }
+
+  public static <E> Map<Integer, E> toIntMap(@NonNull List<E> list, int baseNumber) {
+    return toMap(list, ((idx, item) -> idx + baseNumber));
+  }
+
+  public static <E> Map<String, E> toStringMap(@NonNull List<E> list) {
+    return toStringMap(list, String0.EMPTY);
+  }
+
+  public static <E> Map<String, E> toStringMap(@NonNull List<E> list, String prefix) {
+    return toMap(list, ((idx, item) -> prefix + idx));
+  }
+
+  public static <K, E> Map<K, E> toMap(@NonNull List<E> list, List2MapKeyGenerator<K, E> list2MapKeyGenerator) {
+    Map<K, E> rtnMap = Maps.newHashMap();
+    for (int i = 0; i < list.size(); i++) {
+      rtnMap.put(list2MapKeyGenerator.genKey(i, list.get(i)), list.get(i));
+    }
+    return rtnMap;
   }
 
   private static <E> Tuple.Pair<List<E>, Integer> fillList(List<E> fillList, int fillSize) {

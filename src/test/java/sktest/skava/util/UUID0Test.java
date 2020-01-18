@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.util.Random0;
 import org.shaneking.skava.util.UUID0;
 import sktest.skava.SKUnit;
@@ -38,7 +39,7 @@ public class UUID0Test extends SKUnit {
       set.add(UUID0.l19());
     }
     Assert.assertEquals(r, set.size());
-    Assert.assertEquals(19 * r, Joiner.on("").join(set).length());
+    Assert.assertEquals(19 * r, Joiner.on(String0.EMPTY).join(set).length());
   }
 
   @Test
@@ -68,8 +69,8 @@ public class UUID0Test extends SKUnit {
     set.add(UUID0.l19(UUID.fromString("00000000-0000-0000-0000-000000000000")));
     set.add(UUID0.l19(UUID.fromString("ffffffff-ffff-ffff-ffff-ffffffffffff")));
     Assert.assertEquals(r, set.size());
-    Assert.assertEquals(19 * r, Joiner.on("").join(set).length());
-    System.out.println(Joiner.on("").join(set));
+    Assert.assertEquals(19 * r, Joiner.on(String0.EMPTY).join(set).length());
+    System.out.println(Joiner.on(String0.EMPTY).join(set));
   }
 
   @Test
@@ -79,8 +80,8 @@ public class UUID0Test extends SKUnit {
     set.add(UUID0.l19(uuid));
     set.add(UUID0.l19(UUID.randomUUID()));
     Assert.assertEquals(r, set.size());
-    Assert.assertEquals(19 * r, Joiner.on("").join(set).length());
-    System.out.println(Joiner.on("").join(set));
+    Assert.assertEquals(19 * r, Joiner.on(String0.EMPTY).join(set).length());
+    System.out.println(Joiner.on(String0.EMPTY).join(set));
   }
 
   @Test
