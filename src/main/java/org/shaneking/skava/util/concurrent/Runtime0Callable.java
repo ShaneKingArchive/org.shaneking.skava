@@ -45,7 +45,7 @@ public class Runtime0Callable implements Callable<Boolean> {
       if (Strings.isNullOrEmpty(this.getPauseFlag())) {
         while ((line = lineNumberReader.readLine()) != null) {
           if (this.isErrorStream()) {
-            log.error(line);
+            log.warn(line);
           } else {
             log.info(line);
           }
@@ -53,7 +53,7 @@ public class Runtime0Callable implements Callable<Boolean> {
       } else {
         while ((line = lineNumberReader.readLine()) != null) {
           if (this.isErrorStream()) {
-            log.error(line);
+            log.warn(line);
           } else {
             log.info(line);
           }
