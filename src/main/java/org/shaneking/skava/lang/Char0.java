@@ -82,9 +82,13 @@ public class Char0 {
   public static final char F = 'F';//False/Failed
   public static final char S = 'S';//Successfully
 
-  public static final char C10 = 0x0A;//LF=\n
-  public static final char C13 = 0x0D;//CR=\r
-  public static final char C27 = 0x18;//ESC
+  public static final char C7 = 0x07;//BEL=\b, bell
+  public static final char C9 = 0x09;//TAB=\t, horizontal tab
+  public static final char C10 = 0x0A;//LF=\n, NL line feed, new line
+  public static final char C12 = 0x0C;//FF=\f, NP form feed, new page
+  public static final char C13 = 0x0D;//CR=\r, carriage return
+  public static final char C27 = 0x1B;//ESC=\e, escape
+  public static final char C127 = 0x7F;//DEL
 
 
   public static boolean isAlphabet(char c) {
