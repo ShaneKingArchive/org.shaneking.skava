@@ -17,12 +17,12 @@ public class SKUnit {
   private Stopwatch stopwatch = Stopwatch.createStarted();
 
   //CFG BEGIN:prepare
-  public File prepareFolder(Class clazz) {
-    return new File(MAVEN_TEST_ROOT_FOLDER, clazz.getName().replaceAll(clazz.getSimpleName(), "prepare").replaceAll(Regex0.DOT, String0.SLASH));
+  public File skTestFiles(Class clazz) {
+    return new File(MAVEN_TEST_ROOT_FOLDER, clazz.getName().replaceAll(clazz.getSimpleName(), "testfiles").replaceAll(Regex0.DOT, String0.SLASH));
   }
 
-  public File prepareFile(Class clazz, String seq, String io, String fileType) {
-    return new File(prepareFolder(clazz), clazz.getSimpleName() + String0.UNDERLINE + testName.getMethodName() + String0.UNDERLINE + seq + String0.UNDERLINE + io + String0.DOT + fileType);
+  public File skTestFiles(Class clazz, String seq, String io, String fileType) {
+    return new File(skTestFiles(clazz), clazz.getSimpleName() + String0.UNDERLINE + testName.getMethodName() + String0.UNDERLINE + seq + String0.UNDERLINE + io + String0.DOT + fileType);
   }
   //CFG END:prepare
 
