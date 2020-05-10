@@ -6,11 +6,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.persistence.Tuple;
-import sktest.skava.SKUnit;
 
 import java.text.MessageFormat;
 
-public class TupleTest extends SKUnit {
+public class TupleTest {
   private String elevenString = "[1,2,3,4,5,6,7,8,9,10,11]";
   private String elevenString2 = "[1,2,3,4,5,[1,2,3,4,5,6,7,8,9,10,11],7,8,9,10,11]";
   private Tuple elevenTuple = Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
@@ -19,7 +18,6 @@ public class TupleTest extends SKUnit {
 
   @Before
   public void setUp() {
-    super.setUp();
     elevenTuple = Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
     elevenTuple2 = Tuple.of(1, 2, 3, 4, 5, Tuple.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11), 7, 8, 9, 10, 11);
     tupleJoiner = new Tuple.TupleJoiner(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET);
@@ -27,7 +25,6 @@ public class TupleTest extends SKUnit {
 
   @After
   public void tearDown() {
-    super.tearDown();
   }
 //  @Test
 //  public void joinWith1() {

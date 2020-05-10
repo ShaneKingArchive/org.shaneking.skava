@@ -82,6 +82,9 @@ public class Char0 {
   public static final char F = 'F';//False/Failed
   public static final char S = 'S';//Successfully
 
+  public static final char I = 'I';//Input
+  public static final char O = 'O';//Output
+
   public static final char C7 = 0x07;//BEL=\b, bell
   public static final char C9 = 0x09;//TAB=\t, horizontal tab
   public static final char C10 = 0x0A;//LF=\n, NL line feed, new line

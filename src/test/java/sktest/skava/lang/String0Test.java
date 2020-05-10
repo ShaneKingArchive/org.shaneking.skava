@@ -1,17 +1,18 @@
 package sktest.skava.lang;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.persistence.Tuple;
 import org.shaneking.skava.persistence.Tuple.Triple;
-import sktest.skava.SKUnit;
 
 import java.text.MessageFormat;
 import java.util.List;
 
-public class String0Test extends SKUnit {
+@Slf4j
+public class String0Test {
   //https://book.douban.com/review/5082337/
   //http://www.hxen.com/englisharticle/yingyumeiwen/2018-06-04/498157.html
   private List<Triple<String, Object[], String>> tripleList = Lists.newArrayList(
@@ -41,7 +42,7 @@ public class String0Test extends SKUnit {
 
   @Test(expected = NullPointerException.class)
   public void dbColumn2FieldNull() {
-    skPrint(String0.dbColumn2Field(null));
+    log.info(String0.dbColumn2Field(null));
   }
 
   @Test

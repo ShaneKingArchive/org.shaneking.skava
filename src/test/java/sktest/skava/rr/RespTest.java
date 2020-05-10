@@ -4,18 +4,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.rr.Resp;
 import org.shaneking.skava.rr.RespException;
-import sktest.skava.SKUnit;
 
-public class RespTest extends SKUnit {
-  @Test
-  public void build1() {
-    Assert.assertEquals("Resp(code=-1, data=data, mesg=mesg)", Resp.build(Resp.CODE_UNKNOWN_EXCEPTION, "data", "mesg").toString());
-  }
+public class RespTest {
+    @Test
+    public void build1() {
+        Assert.assertEquals("Resp(code=-1, data=data, mesg=mesg)", Resp.build(Resp.CODE_UNKNOWN_EXCEPTION, "data", "mesg").toString());
+    }
 
-  @Test
-  public void build0() {
-    Assert.assertEquals("Resp(code=0, data=data, mesg=mesg)", Resp.build(Resp.CODE_SUCCESSFULLY, "data", "mesg").toString());
-  }
+    @Test
+    public void build0() {
+        Assert.assertEquals("Resp(code=0, data=data, mesg=mesg)", Resp.build(Resp.CODE_SUCCESSFULLY, "data", "mesg").toString());
+    }
 
   @Test
   public void failedA0() {

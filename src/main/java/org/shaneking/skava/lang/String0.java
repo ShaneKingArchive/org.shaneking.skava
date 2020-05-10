@@ -91,6 +91,9 @@ public class String0 {
   public static final String F = String.valueOf(Char0.F);//False/Failed
   public static final String S = String.valueOf(Char0.S);//Successfully
 
+  public static final String I = String.valueOf(Char0.I);//Input
+  public static final String O = String.valueOf(Char0.O);//Output
+
   public static final String BR_LINUX = "\n";
   public static final String BR_MACOS = "\r";
   public static final String BR_WINOS = "\r\n";

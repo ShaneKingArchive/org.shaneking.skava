@@ -3,9 +3,8 @@ package sktest.skava.rr;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shaneking.skava.rr.Pri;
-import sktest.skava.SKUnit;
 
-public class PriTest extends SKUnit {
+public class PriTest {
   @Test
   public void build() {
     Assert.assertEquals("Pri(ext=ext, obj=obj, rtn=rtn)", Pri.build().setExt("ext").setObj("obj").setRtn("rtn").toString());

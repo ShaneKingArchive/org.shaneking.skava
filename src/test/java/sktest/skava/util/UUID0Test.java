@@ -9,7 +9,6 @@ import org.junit.runners.Parameterized;
 import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.util.Random0;
 import org.shaneking.skava.util.UUID0;
-import sktest.skava.SKUnit;
 import sktest.skava.util.prepare.PrepareUUID0;
 
 import java.util.Arrays;
@@ -18,7 +17,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RunWith(Parameterized.class)
-public class UUID0Test extends SKUnit {
+public class UUID0Test {
   private UUID uuid;
 
   public UUID0Test(UUID uuid) {

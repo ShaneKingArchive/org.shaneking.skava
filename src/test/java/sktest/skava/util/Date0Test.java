@@ -8,7 +8,6 @@ import org.junit.runners.Parameterized;
 import org.shaneking.skava.lang.SkavaException;
 import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.util.Date0;
-import sktest.skava.SKUnit;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -17,17 +16,17 @@ import java.util.List;
 
 //Parameterized step1:add Parameterized.class to RunWith
 @RunWith(Parameterized.class)
-public class Date0Test extends SKUnit {
-  private Date date;
-  private String pattern;
+public class Date0Test {
+    private Date date;
+    private String pattern;
 
-  private Date now = null;
-  private String datetime = null;
+    private Date now = null;
+    private String datetime = null;
 
-  //Parameterized step2:use step2 data to constructor object
-  public Date0Test(Date date, String pattern) {
-    super();
-    this.date = date;
+    //Parameterized step2:use step2 data to constructor object
+    public Date0Test(Date date, String pattern) {
+        super();
+        this.date = date;
     this.pattern = pattern;
   }
 
@@ -39,8 +38,6 @@ public class Date0Test extends SKUnit {
 
   @Before
   public void setUp() {
-    super.setUp();
-
     now = Date0.now();
     datetime = new SimpleDateFormat(Date0.DATETIME).format(now);
   }

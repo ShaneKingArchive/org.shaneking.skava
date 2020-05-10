@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.util.List0;
 import org.shaneking.skava.util.Random0;
-import sktest.skava.SKUnit;
 import sktest.skava.util.concurrent.atomic.prepare.PrepareDecrease;
 import sktest.skava.util.concurrent.atomic.prepare.PrepareIncrease;
 
@@ -17,17 +16,17 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Slf4j
-public class AtomicLong0Test extends SKUnit {
-  private final AtomicLong al = new AtomicLong(Runtime.getRuntime().availableProcessors() + 1);
+public class AtomicLong0Test {
+    private final AtomicLong al = new AtomicLong(Runtime.getRuntime().availableProcessors() + 1);
 
-  @Before
-  public void setUp() {
-    al.set(Runtime.getRuntime().availableProcessors() + 1);
-  }
+    @Before
+    public void setUp() {
+        al.set(Runtime.getRuntime().availableProcessors() + 1);
+    }
 
-  @Test
-  public void tryDecreaseFailed() throws Exception {
-    ExecutorService executorService = Executors.newFixedThreadPool(6 * Runtime.getRuntime().availableProcessors() + 1);
+    @Test
+    public void tryDecreaseFailed() throws Exception {
+        ExecutorService executorService = Executors.newFixedThreadPool(6 * Runtime.getRuntime().availableProcessors() + 1);
     List<Future<Boolean>> futureList = executorService.invokeAll(List0.fillList(null, 8 * Runtime.getRuntime().availableProcessors() + 1, () -> new PrepareDecrease(al)));
     long l = futureList.parallelStream().map(future -> {
       try {
