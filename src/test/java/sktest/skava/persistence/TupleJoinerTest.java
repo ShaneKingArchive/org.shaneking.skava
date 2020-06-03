@@ -1,6 +1,5 @@
 package sktest.skava.persistence;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,10 +14,6 @@ public class TupleJoinerTest {
   public void setUp() {
     ip = Tuple.of(127, 0, 0, 1);
     tupleJoiner = new Tuple.TupleJoiner(String0.OPEN_BRACKET, String0.DOT, String0.CLOSE_BRACKET);
-  }
-
-  @After
-  public void tearDown() {
   }
 
   @Test

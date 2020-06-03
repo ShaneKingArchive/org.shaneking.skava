@@ -1,8 +1,6 @@
 package sktest.skava.time;
 
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.lang.String0;
 import org.shaneking.skava.time.LocalTime0;
@@ -11,14 +9,6 @@ import org.shaneking.skava.util.Date0;
 import java.time.LocalTime;
 
 public class LocalTime0Test {
-  @Before
-  public void setUp() throws Exception {
-  }
-
-  @After
-  public void tearDown() throws Exception {
-  }
-
   @Test
   public void now() {
     Assert.assertEquals(Date0.on().time(), LocalTime0.on().time());

@@ -17,16 +17,16 @@ import java.util.List;
 //Parameterized step1:add Parameterized.class to RunWith
 @RunWith(Parameterized.class)
 public class Date0Test {
-    private Date date;
-    private String pattern;
+  private Date date;
+  private String pattern;
 
-    private Date now = null;
-    private String datetime = null;
+  private Date now = null;
+  private String datetime = null;
 
-    //Parameterized step2:use step2 data to constructor object
-    public Date0Test(Date date, String pattern) {
-        super();
-        this.date = date;
+  //Parameterized step2:use step2 data to constructor object
+  public Date0Test(Date date, String pattern) {
+    super();
+    this.date = date;
     this.pattern = pattern;
   }
 

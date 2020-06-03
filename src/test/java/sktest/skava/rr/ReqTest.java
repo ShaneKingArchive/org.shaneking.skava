@@ -6,15 +6,15 @@ import org.shaneking.skava.rr.Pri;
 import org.shaneking.skava.rr.Req;
 
 public class ReqTest {
-    @Test
-    public void build() {
-        Assert.assertEquals("Req(enc=enc, pri=null, pub=null)", Req.build().setEnc("enc").toString());
-    }
+  @Test
+  public void build() {
+    Assert.assertEquals("Req(enc=enc, pri=null, pub=null)", Req.build().setEnc("enc").toString());
+  }
 
-    @Test
-    public void buildPri() {
-        Assert.assertEquals("Req(enc=null, pri=Pri(ext=null, obj=null, rtn=rtn), pub=null)", Req.build(Pri.build("rtn")).toString());
-    }
+  @Test
+  public void buildPri() {
+    Assert.assertEquals("Req(enc=null, pri=Pri(ext=null, obj=null, rtn=rtn), pub=null)", Req.build(Pri.build("rtn")).toString());
+  }
 
   @Test
   public void buildPub() {

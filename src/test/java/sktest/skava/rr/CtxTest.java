@@ -1,9 +1,7 @@
 package sktest.skava.rr;
 
 import com.google.common.collect.Lists;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.shaneking.skava.rr.Ctx;
 import org.shaneking.skava.rr.Resp;
@@ -15,14 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class CtxTest {
-  @Before
-  public void setUp() throws Exception {
-  }
-
-  @After
-  public void tearDown() throws Exception {
-  }
-
   @Test
   public void testLanguage() throws Exception {
     List<Callable<String>> callableList = Lists.newArrayList();
