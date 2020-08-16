@@ -43,11 +43,11 @@ public class Resp<D> {
   }
 
   public static <D> Resp<D> failed(String code) {
-    return failed(code, String0.EMPTY);
+    return failed(code, null);
   }
 
   public static <D> Resp<D> failed() {
-    return failed(Resp.CODE_UNKNOWN_EXCEPTION, String0.EMPTY);
+    return failed(Resp.CODE_UNKNOWN_EXCEPTION);
   }
 
   public static <D> Resp<D> success(D data) {

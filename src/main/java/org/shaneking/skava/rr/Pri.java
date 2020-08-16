@@ -33,4 +33,12 @@ public class Pri<E, O, R> {
   public static <E, O, R> Pri<E, O, R> build(R rtn) {
     return new Pri<E, O, R>().setRtn(rtn);
   }
+
+  public static <E, O, R> Pri<E, O, R> build(R rtn, O obj) {
+    return new Pri<E, O, R>().setRtn(rtn).setObj(obj);
+  }
+
+  public static <E, O, R> Pri<E, O, R> build(R rtn, O obj, E ext) {
+    return new Pri<E, O, R>().setRtn(rtn).setObj(obj).setExt(ext);
+  }
 }

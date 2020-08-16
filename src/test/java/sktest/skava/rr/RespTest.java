@@ -18,13 +18,13 @@ public class RespTest {
 
   @Test
   public void failedA0() {
-    Assert.assertEquals("Resp(code=-1, data=null, mesg=)", Resp.failed().toString());
+    Assert.assertEquals("Resp(code=-1, data=null, mesg=null)", Resp.failed().toString());
   }
 
   @Test
   public void failedA1() {
 //    Assert.assertEquals("{\"code\":\"1\",\"mesg\":\"NULL\"}", OM3.writeValueAsString(Resp.failed(Resp.CODE_KNOWN_EXCEPTION)));
-    Assert.assertEquals("Resp(code=-1, data=null, mesg=)", Resp.failed(Resp.CODE_UNKNOWN_EXCEPTION).toString());
+    Assert.assertEquals("Resp(code=-1, data=null, mesg=null)", Resp.failed(Resp.CODE_UNKNOWN_EXCEPTION).toString());
   }
 
   @Test

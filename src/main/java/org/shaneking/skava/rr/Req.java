@@ -36,4 +36,12 @@ public class Req<E, O, R, P> {
   public static <E, O, R, P> Req<E, O, R, P> build(P pub) {
     return new Req<E, O, R, P>().setPub(pub);
   }
+
+  public static <E, O, R, P> Req<E, O, R, P> build(P pub, Pri<E, O, R> pri) {
+    return new Req<E, O, R, P>().setPub(pub).setPri(pri);
+  }
+
+  public static <E, O, R, P> Req<E, O, R, P> build(P pub, String enc) {
+    return new Req<E, O, R, P>().setPub(pub).setEnc(enc);
+  }
 }
