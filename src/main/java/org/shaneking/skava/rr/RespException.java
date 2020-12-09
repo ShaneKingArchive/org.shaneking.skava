@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.shaneking.skava.lang.SkavaException;
+import org.shaneking.skava.lang.String0;
 
 @Accessors(chain = true)
 @ToString
@@ -14,8 +15,7 @@ public class RespException extends SkavaException {
   private Resp resp;
 
   public RespException(Resp resp) {
-    super();
-    this.resp = resp;
+    this(resp, String0.null2empty2(resp.getMesg(), resp.getCode()));
   }
 
   public RespException(Resp resp, String message) {

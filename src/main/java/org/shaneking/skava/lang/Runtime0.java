@@ -38,7 +38,7 @@ public class Runtime0 {
   }
 
   public static List<String> exec(String command, long timeout, boolean value4pause, String pauseFlag) {
-    return exec(command, DEFAULT_TIMEOUT_MINUTES, value4pause, pauseFlag, FixedSizeArrayList.DEFAULT_SIZE);
+    return exec(command, timeout, value4pause, pauseFlag, FixedSizeArrayList.DEFAULT_SIZE);
   }
 
   public static List<String> exec(String command, long timeout, boolean value4pause, String pauseFlag, int maxRecordSize) {
